@@ -4,7 +4,7 @@ author: "Léa Pautrel"
 output:
   html_document:
     highlight: zenburn
-    number_sections: no
+    number_sections: yes
     theme: yeti
     toc: yes
 ---
