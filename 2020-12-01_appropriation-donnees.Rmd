@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
 	echo = FALSE,
-	fig.align = "Center",
+	fig.align = "center",
 	message = FALSE,
 	warning = FALSE
 )
@@ -25,6 +25,7 @@ library(foreign)			# read.dbf
 library(ggmap)
 library(wesanderson)
 library(tibble)
+library(ggpubr)
 ```
 
 ------------------------------------
@@ -44,23 +45,70 @@ gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 # gridata : equivalent to predata from predata_output but with a extended surface
 ```
 
+## effort_ouput : données d'effort (sous-données selon échelle d'étude)
+```{r}
+summary(effort_output)
+```
+
+### legdata
+### segdata
+
+## list_prepare_obs_by_sp$PRIGLA_obs_output : données d'observation pour le requin peau bleue (sous-données selon échelle d'étude)
+```{r}
+summary(list_prepare_obs_by_sp$PRIGLA_obs_output)
+```
+
+### distdata
+### obsdata
+### countdata_leg
+### countdata_seg
+
+## predata_output : covariables, grille de 2 km
+```{r}
+summary(predata_output)
+```
+
+## gridata : covariables, surface étendue
+```{r}
+head(gridata)
+```
+
+
+# Quelques infos utiles
 ## Dates des sessions
 ```{r}
 data.frame(session = effort_output$segdata$session, date = effort_output$segdata$date) %>% 
 	unique() %>% 
-	as.tibble() %>% 
-	arrange(session, date)
+	arrange(session, date) %>% 
+	group_by(session) %>% 
+  mutate(dates_session = paste0(date, collapse = " + "))  %>% 
+	select(session, dates_session) %>% 
+	unique() 
 ```
 
 # Histogramme des distances au transect
 ```{r fig.height = 4}
 list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>% 
   ggplot(aes(x = distance)) +
-  geom_histogram(bins = 10)
+  geom_histogram(bins = 15, col = "white")
+```
+
+
+```{r fig.height = 4}
+list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>%
+	gghistogram(
+		x = "distance",
+		y = "..density..",
+		add = "mean",
+		rug = TRUE,
+		fill = "blue",
+		col = "darkblue",
+		add_density = TRUE
+	)
 ```
 
 # Cartes d'occurrences
-```{r}
+```{r fig.height = 8}
 data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>%
 	filter(detected == 1)
 segdata <- effort_output$segdata
@@ -68,7 +116,7 @@ segdata <- effort_output$segdata
 # Emplacement
 sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
 									 lat = c(min(data_occ$latitude), max(data_occ$latitude)),
-									 f = 0.8)
+									 f = 1.4)
 
 # Création de la carte vide
 zone_obs <- get_map(location = sbbox,
