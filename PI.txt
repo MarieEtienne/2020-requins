@@ -1,0 +1,79 @@
+- ligne de vol des avions
+- observateur dans l'avion 
+- si on voit ou pas un requin
+- mesure de l'angle entre la verticale et le requin
+- on positionne le requin
+
+
+Distance sampling
+il y a des individus qu'on voit pas pcq'ils sont trop loins
+biais d'observation
+prendre en compte des covariables
+carte de présence basée 
+
+Faire une carte d'occurence --> les données en globalité
+ 
+Histogramme de distance, distance au transect
+
+Est-ce qu'on ne voit vraiment pas les requins en fonction de la distance?
+Est-ce que les observations diffèrent en fonction des modalités d'observation? 
+
+Pour chaque sortie, est-ce qu'il y a une différence d'observation?
+on fait carte par carte les sorties pour faire des observations
+
+package Rdistance : 
+estimation pour faire de l'estimation avec des méthodes de distance sampling
+
+stephan buckland : Livre distance sampling
+
+présence d'individus et modèle ???? 
+
+- lire le papier de roy
+- faire avec Rdistance???? 
+- processus ponctuel
+- en lisant les papiers : simuler les processus ponctuel avec spatstat package R (lien sur slack) rpoispp : génere des points selon loi de poisson
+- jouer avec cette simulation. Paramètre lambda à modifier pour la simulation
+
+
+METHODE DE TRAVAIL :
+gestion de données de distance sampling
+sur github requins2020
+07 et 14 decembre : rdv à 14h agro
+04janvier 
+10 decembre : 14h réunion avec les deux mathieu 
+
+Pour cette semaine : lire les papiers
+explorer le concept distance sampling
+faire des cartes pour se familiariser avec les programmes 
+
+
+#############################################
+01 DEC 2020
+#############################################
+En présentiel Agrocampus
+
+Lecture de l'article Distance sampling (Royle)
+Documentation sur distance sampling
+package spatstat : rpoispp et lambda en fonction de x et y
+
+CARTE : 
+aves toutes les sessions : OK
+avec les sessions separées : dans leur rmd
+
+DIAGRAMME :
+avec plus d'espacement (bins = 10)  
+
+A FAIRE : 
+lire la doc sur le package Distance et appliquer 
+
+################################################
+03 DEC 2020 
+################################################
+Certaines notations dans le jdd qu'on doit demander 
+Demander le but du projet???
+Compréhension des articles 
+Sens des tableaux et sous tableaux à demander aux deux mathieu
+Fixer des objectifs journaliers à faire 
+
+
+
