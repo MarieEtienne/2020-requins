@@ -1,3 +1,7 @@
+#################################
+PROJET REQUINS 2020
+#################################
+
 - ligne de vol des avions
 - observateur dans l'avion 
 - si on voit ou pas un requin
@@ -96,7 +100,7 @@ S'accorder sur les notations qu'on va utiliser
 - transect
 - session 
 
-RDV MPE : 
+RDV 14H: 
 BUT DU PROJET 
 - Carte d'abondance 
 - Patron saisonnier / pbm : session 1 et 4 rien
@@ -109,7 +113,20 @@ Article trouvé:
 A voir : 
 - Prq c'est faible en dessous de l'avion?
 - Prq on doit forcer la proba à 1?
+faut qu'une des classes de distance soit réelle : donc on choisit la classe 0. faire une hypothèse forte que c'est à 0. 
 
 Rendu :
 - Soutenance orale
 - Rendu pour les Mathieu et pour la gestion de projet
+
+A faire : 
+- resumer les méthodes qu'on a vu (les articles)
+- ajuster sans covariables (avec les données de l'histogramme)
+- package Distance, Rdistance : à voir et essayer avec les données
+- preparer les questions pour les Mathieu
+
+
+########################################
+10 DEC 2020
+########################################
+
