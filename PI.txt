@@ -102,5 +102,14 @@ BUT DU PROJET
 - Patron saisonnier / pbm : session 1 et 4 rien
 
 Article trouvé: 
-- GAM : extension du glm
-- 
+- GAM : extension du glm : A VOIR
+- excès de zero : méthode Tweedie qui ajoute plein de zero pour gagner de la flexibilité par rapport à une loi de poisson classique
+- gam + ajustement + correction soit l'inverse
+
+A voir : 
+- Prq c'est faible en dessous de l'avion?
+- Prq on doit forcer la proba à 1?
+
+Rendu :
+- Soutenance orale
+- Rendu pour les Mathieu et pour la gestion de projet
