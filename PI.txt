@@ -84,3 +84,15 @@ Chapitre 123
 Questions : 
 - Docs à rendre
 - Presentation format
+
+Les biais possible :
+- hauteur de l'avion
+- capacité de detection de la personne
+- deplacement des requins, double comptage
+- saison (session 1 et 4 rien)
+- profondeur
+
+S'accorder sur les notations qu'on va utiliser 
+- transect
+- session 
+
