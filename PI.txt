@@ -121,10 +121,16 @@ Rendu :
 
 A faire : 
 - resumer les méthodes qu'on a vu (les articles)
-- ajuster sans covariables (avec les données de l'histogramme)
-- package Distance, Rdistance : à voir et essayer avec les données
-- preparer les questions pour les Mathieu
+- ajuster sans covariables (avec les données de l'histogramme) : utiliser les packages Distance, Rdistance : à voir et essayer avec les données
+- questions pour article irlande
 
+Demain 08 Dec:
+- recap Royle
+- envoyer les graphs sur slack
+- rdv jeudi? où? heure?
+- resumé de l'espèce
+- preparer les questions pour les Mathieu par rapport à l'article irlande aussi 
+- ordre du jour de la reunion
 
 ########################################
 10 DEC 2020
