@@ -29,6 +29,11 @@ library(ggmap)
 library(wesanderson)
 library(ggpubr)
 library(plotly)
+library(cowplot)
+
+
+## Packages calcul
+library(Rdistance)
 ```
 
 ------------------------------------
@@ -117,15 +122,20 @@ DT::datatable(
 )
 ```
 
-# Histogramme des distances au transect
-## Comptage
+```{r}
+summary(list_prepare_obs_by_sp$PRIGLA_obs_output$distdata$detected)
+```
+
+
+# Distances au transect
+## Histogramme : comptage
 ```{r fig.height = 4}
 list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>% 
   ggplot(aes(x = distance)) +
   geom_histogram(bins = 15, col = "white")
 ```
 
-## Densité
+## Histogramme : densité
 ```{r fig.height = 4}
 list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>%
 	gghistogram(
@@ -139,6 +149,68 @@ list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>%
 		add_density = TRUE
 	)
 ```
+
+## Calcul de la fonction de détection
+
+```{r fig.width=10}
+obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)] 
+max(obsdata$distance)
+```
+
+### Comparaison des effets des différentes loi pour la vraisemblance
+```{r fig.width=10}
+# pointSurvey = FALSE car transects
+
+dfuncSparrow1 <- Rdistance::dfuncEstim(distance ~ 1,
+											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											likelihood = "uniform",
+											w.hi = 0.3
+											)
+
+dfuncSparrow2 <- Rdistance::dfuncEstim(distance ~ 1,
+											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											likelihood = "halfnorm",
+											w.hi = 0.3
+											)
+
+
+dfuncSparrow3 <- Rdistance::dfuncEstim(distance ~ 1,
+											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											likelihood = "hazrate",
+											w.hi = 0.3
+											)
+
+
+dfuncSparrow4 <- Rdistance::dfuncEstim(distance ~ 1,
+											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											likelihood = "negexp",
+											w.hi = 0.3
+											)
+
+
+dfuncSparrow5 <- Rdistance::dfuncEstim(distance ~ 1,
+											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+											likelihood = "Gamma",
+											w.hi = 0.3
+											)
+```
+
+
+```{r fig.width=10}
+par(mfrow=c(2,3))
+plot(dfuncSparrow1)
+plot(dfuncSparrow2)
+plot(dfuncSparrow3)
+plot(dfuncSparrow4)
+plot(dfuncSparrow5)
+```
+
 
 # Carte d'occurrences
 ```{r fig.height = 8}
@@ -172,6 +244,6 @@ zone_obs_map +
 						 		col = session)) +
 	theme_void() +
 	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
-
+	
 ```
 
