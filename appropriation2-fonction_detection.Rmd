@@ -199,63 +199,246 @@ colnames(obs_cov_sample)[2] = "Seg"
 DT::datatable(obs_cov_sample)
 ```
 
-### Comparaison des fonctions de détection selon les lois pour la vraisemblance
+# Fonctions de détection avec covariables
+## Fonction de détection en fonction de l'état de la mer
 
-D'abord, on va prendre en compte seulement quelques covariables pour voir l'effet qu'elles ont : la profondeur `depth` ; la distance par rapport à la côte `distCoat` et la pente `slopeP`.
-
-
-#### Test avec les données du package
-
-```{r}
-# Importation des données
-data(sparrowDetectionData)
-data(sparrowSiteData)
-
-# Estimation de la fonction de détection
-sparrow_dfuncObs <- dfuncEstim(
-	formula = dist ~ observer,
-	detectionData = sparrowDetectionData,
-	siteData = sparrowSiteData,
-	likelihood = "halfnorm",
-	w.hi = 100,
-	pointSurvey = FALSE,
-	control = RdistanceControls(maxIter = 1000)
-)
-
-# Affichage
-plot(sparrow_dfuncObs,
-		 newdata = data.frame(observer = levels(sparrowSiteData$observer)))
-```
-
-#### Test en fonction de la profondeur
-Initialisation
 ```{r echo=TRUE}
-formula <- "distance ~ depth"
+# Initialisation
+formula <- "distance ~ seaState"
 sharkDetectionData <- data.frame("Seg" = obs_cov_sample$Seg,
 														"groupsize" = obs_cov_sample$size,
 														"distance" = obs_cov_sample$distance)
 head(sharkDetectionData)
 
 sharkSiteData <- data.frame("Seg" = obs_cov_sample$Seg,
-											 "depth" = obs_cov_sample$depth)
+											 "seaState" = as.factor(obs_cov_sample$seaState))
 head(sharkSiteData)
 
+# Estimation de la fonction de détection
 shark_dfunc <- Rdistance::dfuncEstim(
 	formula = formula,
 	detectionData = sharkDetectionData,
 	siteData = sharkSiteData,
 	likelihood = "halfnorm",
 	w.hi = 0.3,
-	pointSurvey = FALSE,
-	control = RdistanceControls(maxIter = 1000)
+	pointSurvey = FALSE
 )
 
-plot(shark_dfunc)
+# Affichage
+plot(shark_dfunc,
+		 newdata = data.frame(seaState = levels(sharkSiteData$seaState)))
+```
+
+## Fonction de détection en fonction de la profondeur, la distance par rapport à la côte et la pente
+```{r}
+# sharkDetectionData
+sharkDetectionData <- data.frame(
+	"Seg" = obs_cov_sample$Seg,
+	"groupsize" = obs_cov_sample$size,
+	"distance" = obs_cov_sample$distance
+)
+head(sharkDetectionData)
+
+#sharkSiteData
+sharkSiteData <- data.frame(
+	"Seg" = obs_cov_sample$Seg,
+	"depth" = obs_cov_sample$depth,
+	"distCoast" = obs_cov_sample$distCoast,
+	"slopeP" = obs_cov_sample$slopeP
+)
+
+# Discrétisation des covariables
+sharkSiteData$depth = factor(cut(
+	x = sharkSiteData$depth,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+sharkSiteData$distCoast = factor(cut(
+	x = sharkSiteData$distCoast,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+sharkSiteData$slopeP = factor(cut(
+	x = sharkSiteData$slopeP,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+# Affichage
+head(sharkSiteData)
 ```
 
 
-```{r fig.width=10}
-compare_loi_vrais(tableau = obs_cov_sample,
-									formula = "distance ~ depth + distCoast + slopeP")
+### depth (profondeur)
+```{r}
+shark_dfunc_p <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p
 ```
 
+### distCoast
+```{r}
+shark_dfunc_d <- Rdistance::dfuncEstim(
+	formula = "distance ~ distCoast",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_d
+```
+
+### slopeP
+```{r}
+shark_dfunc_s <- Rdistance::dfuncEstim(
+	formula = "distance ~ slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_s
+```
+
+### depth (p) + distCoast
+```{r}
+shark_dfunc_p_d <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + distCoast",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_d
+```
+
+### depth (p) + slopeP
+```{r}
+shark_dfunc_p_s <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_s
+```
+
+### distCoast + slopeP
+```{r}
+shark_dfunc_d_s<- Rdistance::dfuncEstim(
+	formula = "distance ~ distCoast + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_d_s
+```
+
+### depth (p) + distCoast + slopeP
+```{r}
+shark_dfunc_p_d_s<- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + distCoast + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_d_s
+```
+
+### Resultats graphiques
+
+**Résultats **
+
+```{r fig.height = 15, fig.width=10}
+plot_dfunc_lea <- function(dfunc_res, newdata, titre = "") {
+	plot(
+		dfunc_res,
+		newdata = newdata,
+		nbins = 15,
+		col = "#BDD9D6",
+		border = 0,
+		vertLines = FALSE,
+		main = titre
+	)
+}
+
+par(mfrow = c(3, 2))
+
+### depth (profondeur)
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p,
+	newdata = data.frame(depth = levels(sharkSiteData$depth)),
+	titre = "depth"
+)
+
+### distCoast
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_d,
+	newdata = data.frame(distCoast = levels(sharkSiteData$distCoast)),
+	titre = "distCoast"
+)
+
+### slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_s,
+	newdata = data.frame(slopeP = levels(sharkSiteData$slopeP)),
+	titre = "slopeP"
+)
+
+### depth (p) + distCoast
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_d,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		distCoast = levels(sharkSiteData$distCoast)
+	),
+	titre = "depth + distCoast"
+)
+
+### depth (p) + slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_s,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "depth  + slopeP"
+)
+
+### distCoast + slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_d_s,
+	newdata = expand.grid(
+		distCoast = levels(sharkSiteData$distCoast),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "distCoast + slopeP"
+)
+```
+
+
+```{r fig.height = 8, fig.width=10}
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_d_s,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		distCoast = levels(sharkSiteData$distCoast),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "depth + distCoast + slopeP"
+)
+```
