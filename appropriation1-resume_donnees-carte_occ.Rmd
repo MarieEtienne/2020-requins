@@ -1,6 +1,6 @@
 ---
 title: "Appropriation des données"
-subtitle: "Histogramme des distances au transect et cartes d'occurrence"
+subtitle: "Exploration des tableaux de données et carte d'occurrences"
 author: "Léa Pautrel"
 output:
   html_document:
@@ -83,20 +83,24 @@ DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$distdata[1:3,]))
 DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[1:3,]))
 ```
 
-### countdata_leg
-```{r}
+### countdata_leg : nombre de requins comptés au total pour chacun des 35 transects
+```{r, echo = TRUE}
+dim(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_leg)
 DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_leg[1:3,]))
 ```
 
-### countdata_seg
-```{r}
+### countdata_seg : nombre de requins comptés au total pour les différents segments des 35 transects
+```{r, echo = TRUE}
+dim(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_seg)
 DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_seg[1:3,]))
 ```
 
 
 ## predata_output : covariables, grille de 2 km
-```{r}
+```{r, echo = TRUE}
 DT::datatable(summary(predata_output))
+DT::datatable(t(predata_output$predata[1:3,]))
+DT::datatable(t(predata_output$segdata[1:3,]))
 ```
 
 ## gridata : covariables, surface étendue
@@ -125,92 +129,6 @@ DT::datatable(
 ```{r}
 summary(list_prepare_obs_by_sp$PRIGLA_obs_output$distdata$detected)
 ```
-
-
-# Distances au transect
-## Histogramme : comptage
-```{r fig.height = 4}
-list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>% 
-  ggplot(aes(x = distance)) +
-  geom_histogram(bins = 15, col = "white")
-```
-
-## Histogramme : densité
-```{r fig.height = 4}
-list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>%
-	gghistogram(
-		x = "distance",
-		y = "..density..",
-		bins = 15,
-		add = "mean",
-		rug = TRUE,
-		fill = "blue",
-		col = "darkblue",
-		add_density = TRUE
-	)
-```
-
-## Calcul de la fonction de détection
-
-```{r fig.width=10}
-obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
-list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)] 
-max(obsdata$distance)
-```
-
-### Comparaison des effets des différentes loi pour la vraisemblance
-```{r fig.width=10}
-# pointSurvey = FALSE car transects
-
-dfuncSparrow1 <- Rdistance::dfuncEstim(distance ~ 1,
-											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											likelihood = "uniform",
-											w.hi = 0.3
-											)
-
-dfuncSparrow2 <- Rdistance::dfuncEstim(distance ~ 1,
-											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											likelihood = "halfnorm",
-											w.hi = 0.3
-											)
-
-
-dfuncSparrow3 <- Rdistance::dfuncEstim(distance ~ 1,
-											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											likelihood = "hazrate",
-											w.hi = 0.3
-											)
-
-
-dfuncSparrow4 <- Rdistance::dfuncEstim(distance ~ 1,
-											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											likelihood = "negexp",
-											w.hi = 0.3
-											)
-
-
-dfuncSparrow5 <- Rdistance::dfuncEstim(distance ~ 1,
-											detectionData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											siteData = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
-											likelihood = "Gamma",
-											w.hi = 0.3
-											)
-```
-
-
-```{r fig.width=10}
-par(mfrow=c(2,3))
-plot(dfuncSparrow1)
-plot(dfuncSparrow2)
-plot(dfuncSparrow3)
-plot(dfuncSparrow4)
-plot(dfuncSparrow5)
-```
-
 
 # Carte d'occurrences
 ```{r fig.height = 8}
