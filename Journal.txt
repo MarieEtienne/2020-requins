@@ -133,6 +133,13 @@ Demain 08 Dec:
 - ordre du jour de la reunion
 
 ########################################
-10 DEC 2020
+09 DEC 2020
 ########################################
-RDV avec 2 Mathieu
+Article dolphin
+
+Forme des données :
+- segdata : données sur les segments des transects
+- distdata : données sur le distance sampling pour ajuster la fonction de detection
+- obsdata : lien entre les distances et les segments
+- preddata : grille de prediction avec les covariables
+
