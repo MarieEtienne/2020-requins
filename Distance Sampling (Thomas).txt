@@ -37,4 +37,31 @@ Ajustement :
 ################################
 Variance and Interval Estimation
 - variance de D^ : estimée par la variance de l'échantillonnage 
-- f(0) estimée par la max de vraisemblance
+- f(0) estimée par la max de vraisemblance et sa variance estimée par information matrix
+- méthode bootstrap 
+
+##############################
+Cluster size estimation
+Pour les animaux en bandes/groupes
+
+#############################
+Assumptions
+- N individus sur une aire A tel que D = N/A
+- n individus detectés sur des lignes placés aléatoirement 
+
+la distribution des individus n'est pas nécessairement aléatoire
+mais la mise en place des transect doit respecter la distribution locale des individus 
+(DONC COMMENT ON PLACE LES TRANSECTS SI ON NE CONNAIT PAS LA DISTRIBUTION OU SI ON NE PRESUME PAS QUE CA SUIT UNE LOI DE POISSON PAR EXEMPLE???)
+
+3 HYPOTHESES : 
+- Individu sur la ligne sont toujours détecté d'où le g(0) = 1
+- Individu détecté sur leur position initiale
+- Distance accurate
+
+################################
+Point transect :
+les équations intègrent les formules pour un cercle 2Pir² donc je ne lis pas pour éviter la confusion
+
+################################
+Related methods
+
