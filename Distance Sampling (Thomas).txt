@@ -64,4 +64,25 @@ les équations intègrent les formules pour un cercle 2Pir² donc je ne lis pas 
 
 ################################
 Related methods
+- Trapping webs : alternative a la methode de capture recapture
+- Cue counting : alternative à la ligne transect (ex observation par bateau ou avion)
+- Indirect methods : compter les choses liées à l'animal vu qu'il est rare
+
+##################################
+Current research
+- bases de la distance sampling (chapitre en haut)
+- but : améliorer la précision et vérifier les hypothèses
+
+- améliorer la précision en ajoutant des covariables et voir leurs effets sur g(x)
+- une approche serait de considérer l'effet de la cov sur l'échelle de detection mais non sa forme????? 
+- combinaison de distance sampling avec capture recapture car g(0)<1 pcq c'est incertain de voir les animaux (ex quand ils sont dans l'eau ou cachés par la végétation)
+
+Spatial modeling
+- la densité de l'animal est liée à des variables environnementales qui peuvent avoir des effets sur la précision et sur l'estimation de l'abondance
+- concept : la distribution des animaux est heterogene suivant la loi de Poisson
+
+- SIG : automated design algo 
+- Adaptive sampling :
+ 
+
 
