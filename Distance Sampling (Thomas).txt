@@ -1,0 +1,40 @@
+ARTICLE DISTANCE SAMPLING (Thomas)
+
+Distance sampling 
+- observation sur une serie de lines/points pour voir la présence d'un individu (espèce)
+- pour chaque individu détecté: mesurer la distance à partir des lines/points
+
+Detection function
+- la detection diminue quand la distance augmente
+- ajuster la fonction de detection pour estimer la proportion manquée dans l'observation
+
+Line transect sampling
+- series of straight lines (terrestres/aquatiques)
+
+############################
+Estimation
+- mesure sur le terrain : distance r et angle theta
+- calcul distance x : perpendiculaire à la ligne x = r.sin(theta)
+- surface de detection a = 2wL avec w distance perpendiculaire max et L longueur transect (L = Sum(l1,....,lk) : segmentation du transect)
+- Pa : probabilité de detection d'un animal 
+- P^a : disponibilité
+- Calcul de la densité de l'animal : D^= n/(2wLP^a) 
+
+############################
+Detection function
+- Pour avoir un estimation de Pa on a une fonction de detection g(x) qui est la proba d'un animal d'être detecté à une distance x. ON CONSIDERE QUE g(0) = 1
+- mu c'est la dérivé de g(x) donc Pa = mu/w
+- DONC ===> D^ = n / (2mu^L)
+
+- f(x) probability density function qui considère la courbe de fréquence f(x) = g(x)/mu ON CONSIDERE QUE f(0) = 1/mu
+- DONC ===> D^ = nf^(0)/2L 
+- probleme : evaluer la fonction ajustée à x = 0
+
+Ajustement : 
+- fonction paramétrique ou polynomial/cosine series adjustements si ca ne marche pas
+- pour les donnnées avec des catégories de distances : use Standard likelihood methods for mutlinomial data
+
+################################
+Variance and Interval Estimation
+- variance de D^ : estimée par la variance de l'échantillonnage 
+- f(0) estimée par la max de vraisemblance
