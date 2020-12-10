@@ -135,11 +135,26 @@ Demain 08 Dec:
 ########################################
 09 DEC 2020
 ########################################
-Article dolphin
-
+Lecture Article dolphin
 Forme des données :
 - segdata : données sur les segments des transects
 - distdata : données sur le distance sampling pour ajuster la fonction de detection
 - obsdata : lien entre les distances et les segments
 - preddata : grille de prediction avec les covariables
+
+Réponse aux questions (google drive)
+
+Rendu :
+- ACO : poster, rmd, présentation
+- Pelagis : rmd et résultats 
+
+Video GAM model (Cours CAUSEUR - Session 5)
++ revision 2eme session
+
+########################################
+10 DEC 2020
+########################################
+Lecture article Distance Sampling (Thomas)
+Envoi mail UCC
+
 
