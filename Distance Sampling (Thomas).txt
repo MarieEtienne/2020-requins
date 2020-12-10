@@ -77,12 +77,13 @@ Current research
 - une approche serait de considérer l'effet de la cov sur l'échelle de detection mais non sa forme????? 
 - combinaison de distance sampling avec capture recapture car g(0)<1 pcq c'est incertain de voir les animaux (ex quand ils sont dans l'eau ou cachés par la végétation)
 
+####################################
 Spatial modeling
 - la densité de l'animal est liée à des variables environnementales qui peuvent avoir des effets sur la précision et sur l'estimation de l'abondance
 - concept : la distribution des animaux est heterogene suivant la loi de Poisson
 
 - SIG : automated design algo 
-- Adaptive sampling :
+- Adaptive sampling : augmenter la taille des echantillons et la precision en concentrant les efforts sur les endroits où il y a le plus d'obs. 
  
 
 
