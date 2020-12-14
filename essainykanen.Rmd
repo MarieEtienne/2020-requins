@@ -1,0 +1,49 @@
+---
+title: "nykanen"
+author: "Rindra"
+date: "14/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(sf)
+library(here)
+library(foreign) 
+library(lubridate)
+library(ggmap)
+library(Rdistance)
+library(cowplot)
+```
+
+```{r}
+obs <- read_excel("C:/Users/rindr/Downloads/obsdata.xlsx")
+dist <- read_excel("C:/Users/rindr/Downloads/segdata.xlsx", sheet = "Shark sightings")
+##là on a les covariables et tout
+##prepdist c'est la distance
+seg <- read_excel("C:/Users/rindr/Downloads/segdata.xlsx", sheet = "Effort segments")
+```
+
+```{r}
+data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>%
+	filter(detected == 1)
+
+# Emplacement
+sbbox <- make_bbox(lon = c(min(dist$Lon), max(dist$Lon)),
+									 lat = c(min(dist$Lan), max(dist$Lan)),
+									 f = 1)
+
+# Création de la carte vide
+zone_obs <- get_map(location = sbbox,
+										zoom = 8,
+										maptype =  "terrain")
+
+zone_obs_map = ggmap(zone_obs) + theme_void()
+
+zone_obs_map + geom_point(data = dist,
+														aes(x = Lon,
+																y = Lat,
+																col = Substratum))
+```
+
