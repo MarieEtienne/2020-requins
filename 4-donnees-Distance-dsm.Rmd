@@ -1,0 +1,147 @@
+---
+title: "Appropriation des données"
+subtitle: "Histogramme des distances au transect et fonction de détection"
+author: "Léa Pautrel"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	error = TRUE
+)
+
+# Packages
+library(dplyr)				# tidyverse
+library(foreign)			# read.dbf
+library(DT)						# interactive HTML datatables
+
+## Graphes packages
+library(ggplot2) ; ggplot2::theme_set(theme_light())
+
+## Packages calcul
+library(Distance)
+library(dsm)
+```
+
+
+------------------------------------
+
+Importation des données
+
+```{r import_donnees}
+load("../data/effort_output.RData")
+# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
+
+load("../data/list_prepare_obs_by_sp.RData")
+# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
+
+load("../data/predata_output.RData")
+# predata_output : A grid of 2km cells size with different covariable associated around the observation.
+
+gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+# gridata : equivalent to predata from predata_output but with a extended surface
+```
+
+Transformation des données
+
+```{r}
+# Jointure
+distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata, 
+																	 cov_segment <- predata_output$segdata,
+																	 by = "Seg")
+
+# Réarrangement des colonnes
+distdata <- distdata[, c(3, 5:11, 1:2, 14:31)]
+colnames(distdata)[1] = "Transect.Label"
+colnames(distdata)[2] = "Seg"
+colnames(distdata)[3] = "Sample.Label"
+
+
+# Affichages
+head(distdata)
+```
+
+[1] "segdata"
+[1] "longitude"      "latitude"       "x"              "y"              "Effort"        
+[6] "Transect.Label" "Sample.Label"   "depth"         
+[1] "obsdata"
+[1] "object"       "Sample.Label" "size"         "distance"     "Effort"      
+
+```{r}
+segdata <-
+	data.frame(
+		"longitude" = distdata$longitude,
+		"latitude" = distdata$latitude,
+		"X" = distdata$X,
+		"Y" = distdata$Y,
+		"Effort" = distdata$Effort,
+		"Transect.Label" = distdata$Transect.Label,
+		"Sample.Label" = distdata$Sample.Label,
+		"depth" = distdata$depth
+	)
+head(segdata)
+
+obsdata <-
+	data.frame(
+		"object" = distdata$object,
+		"Sample.Label" = distdata$Sample.Label,
+		"size" = distdata$size,
+		"distance" = distdata$distance,
+		"Effort" = distdata$Effort
+	)
+head(obsdata)
+```
+
+
+# Sans aucune covariables
+
+## Fonction de détection
+```{r}
+detfc.null <- Distance::ds(distdata,
+							 max(distdata$distance),
+							 key = "hr",
+							 adjustment = NULL)
+```
+
+
+```{r}
+summary(detfc.null)
+par(mfrow=c(1,2))
+plot(detfc.null, showpoints=FALSE, pl.den=0, lwd=2)
+ddf.gof(detfc.null$ddf)
+```
+
+## Fonction de densité
+
+```{r}
+dsm.xy <- dsm(count ~ s(X, Y), 
+							detfc.null,
+							segdata,
+							obsdata,
+							method = "REML")
+summary(dsm.xy)
+```
+
+```{r}
+vis.gam(
+	dsm.xy,
+	plot.type = "contour",
+	view = c("X", "Y"),
+	asp = 1,
+	type = "response",
+	contour.col = "black",
+	n.grid = 100
+)
+```
+

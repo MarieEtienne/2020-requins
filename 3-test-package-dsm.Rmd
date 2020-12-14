@@ -11,6 +11,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+rm(list=ls())
+
 knitr::opts_chunk$set(
 	echo = FALSE,
 	fig.align = "center",
@@ -36,7 +38,6 @@ library(dsm)
 # `dsm` : exemple dauphins
 Importation données
 ```{r}
-rm(list=ls())
 set.seed(11123)
 data(mexdolphins)
 ```
@@ -112,4 +113,31 @@ vis.gam(
 	n.grid = 100
 )
 ```
+
+### Cov depth
+```{r}
+dsm.xy.depth <-
+	dsm(count ~ s(x, y, k = 10) + s(depth, k = 20),
+			detfc.hr.null, # fonction de détection sans covariable
+			segdata,
+			obsdata,
+			method = "REML")
+summary(dsm.xy.depth)
+vis.gam(
+	dsm.xy.depth,
+	plot.type = "contour",
+	view = c("x", "y"),
+	asp = 1,
+	type = "response",
+	contour.col = "black",
+	n.grid = 100
+)
+plot(dsm.xy.depth, select=2)
+```
+### pred abondance
+```{r}
+dsm.xy.pred <- predict(dsm.xy, preddata, preddata$area)
+summary(dsm.xy.pred)
+```
+
 

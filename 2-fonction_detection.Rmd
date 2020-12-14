@@ -38,7 +38,8 @@ library(Rdistance)
 
 ------------------------------------
 
-# Importation des données
+Importation des données
+
 ```{r import_donnees}
 load("../data/effort_output.RData")
 # effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
