@@ -158,3 +158,13 @@ Lecture article Distance Sampling (Thomas)
 Envoi mail UCC
 
 
+##########################################
+14 DEC 2020
+##########################################
+Réponse UCC : manque de données
+Fonction de detection avec Distance 
+Fonction de detection (critère AIC, code Léa)
+
+Modèle avec dsm
+
+A voir : zoib 
