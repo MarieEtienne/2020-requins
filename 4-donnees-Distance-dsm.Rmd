@@ -25,6 +25,7 @@ knitr::opts_chunk$set(
 library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
 library(DT)						# interactive HTML datatables
+library(data.table)
 
 ## Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
@@ -67,6 +68,8 @@ colnames(distdata)[1] = "Transect.Label"
 colnames(distdata)[2] = "Seg"
 colnames(distdata)[3] = "Sample.Label"
 
+distdata$seaState = as.integer(distdata$seaState)
+distdata$observerId<-as.integer(distdata$observerId)
 
 # Affichages
 head(distdata)
@@ -88,7 +91,8 @@ segdata <-
 		"Effort" = distdata$Effort,
 		"Transect.Label" = distdata$Transect.Label,
 		"Sample.Label" = distdata$Sample.Label,
-		"depth" = distdata$depth
+		"depth" = distdata$depth,
+		"seaState" = distdata$seaState
 	)
 head(segdata)
 
@@ -145,3 +149,164 @@ vis.gam(
 )
 ```
 
+# Avec SeaState (detfc) et depth (dsm)
+## Fonction de détection
+```{r}
+detfc.sea <- Distance::ds(distdata,
+							 max(distdata$distance),
+							 formula =  ~ as.factor(seaState),
+							 key = "hr",
+							 adjustment = NULL)
+```
+
+
+```{r}
+summary(detfc.sea)
+par(mfrow=c(1,2))
+plot(detfc.sea, showpoints=FALSE, pl.den=0, lwd=2)
+add_df_covar_line(detfc.sea, data.frame(seaState=levels(distdata$seaState)), pdf=TRUE)
+legend(1.5, 1, 0:3, lty=1:4)
+
+ddf.gof(detfc.sea$ddf)
+```
+
+## Fonction de densité
+
+```{r}
+dsm.xy.2 <- dsm(count ~ s(X, Y, k = 10) + s(depth, k = 20), 
+							detfc.sea,
+							segdata,
+							obsdata,
+							method = "REML")
+summary(dsm.xy.2)
+```
+
+```{r, fig.height=10}
+par(mfrow=c(1,2))
+
+vis.gam(
+	dsm.xy,
+	plot.type = "contour",
+	view = c("X", "Y"),
+	asp = 1,
+	type = "response",
+	contour.col = "black",
+	n.grid = 100,
+	main = "Null"
+)
+
+vis.gam(
+	dsm.xy.2,
+	plot.type = "contour",
+	view = c("X", "Y"),
+	asp = 1,
+	type = "response",
+	contour.col = "black",
+	n.grid = 100,
+	main = "SeaState (detfc) et depth (dsm)"
+)
+```
+
+# Sélection de la meilleure fonction de détection
+```{r}
+detfc.sea <- Distance::ds(distdata,
+							 max(distdata$distance),
+							 formula =  ~ as.factor(seaState),
+							 key = "hr",
+							 adjustment = NULL)
+```
+
+
+
+```{r}
+selec_detfc_aic <- function(distancedata, list.cov, list.key) {
+	# On récupère le nombre de combinaisons possibles
+	## 2^(nombre de covariables) : nombre de combinaisons possibles pour les covariables
+	## * nb de key : 1 seule key à chaque fois
+	n_comb <- 2 ^ (length(list.cov)) * length(list.key)
+	
+	# On récupère les combinaisons pour list.cov
+	comb_list.cov <-
+		do.call(data.table::CJ, replicate(length(list.cov), 0:1, FALSE))
+	names(comb_list.cov) <- list.cov
+	comb_list.cov[rep(1:nrow(comb_list.cov), length(list.key)), 1:length(list.cov)]
+	
+	# Initialisation : tableau des résultats vide
+	res <- as.data.frame(cbind(
+		comb_list.cov[rep(1:nrow(comb_list.cov), length(list.key)), 1:length(list.cov)],
+		data.frame(
+			"formula" = rep(NA, n_comb),
+			"key" = rep(list.key, each = 2 ^ (length(list.cov))),
+			"AIC" =  rep(NA, n_comb)
+		)
+	))
+	
+	# On lance une double boucle qui va calculer pour chaque possibilité l'AIC
+	i = 0
+	for (c in 1:2 ^ (length(list.cov))) {
+		for (k in 1:length(list.key)) {
+			i = i + 1 # Numéro de ligne pour res
+			
+			# key ----
+			#	res$key[i] = list.key[k] # Insertion de key dans res pour la ligne i
+			
+			# formula ----
+			formula <- "~"
+			for (col in 1:length(list.cov)) {
+				if (res[i, col] == 1) {
+					formula <- paste(formula, names(res)[col], "+")
+				}
+			}
+			if (formula == "~") {
+				formula = "~1"
+			} else {
+				formula = substr(formula, 1, nchar(formula) - 2)
+				formula = gsub(" ", "", formula)
+			}
+			res$formula[i] = formula # Insertion de formula dans res pour la ligne i
+			
+			# AIC ----
+			erreur <- try(tmp <- eval(parse(
+				text = paste(
+					"Distance::ds(
+					distdata,
+					max(distdata$distance),
+					formula =", formula, ",
+					key = 'hn'
+				)"
+				)
+			)),
+silent = T)
+			if (is(erreur, "try-error")) {
+				print("Erreur Distance::ds")
+				print(erreur)
+				out_AIC <- NA
+			} else {
+				tmp <- eval(parse(
+					text = paste(
+							"Distance::ds(
+							distdata,
+							max(distdata$distance),
+							formula =", formula, ",
+							key = 'hn'
+						)"
+					)
+				))
+				
+				out_AIC <- AIC(tmp)$AIC
+			}
+			res$AIC[i] = out_AIC # Insertion de AIC dans res pour la ligne i
+			
+			# Affichage
+			print(paste("Itération", i, "sur", n_comb, "terminée."))
+		}
+	}
+	
+	return(res)
+}
+
+```
+
+```{r}
+selec_detfc_aic(distancedata = distdata, list.cov = c("observerId", "seaState"), list.key = c("hn", "hr"))
+```
