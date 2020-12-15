@@ -241,12 +241,15 @@ selec_detfc_aic <- function(distancedata, list.cov, list.key) {
 		)
 	))
 	
+	detfc_res <- list()
+	
 	# On lance une double boucle qui va calculer pour chaque possibilité l'AIC
 	i = 0
-	for (c in 1:2 ^ (length(list.cov))) {
-		for (k in 1:length(list.key)) {
+	for (k in 1:length(list.key)) {
+		for (c in 1:2 ^ (length(list.cov))) {
 			i = i + 1 # Numéro de ligne pour res
-			
+
+	
 			# key ----
 			#	res$key[i] = list.key[k] # Insertion de key dans res pour la ligne i
 			
@@ -264,16 +267,16 @@ selec_detfc_aic <- function(distancedata, list.cov, list.key) {
 				formula = gsub(" ", "", formula)
 			}
 			res$formula[i] = formula # Insertion de formula dans res pour la ligne i
-			
+	
 			# AIC ----
 			erreur <- try(tmp <- eval(parse(
 				text = paste(
 					"Distance::ds(
-					distdata,
-					max(distdata$distance),
-					formula =", formula, ",
-					key = 'hn'
-				)"
+					distancedata,
+					max(distancedata$distance),
+					formula = ", formula, ",
+					key = '", list.key[k], "'
+				)", sep = ""
 				)
 			)),
 silent = T)
@@ -284,15 +287,15 @@ silent = T)
 			} else {
 				tmp <- eval(parse(
 					text = paste(
-							"Distance::ds(
-							distdata,
-							max(distdata$distance),
-							formula =", formula, ",
-							key = 'hn'
-						)"
+						"Distance::ds(
+						distancedata,
+						max(distancedata$distance),
+						formula = ", formula, ",
+						key = '", list.key[k], "'
+					)", sep = ""
 					)
 				))
-				
+				eval(parse(text = paste("detfc_res$detfc$iter", i, " <- tmp", sep = "")))
 				out_AIC <- AIC(tmp)$AIC
 			}
 			res$AIC[i] = out_AIC # Insertion de AIC dans res pour la ligne i
@@ -302,11 +305,19 @@ silent = T)
 		}
 	}
 	
-	return(res)
+	return(list(res, detfc_res))
 }
-
 ```
 
 ```{r}
-selec_detfc_aic(distancedata = distdata, list.cov = c("observerId", "seaState"), list.key = c("hn", "hr"))
+res_detfc <- selec_detfc_aic(distancedata = distdata, list.cov = c("observerId", "seaState"), list.key = c("hn", "hr"))
+res_detfc
 ```
+
+```{r}
+par(mfrow=c(1,2))
+plot(res_detfc[[2]]$detfc$iter4)
+plot(res_detfc[[2]]$detfc$iter8)
+```
+
+
