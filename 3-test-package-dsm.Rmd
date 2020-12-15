@@ -77,6 +77,7 @@ detfc.hr.beau <-
 summary(detfc.hr.beau)
 class(detfc.hr.beau)
 ```
+
 ### Avec RDistance
 ```{r}
 dfunc.null <- Rdistance::dfuncEstim(
@@ -134,6 +135,7 @@ vis.gam(
 )
 plot(dsm.xy.depth, select=2)
 ```
+
 ### pred abondance
 ```{r}
 dsm.xy.pred <- predict(dsm.xy, preddata, preddata$area)

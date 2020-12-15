@@ -75,38 +75,44 @@ distdata$observerId<-as.integer(distdata$observerId)
 head(distdata)
 ```
 
-[1] "segdata"
-[1] "longitude"      "latitude"       "x"              "y"              "Effort"        
-[6] "Transect.Label" "Sample.Label"   "depth"         
-[1] "obsdata"
-[1] "object"       "Sample.Label" "size"         "distance"     "Effort"      
 
 ```{r}
-segdata <-
-	data.frame(
-		"longitude" = distdata$longitude,
-		"latitude" = distdata$latitude,
-		"X" = distdata$X,
-		"Y" = distdata$Y,
-		"Effort" = distdata$Effort,
-		"Transect.Label" = distdata$Transect.Label,
-		"Sample.Label" = distdata$Sample.Label,
-		"depth" = distdata$depth,
-		"seaState" = distdata$seaState
-	)
-head(segdata)
+segdata <- predata_output$segdata
 
-obsdata <-
-	data.frame(
-		"object" = distdata$object,
-		"Sample.Label" = distdata$Sample.Label,
-		"size" = distdata$size,
-		"distance" = distdata$distance,
-		"Effort" = distdata$Effort
-	)
+	# data.frame(
+	# 	"longitude" = distdata$longitude,
+	# 	"latitude" = distdata$latitude,
+	# 	"X" = distdata$X,
+	# 	"Y" = distdata$Y,
+	# 	"Effort" = distdata$Effort,
+	# 	"Transect.Label" = distdata$Transect.Label,
+	# 	"Sample.Label" = distdata$Sample.Label,
+	# 	"depth" = distdata$depth,
+	# 	"seaState" = distdata$seaState
+	# )
+
+segdata2 <- segdata %>% 
+	inner_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata)
+
+segdata2
+```
+
+
+```{r}
+obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+	# data.frame(
+	# 	"object" = distdata$object,
+	# 	"Sample.Label" = distdata$Sample.Label,
+	# 	"size" = distdata$size,
+	# 	"distance" = distdata$distance,
+	# 	"Effort" = distdata$Effort
+	# )
 head(obsdata)
 ```
 
+```{r}
+obsdata %>% group_by(Seg) %>% summarise(n = n()) %>% arrange(-n) 
+```
 
 # Sans aucune covariables
 
@@ -320,4 +326,29 @@ plot(res_detfc[[2]]$detfc$iter4)
 plot(res_detfc[[2]]$detfc$iter8)
 ```
 
+On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key	`hn`.
+
+```{r}
+detfc.obs.sea.hn <- res_detfc[[2]]$detfc$iter4
+```
+
+# Modèle de densité `dsm`
+
+```{r}
+dsm.all.tw <-dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + 
+			s(distCoast) + s(dist200) +
+			s(CHL_4w_mea) + s(CHL_4w_sd) + 
+			s(SST_4w_mea) + s(SST_4w_sd) + 
+			s(POC_4w_mea),
+		ddf.obj = detfc.obs.sea.hn,
+		segment.data = segdata2,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+```
 
