@@ -187,3 +187,18 @@ faire le point avant les vacances :
 - google drive avec ce qu'on a fait et ce qu'on a à faire
 - quelques questions pour MPE 
 
+PROBLEME DSM (APPELLE MPE APRESMIDI)
+- ajuster tous les modèles possibles
+- selection forward : on ajoute une par une les cov et voir si on le garde ou pas
+- Pas de AIC
+Les résultats qu'on a dans summary:
+- on a un R² ajusté mais on sait pas trop l'interpreter 
+- il y a une AIC 
+Faire un graphique de correlation des variables et eliminer une des variables si les correlations sont élevées (ACP)
+
+A FAIRE
+- on fait tous les modèles possibles avec une seule variable
+- faire une boucle pour selectionner 
+- arranger les resultats de fonction de detection en fonction de l'AIC 
+
+
