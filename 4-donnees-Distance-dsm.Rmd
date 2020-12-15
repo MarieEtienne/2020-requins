@@ -77,24 +77,28 @@ head(distdata)
 
 
 ```{r}
-segdata <- predata_output$segdata
 
-	# data.frame(
-	# 	"longitude" = distdata$longitude,
-	# 	"latitude" = distdata$latitude,
-	# 	"X" = distdata$X,
-	# 	"Y" = distdata$Y,
-	# 	"Effort" = distdata$Effort,
-	# 	"Transect.Label" = distdata$Transect.Label,
-	# 	"Sample.Label" = distdata$Sample.Label,
-	# 	"depth" = distdata$depth,
-	# 	"seaState" = distdata$seaState
-	# )
+segdata <-	data.frame(
+		"longitude" = distdata$longitude,
+		"latitude" = distdata$latitude,
+		"X" = distdata$X,
+		"Y" = distdata$Y,
+		"Effort" = distdata$Effort,
+		"Transect.Label" = distdata$Transect.Label,
+		"Sample.Label" = distdata$Sample.Label,
+		"depth" = distdata$depth,
+		"seaState" = distdata$seaState
+	)
 
 segdata2 <- segdata %>% 
 	inner_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata)
 
 segdata2
+
+segdata3 <- predata_output$segdata
+segdata4 <- segdata
+segdata4$Sample.Label <- factor(segdata4$Seg)
+
 ```
 
 
@@ -319,6 +323,9 @@ silent = T)
 res_detfc <- selec_detfc_aic(distancedata = distdata, list.cov = c("observerId", "seaState"), list.key = c("hn", "hr"))
 res_detfc
 ```
+```{r}
+plot(res_detfc[[2]]$detfc$iter5)
+```
 
 ```{r}
 par(mfrow=c(1,2))
@@ -329,20 +336,16 @@ plot(res_detfc[[2]]$detfc$iter8)
 On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key	`hn`.
 
 ```{r}
-detfc.obs.sea.hn <- res_detfc[[2]]$detfc$iter4
+detfc.null.hr <- res_detfc[[2]]$detfc$iter5
 ```
 
 # Modèle de densité `dsm`
 
 ```{r}
-dsm.all.tw <-dsm(
-		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + 
-			s(distCoast) + s(dist200) +
-			s(CHL_4w_mea) + s(CHL_4w_sd) + 
-			s(SST_4w_mea) + s(SST_4w_sd) + 
-			s(POC_4w_mea),
-		ddf.obj = detfc.obs.sea.hn,
-		segment.data = segdata2,
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + s(distCoast) + s(dist200) + s(CHL_4w_mea) + s(CHL_4w_sd) + s(SST_4w_mea) ,#+ s(SST_4w_sd) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
 		observation.data = obsdata,
 		method = "REML",
 		family = tw(),
@@ -350,5 +353,122 @@ dsm.all.tw <-dsm(
 		select = T,
 		group = T,
 		gamma = 1.4)
+summary(dsm.all.tw)
 ```
+Chlorohylle sd le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + s(distCoast) + s(dist200) + s(CHL_4w_mea)  + s(SST_4w_mea) + s(SST_4w_sd) ,#+  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+Chlorohylle mea le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + s(distCoast) + s(dist200)  + s(SST_4w_mea) + s(SST_4w_sd) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+
+SST_4w_sd le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(slopeP) + s(distCoast) + s(dist200)  + s(SST_4w_mea) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+
+
+slopeP le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(depth) + s(distCoast) + s(dist200)  + s(SST_4w_mea) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+depth le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(distCoast) + s(dist200)  + s(SST_4w_mea) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+dist200 le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(distCoast)  + s(SST_4w_mea) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+SST_4w_mea le moins significatif, on le vire
+```{r}
+dsm.all.tw <- dsm(
+		formula = count ~ s(X, Y) + s(distCoast) +  s(POC_4w_mea),
+		ddf.obj = detfc.null.hr,
+		segment.data = distdata,
+		observation.data = obsdata,
+		method = "REML",
+		family = tw(),
+		engine = "gam",
+		select = T,
+		group = T,
+		gamma = 1.4)
+summary(dsm.all.tw)
+```
+
+
 
