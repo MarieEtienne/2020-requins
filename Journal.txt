@@ -168,3 +168,22 @@ Fonction de detection (critère AIC, code Léa)
 Modèle avec dsm
 
 A voir : zoib 
+
+
+###########################################
+15 DEC 2020
+###########################################
+fonction de detection : 
+- aucune covariable à utiliser
+- AIC le plus faible c'est avec 0 covariables
+
+
+modèle de denisté :
+- sample.label : forme des données non fonctionnelle
+- erreur : sample label 
+- sample label c'est quoi??? 
+
+faire le point avant les vacances :
+- google drive avec ce qu'on a fait et ce qu'on a à faire
+- quelques questions pour MPE 
+
