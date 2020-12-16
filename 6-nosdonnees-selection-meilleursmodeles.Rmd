@@ -30,6 +30,7 @@ library(data.table)
 
 ## Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
+library(ggmap)
 
 ## Packages calcul
 library(Distance)
@@ -76,45 +77,12 @@ distdata$observerId<-as.integer(distdata$observerId)
 head(distdata)
 ```
 
-
-```{r}
-segdata <-	data.frame(
-		"longitude" = distdata$longitude,
-		"latitude" = distdata$latitude,
-		"X" = distdata$X,
-		"Y" = distdata$Y,
-		"Effort" = distdata$Effort,
-		"Transect.Label" = distdata$Transect.Label,
-		"Sample.Label" = distdata$Sample.Label,
-		"depth" = distdata$depth,
-		"seaState" = distdata$seaState
-	)
-```
-
-
 ```{r}
 obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
-	# data.frame(
-	# 	"object" = distdata$object,
-	# 	"Sample.Label" = distdata$Sample.Label,
-	# 	"size" = distdata$size,
-	# 	"distance" = distdata$distance,
-	# 	"Effort" = distdata$Effort
-	# )
-head(obsdata)
+segdata <- effort_output$segdata
 ```
 
 # Sélection de la meilleure fonction de détection
-```{r}
-detfc.sea <- Distance::ds(distdata,
-							 max(distdata$distance),
-							 formula =  ~ as.factor(seaState),
-							 key = "hr",
-							 adjustment = NULL)
-```
-
-
-
 ```{r}
 selec_detfc_aic <- function(distancedata, list.cov, list.key) {
 	# On récupère le nombre de combinaisons possibles
@@ -229,7 +197,7 @@ Cette fonction prend en arguments segdata, obsdata, la fonction de détection et
 
 ```{r}
 selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
-															vct.spline.test, str.spline.selec = NULL,
+															vct.spline.test, availability = 1, str.spline.selec = NULL,
 															nvar = 1, messages = TRUE, n_cov_tot = NULL, suivi_df = NULL){
 	
 	# Message : suivi de la progression
@@ -268,7 +236,8 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
-				gamma = 1.4)"
+				gamma = 1.4,
+				availability = availability)"
 			)
 		))
 		
@@ -329,13 +298,28 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 }
 ```
 
-
+## dsm pour `availability = 1`
 ```{r}
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
-selec_dsm <- NULL
-selec_dsm <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
 									detfc = detfc.null.hr,
-									vct.spline.test = vct.spline.test)
-selec_dsm
+									vct.spline.test = vct.spline.test,
+									availability = 1)
+selec_dsm_av1
+dsm_av1 <- selec_dsm_av1$dsm.selec
+dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$Area)
+```
+
+## dsm pour `availability = 0.41`
+```{r}
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+									detfc = detfc.null.hr,
+									vct.spline.test = vct.spline.test,
+									availability = 0.41)
+selec_dsm_av1
+dsm_av1 <- selec_dsm_av1$dsm.selec
+dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$Area)
 ```
