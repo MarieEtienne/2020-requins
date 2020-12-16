@@ -1,0 +1,341 @@
+---
+title: "Sélection des meilleurs modèles"
+subtitle: "Fonction de détection et dsm"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	error = TRUE
+)
+
+# Packages
+library(dplyr)				# tidyverse
+library(foreign)			# read.dbf
+library(DT)						# interactive HTML datatables
+library(data.table)
+
+## Graphes packages
+library(ggplot2) ; ggplot2::theme_set(theme_light())
+
+## Packages calcul
+library(Distance)
+library(dsm)
+```
+
+
+------------------------------------
+
+Importation des données
+
+```{r import_donnees}
+load("../data/effort_output.RData")
+# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
+
+load("../data/list_prepare_obs_by_sp.RData")
+# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
+
+load("../data/predata_output.RData")
+# predata_output : A grid of 2km cells size with different covariable associated around the observation.
+
+gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+# gridata : equivalent to predata from predata_output but with a extended surface
+```
+
+Transformation des données
+
+```{r}
+# Jointure
+distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata, 
+																	 cov_segment <- predata_output$segdata,
+																	 by = "Seg")
+
+# Réarrangement des colonnes
+distdata <- distdata[, c(3, 5:11, 1:2, 14:31)]
+colnames(distdata)[1] = "Transect.Label"
+colnames(distdata)[2] = "Seg"
+colnames(distdata)[3] = "Sample.Label"
+
+distdata$seaState = as.integer(distdata$seaState)
+distdata$observerId<-as.integer(distdata$observerId)
+
+# Affichages
+head(distdata)
+```
+
+
+```{r}
+segdata <-	data.frame(
+		"longitude" = distdata$longitude,
+		"latitude" = distdata$latitude,
+		"X" = distdata$X,
+		"Y" = distdata$Y,
+		"Effort" = distdata$Effort,
+		"Transect.Label" = distdata$Transect.Label,
+		"Sample.Label" = distdata$Sample.Label,
+		"depth" = distdata$depth,
+		"seaState" = distdata$seaState
+	)
+```
+
+
+```{r}
+obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+	# data.frame(
+	# 	"object" = distdata$object,
+	# 	"Sample.Label" = distdata$Sample.Label,
+	# 	"size" = distdata$size,
+	# 	"distance" = distdata$distance,
+	# 	"Effort" = distdata$Effort
+	# )
+head(obsdata)
+```
+
+# Sélection de la meilleure fonction de détection
+```{r}
+detfc.sea <- Distance::ds(distdata,
+							 max(distdata$distance),
+							 formula =  ~ as.factor(seaState),
+							 key = "hr",
+							 adjustment = NULL)
+```
+
+
+
+```{r}
+selec_detfc_aic <- function(distancedata, list.cov, list.key) {
+	# On récupère le nombre de combinaisons possibles
+	## 2^(nombre de covariables) : nombre de combinaisons possibles pour les covariables
+	## * nb de key : 1 seule key à chaque fois
+	n_comb <- 2 ^ (length(list.cov)) * length(list.key)
+	
+	# On récupère les combinaisons pour list.cov
+	comb_list.cov <-
+		do.call(data.table::CJ, replicate(length(list.cov), 0:1, FALSE))
+	names(comb_list.cov) <- list.cov
+	comb_list.cov[rep(1:nrow(comb_list.cov), length(list.key)), 1:length(list.cov)]
+	
+	# Initialisation : tableau des résultats vide
+	res <- as.data.frame(cbind(
+		comb_list.cov[rep(1:nrow(comb_list.cov), length(list.key)), 1:length(list.cov)],
+		data.frame(
+			"formula" = rep(NA, n_comb),
+			"key" = rep(list.key, each = 2 ^ (length(list.cov))),
+			"AIC" =  rep(NA, n_comb)
+		)
+	))
+	
+	detfc_res <- list()
+	
+	# On lance une double boucle qui va calculer pour chaque possibilité l'AIC
+	i = 0
+	for (k in 1:length(list.key)) {
+		for (c in 1:2 ^ (length(list.cov))) {
+			i = i + 1 # Numéro de ligne pour res
+
+	
+			# key ----
+			#	res$key[i] = list.key[k] # Insertion de key dans res pour la ligne i
+			
+			# formula ----
+			formula <- "~"
+			for (col in 1:length(list.cov)) {
+				if (res[i, col] == 1) {
+					formula <- paste(formula, names(res)[col], "+")
+				}
+			}
+			if (formula == "~") {
+				formula = "~1"
+			} else {
+				formula = substr(formula, 1, nchar(formula) - 2)
+				formula = gsub(" ", "", formula)
+			}
+			res$formula[i] = formula # Insertion de formula dans res pour la ligne i
+	
+			# AIC ----
+			erreur <- try(tmp <- eval(parse(
+				text = paste(
+					"Distance::ds(
+					distancedata,
+					max(distancedata$distance),
+					formula = ", formula, ",
+					key = '", list.key[k], "'
+				)", sep = ""
+				)
+			)),
+silent = T)
+			if (is(erreur, "try-error")) {
+				print("Erreur Distance::ds")
+				print(erreur)
+				out_AIC <- NA
+			} else {
+				tmp <- eval(parse(
+					text = paste(
+						"Distance::ds(
+						distancedata,
+						max(distancedata$distance),
+						formula = ", formula, ",
+						key = '", list.key[k], "'
+					)", sep = ""
+					)
+				))
+				eval(parse(text = paste("detfc_res$detfc$iter", i, " <- tmp", sep = "")))
+				out_AIC <- AIC(tmp)$AIC
+			}
+			res$AIC[i] = out_AIC # Insertion de AIC dans res pour la ligne i
+			
+			# Affichage
+			print(paste("Itération", i, "sur", n_comb, "terminée."))
+		}
+	}
+	
+	return(list(res, detfc_res))
+}
+```
+
+```{r}
+res_detfc <- selec_detfc_aic(distancedata = distdata, list.cov = c("observerId", "seaState"), list.key = c("hn", "hr"))
+res_detfc
+```
+
+On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key	`hn`.
+
+```{r}
+detfc.null.hr <- res_detfc[[2]]$detfc$iter5
+summary(detfc.null.hr)
+plot(detfc.null.hr)
+```
+
+# Modèle de densité `dsm`
+
+## Fonction `selec_dsm_aic_fwd` : sans données de disponibilité
+
+On créé une fonction `selec_dsm_aic_fwd` qui va permettre de sélectionner de manière forward les covariables à inclure dans le modèle dsm. 
+
+Cette fonction prend en arguments segdata, obsdata, la fonction de détection et un vecteur de toutes les covariables à tester. C'est une fonction récursive, elle peut donc aussi prendre en argument un vecteur des covariables déjà sélectionnées.
+
+```{r}
+selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
+															vct.spline.test, str.spline.selec = NULL,
+															nvar = 1, messages = TRUE, n_cov_tot = NULL, suivi_df = NULL){
+	
+	# Message : suivi de la progression
+	if(messages){print(paste0("----- Sélection de la covariable numéro ", nvar, " -----"))}
+	
+	# On récupère le nombre de covariables à tester en tout à l'itération 1
+	if(nvar == 1){n_cov_tot <- length(vct.spline.test)}
+	
+	# Initialisation du tableau de résultats pour chaque spline sélectionnée
+	res.spl.aic <- data.frame("nspline" = 1:length(vct.spline.test),
+														"formule.dsm" = rep(NA, length(vct.spline.test)),
+														"AIC" =  rep(NA, length(vct.spline.test)))
+	
+	# Initialisation de la liste de tous les modèles
+	dsm.tmp.all <- list()
+	
+	# Boucle sur les covariables à tester pour récupérer l'AIC
+	for (spl in 1:length(vct.spline.test)) {
+		
+		# Récupère la formule à mettre dans la fonction dsm
+		if (is.null(str.spline.selec)) {
+			formule.dsm <- paste0("count ~ ", vct.spline.test[spl])
+		} else {
+			formule.dsm <-
+				paste0(str.spline.selec, " + ", vct.spline.test[spl])
+		}
+		
+		# Faire tourner la fonction dsm
+		dsm.tmp <- eval(parse(
+			text = paste0(
+				"dsm(
+				formula = ", formule.dsm, ",
+				ddf.obj =  detfc,
+				segment.data = segdata,
+				observation.data = obsdata,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4)"
+			)
+		))
+		
+		# Ajout des résultats à res.spl.aic
+		res.spl.aic$formule.dsm[spl] <- formule.dsm
+		res.spl.aic$AIC[spl] <- dsm.tmp$aic
+		eval(parse(text = paste0("dsm.tmp.all$iter",spl," <- dsm.tmp")))
+	}
+
+	# Récupération des infos du modèle pour lequel l'AIC est minimal
+	nspline.selec <- res.spl.aic$nspline[res.spl.aic$AIC == min(res.spl.aic$AIC)]
+	str.spline.selec <- res.spl.aic$formule.dsm[nspline.selec]
+	str.spline.AIC <- res.spl.aic$AIC[nspline.selec]
+	dsm.selec <- eval(parse(text = paste0("dsm.tmp.all$iter",nspline.selec)))
+	
+	# On créé ou complète le tableau suivi_df
+	if (nvar == 1){
+		suivi_df = data.frame("iter" = 1, "formule" = str.spline.selec, "aic" = str.spline.AIC, stringsAsFactors = FALSE)
+	} else {suivi_df[nvar, 1] = nvar; suivi_df[nvar, 2] = str.spline.selec ; suivi_df[nvar, 3] = str.spline.AIC}
+
+	# Suppression de la variable sélectionnée de vct.spline.test pour réitérer la fonction
+	vct.spline.test <- vct.spline.test[-nspline.selec]
+	
+	res_final <- list(dsm.selec = dsm.selec,
+									aic = dsm.selec$aic,
+									formule.dsm = formule.dsm,
+									suivi = suivi_df)
+
+	# Si le nombre de coefficients estimés est inférieur au nombre de lignes de obsdata, on continue
+	if (length(dsm.selec$coefficients) < nrow(obsdata) & nvar <= n_cov_tot){
+		
+		# Si c'est la 1ère itération, on choisit ce modèle et on continue
+		if (nvar == 1) {
+			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
+																	 vct.spline.test = vct.spline.test,
+																	 str.spline.selec = str.spline.selec,
+																	 nvar = nvar+1, messages = messages, 
+																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
+			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
+			
+		# Si l'AIC diminue, on choisit ce modèle et on continue
+		} else if (nvar > 1 & (res_final$suivi$aic[nvar] < res_final$suivi$aic[nvar-1])){
+			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
+																	 vct.spline.test = vct.spline.test,
+																	 str.spline.selec = str.spline.selec,
+																	 nvar = nvar+1, messages = messages, 
+																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
+			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
+			
+		# Sinon, on arrête
+		} else {
+				print(paste0("L'AIC ne diminue plus en ajoutant une ", nvar, "ème covariable"))
+				return(res_final)
+		}
+	}
+	
+	return(res_final)
+}
+```
+
+
+```{r}
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+selec_dsm <- NULL
+selec_dsm <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+									detfc = detfc.null.hr,
+									vct.spline.test = vct.spline.test)
+selec_dsm
+```
