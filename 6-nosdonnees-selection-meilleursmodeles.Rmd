@@ -8,7 +8,7 @@ output:
     theme: yeti
     toc: yes
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -361,9 +361,10 @@ dsm_avshelf.pred <- predict(dsm_avshelf, predata_output$predata, predata_output$
 ## Comparaison des résultats selon la valeur de disponibilité
 ```{r echo=FALSE}
 print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_av1.pred), 1), "requins au total dans la zone."))
-print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_av0.41.pred), 1), "requins au total dans la zone."))
-print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_avshelf.pred), 1), "requins au total dans la zone."))
 
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_av0.41.pred), 1), "requins au total dans la zone."))
+
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_avshelf.pred), 1), "requins au total dans la zone."))
 ```
 
 
