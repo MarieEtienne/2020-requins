@@ -197,7 +197,7 @@ Cette fonction prend en arguments segdata, obsdata, la fonction de détection et
 
 ```{r}
 selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
-															vct.spline.test, availability = 1, str.spline.selec = NULL,
+															vct.spline.test, availability, str.spline.selec = NULL,
 															nvar = 1, messages = TRUE, n_cov_tot = NULL, suivi_df = NULL){
 	
 	# Message : suivi de la progression
@@ -237,7 +237,7 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
-				availability = availability)"
+				availability = ", availability, ")"
 			)
 		))
 		
@@ -274,6 +274,7 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
 																	 vct.spline.test = vct.spline.test,
 																	 str.spline.selec = str.spline.selec,
+																	 availability = availability,
 																	 nvar = nvar+1, messages = messages, 
 																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
 			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
@@ -283,6 +284,7 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
 																	 vct.spline.test = vct.spline.test,
 																	 str.spline.selec = str.spline.selec,
+																	 availability = availability,
 																	 nvar = nvar+1, messages = messages, 
 																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
 			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
@@ -315,11 +317,94 @@ dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$
 ```{r}
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
-selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+selec_dsm_av0.41 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
 									detfc = detfc.null.hr,
 									vct.spline.test = vct.spline.test,
 									availability = 0.41)
-selec_dsm_av1
-dsm_av1 <- selec_dsm_av1$dsm.selec
-dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$Area)
+selec_dsm_av0.41
+dsm_av0.41 <- selec_dsm_av0.41$dsm.selec
+dsm_av0.41.pred <- predict(dsm_av0.41, predata_output$predata, predata_output$predata$Area)
 ```
+
+## dsm pour `availability` dépendante de on-shelf et off-shelf
+
+> shelf = plateau continental
+
+On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m.
+
+$$availability_{off shelf}=0,1357617$$
+
+$$availability_{on shelf}=0,6332016$$
+```{r}
+distdata$availability = NA
+for (i in 1:nrow(distdata)) {
+	if (distdata$depth[i] <= 150) {
+		distdata$availability[i] = 0.6332016
+	} else{
+		distdata$availability[i] = 0.1357617
+	}
+}
+availability <- distdata$availability
+
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+selec_dsm_avshelf <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+									detfc = detfc.null.hr,
+									vct.spline.test = vct.spline.test,
+									availability = availability)
+selec_dsm_avshelf
+dsm_avshelf <- selec_dsm_avshelf$dsm.selec
+dsm_avshelf.pred <- predict(dsm_avshelf, predata_output$predata, predata_output$predata$Area)
+```
+
+
+## Comparaison des résultats selon la valeur de disponibilité
+```{r echo=FALSE}
+print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_av1.pred), 1), "requins au total dans la zone."))
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_av0.41.pred), 1), "requins au total dans la zone."))
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_avshelf.pred), 1), "requins au total dans la zone."))
+
+```
+
+
+## Visualisation
+```{r}
+plot_pred_by_term(dsm_av1, data = predata_output$segdata, location_cov=c("X","Y"))
+```
+
+
+```{r}
+data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>% filter(detected == 1)
+segdata <- effort_output$segdata
+
+# Emplacement
+sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
+									 lat = c(min(data_occ$latitude), max(data_occ$latitude)),
+									 f = 1)
+
+# Création de la carte vide
+zone_obs <- get_map(location = sbbox,
+										zoom = 8,
+										maptype =  "terrain")
+
+zone_obs_map = ggmap(zone_obs) + theme_void()
+```
+
+
+```{r}
+# Carte avec les points
+zone_obs_map +
+	geom_path(
+		data = segdata,
+		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+		size = 0.3,
+		colour = alpha("black", 0.2)
+	) +
+	geom_point(data = data_occ,
+						 aes(x = longitude,
+						 		y = latitude,
+						 		col = session)) +
+	theme_void() +
+	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+```
+
