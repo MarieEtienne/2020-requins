@@ -202,3 +202,11 @@ A FAIRE
 - arranger les resultats de fonction de detection en fonction de l'AIC 
 
 
+#####################################################
+18 DEC 2020
+#####################################################
+RDV MPE
+Faire les graphes avant rdv Mathieu
+Lire lien graph slack
+
+
