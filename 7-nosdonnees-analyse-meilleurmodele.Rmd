@@ -2,17 +2,16 @@
 title: "Sélection des meilleurs modèles"
 subtitle: "Fonction de détection et dsm"
 output:
-  html_document:
-    highlight: zenburn
-    number_sections: yes
-    theme: yeti
-    toc: yes
-editor_options: 
-  chunk_output_type: inline
+html_document:
+highlight: zenburn
+number_sections: yes
+theme: yeti
+toc: yes
+editor_options:
+chunk_output_type: inline
 ---
 
 # Initialisation
-
 ```{r setup, include=FALSE}
 rm(list=ls())
 
@@ -23,11 +22,9 @@ knitr::opts_chunk$set(
 	warning = FALSE,
 	error = TRUE
 )
-
 ```
 
 ## Importation des packages
-
 ```{r import_packages}
 # Packages
 library(dplyr)				# tidyverse
@@ -35,24 +32,21 @@ library(foreign)			# read.dbf
 library(DT)						# interactive HTML datatables
 library(data.table)
 
-## Graphes packages
+# Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
 
-## Packages calcul
+# Packages calcul
 library(Distance)
 library(dsm)
 
-## Packages raster/carto
+# Packages raster/carto
 library(sp)
 library(rgdal)
 library(raster)
 ```
 
-------------------------------------------------------------------------
-
-## Importation des données
-
+# Importation des données
 ```{r import_donnees}
 load("../data/effort_output.RData")
 # effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
@@ -67,11 +61,10 @@ gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 # gridata : equivalent to predata from predata_output but with a extended surface
 ```
 
-## Transformation des données
-
+# Transformation des données
 ```{r}
 # Jointure
-distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata, 
+distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata,
 																	 cov_segment <- predata_output$segdata,
 																	 by = "Seg")
 
@@ -95,8 +88,7 @@ segdata <- effort_output$segdata
 
 # Fonction de détection
 
-On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`.
-
+On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`
 ```{r}
 detfc.null.hr <- Distance::ds(
 						distdata,
@@ -104,15 +96,13 @@ detfc.null.hr <- Distance::ds(
 						formula = ~1,
 						key = "hr")
 ```
-
 # Fonction de densité
-
 ## dsm pour $availability = 1$
-
+### Session 2 (mois 05 et 06)
 ```{r}
-dsm_av1 <- dsm(
-				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
-				ddf.obj =  detfc.null.hr,
+dsm_s2_av1 <- dsm(
+				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
+				ddf.obj = detfc.null.hr,
 				segment.data = segdata,
 				observation.data = obsdata,
 				method = 'REML',
@@ -121,13 +111,25 @@ dsm_av1 <- dsm(
 				gamma = 1.4,
 				availability = 1)
 ```
-
-## dsm pour $availability = 0.41$
-
+### Session 3 (mois 07 et 08)
 ```{r}
-dsm_av0.41 <- dsm(
-				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
-				ddf.obj =  detfc.null.hr,
+dsm_s3_av1 <- dsm(
+				formula = count ~ s(X, Y),
+				ddf.obj = detfc.null.hr,
+				segment.data = segdata,
+				observation.data = obsdata,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 1)
+```
+## dsm pour $availability = 0.41$
+### Session 2 (mois 05 et 06)
+```{r}
+dsm_s2_av041 <- dsm(
+				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
+				ddf.obj = detfc.null.hr,
 				segment.data = segdata,
 				observation.data = obsdata,
 				method = 'REML',
@@ -136,13 +138,22 @@ dsm_av0.41 <- dsm(
 				gamma = 1.4,
 				availability = 0.41)
 ```
-
+### Session 3 (mois 07 et 08)
+```{r}
+dsm_s3_av041 <- dsm(
+				formula = count ~ s(X, Y),
+				ddf.obj = detfc.null.hr,
+				segment.data = segdata,
+				observation.data = obsdata,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 0.41)
+```
 ## dsm pour $availability$ dépendante de on-shelf et off-shelf
-
 On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m.
-
 $$availability_{off shelf}=0,1357617$$
-
 $$availability_{on shelf}=0,6332016$$
 
 ```{r}
@@ -156,11 +167,11 @@ for (i in 1:nrow(distdata)) {
 }
 availability <- distdata$availability
 ```
-
+### Session 2 (mois 05 et 06)
 ```{r}
-dsm_avshelf <- dsm(
-				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
-				ddf.obj =  detfc.null.hr,
+dsm_s2_avshelf <- dsm(
+				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
+				ddf.obj = detfc.null.hr,
 				segment.data = segdata,
 				observation.data = obsdata,
 				method = 'REML',
@@ -169,33 +180,62 @@ dsm_avshelf <- dsm(
 				gamma = 1.4,
 				availability = availability)
 ```
-
+### Session 3 (mois 07 et 08)
+```{r}
+dsm_s3_avshelf <- dsm(
+				formula = count ~ s(X, Y),
+				ddf.obj = detfc.null.hr,
+				segment.data = segdata,
+				observation.data = obsdata,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = availability)
+```
 # Prédiction de l'abondance
+```{r}
+predata_output$predata$longitude %>% unique() %>% sort() %>% diff()
+predata_output$predata$latitude %>% unique() %>% sort() %>% diff()
+```
+
+* Longitude-latitude
+	* La différence entre 2 longitudes / latitudes est 0.02 degrés (grilles de 0.02° de coté). Mais un degré ne fait pas forcément la même distance selon la zone.
+	* longitude latitude → shapefile (sf)→ projection lambert
+	* sf : st_transform → passer de WGS84 en L93 et checker si on retombe bien sur les valeurs X et Y
+* Travailler session par session
+*creuser tw()raisonner sur la manière dont on va expliquer ce qu'on a fait→ trame déployable sur le thon
+* envoyer doc la veille
 
 ```{r}
-dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$Area)
-dsm_av0.41.pred <- predict(dsm_av0.41, predata_output$predata, predata_output$predata$Area)
-dsm_avshelf.pred <- predict(dsm_avshelf, predata_output$predata, predata_output$predata$Area)
+dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_output$predata, predata_output$predata$Area)
+dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_output$predata, predata_output$predata$Area)
+
+dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_output$predata, predata_output$predata$Area)
+dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_output$predata, predata_output$predata$Area)
+
+dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_output$predata, predata_output$predata$Area)
+dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_output$predata, predata_output$predata$Area)
 ```
 
 ## Comparaison des résultats selon la valeur de disponibilité
 
 ```{r echo=FALSE}
-print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_av1.pred), 1), "requins au total dans la zone."))
+print("-------- Session 2 --------")
+print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s2_av1.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s2_av041.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s2_avshelf.pred)), "requins au total dans la zone."))
+```
 
-print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_av0.41.pred), 1), "requins au total dans la zone."))
-
-print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_avshelf.pred), 1), "requins au total dans la zone."))
+```{r echo=FALSE}
+print("-------- Session 3 --------")
+print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s3_av1.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s3_av041.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s3_avshelf.pred)), "requins au total dans la zone."))
 ```
 
 ## Informations colonne Area
-
-Alors la colonne Area est exprimée en km²,
-
--   Dans la plupart des tables (lorsqu'il ne s'agit pas d'une grille) Area va correspondre à l'aire total de la zone d'étude, par exemple pour distdata, la colonne Area va avoir une seule valeur qui est 14947 km² correspondant à l'aire de la zone SPEE.
--   Dans les tables qui correspondent à des grilles (predata et gridata) Area correspond à l'aire de chaque cellule, les valeurs peuvent légèrement varier à cause du système de géoréférencement utilisé. Pour toutes les grilles la résolution est de 2 x 2 km.
-
-NB : les coordonnées "X" et "Y" ed predata sont en Lambert93
+Alors la colonne Area est exprimée en km²,Dans la plupart des tables (lorsqu'il ne s'agit pas d'une grille) Area va correspondre à l'aire total de la zone d'étude, par exemple pour distdata, la colonne Area va avoir une seule valeur qui est 14947 km² correspondant à l'aire de la zone SPEE.Dans les tables qui correspondent à des grilles (predata et gridata) Area correspond à l'aire de chaque cellule, les valeurs peuvent légèrement varier à cause du système de géoréférencement utilisé. Pour toutes les grilles la résolution est de 2 x 2 km.NB : les coordonnées "X" et "Y" ed predata sont en Lambert93
 
 ## Rasterisation
 
@@ -212,10 +252,8 @@ r <- raster(e, ncol=100, nrow=100)
 
 
 x <- rasterize(datal93[, 1:2], r, datal93[,3], fun=sum)
-plot(x)
+plot(x)Visualisation
 ```
-
-## Visualisation
 
 ```{r}
 data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>% filter(detected == 1)
@@ -229,7 +267,7 @@ sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
 # Création de la carte vide
 zone_obs <- get_map(location = sbbox,
 										zoom = 8,
-										maptype =  "terrain")
+										maptype = "terrain")
 
 zone_obs_map = ggmap(zone_obs) + theme_void()
 ```
@@ -249,4 +287,3 @@ zone_obs_map +
 						 		col = session)) +
 	theme_void() +
 	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
-```

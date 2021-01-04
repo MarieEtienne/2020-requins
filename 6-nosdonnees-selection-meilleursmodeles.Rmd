@@ -27,6 +27,7 @@ library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
 library(DT)						# interactive HTML datatables
 library(data.table)
+library(lubridate)		# dates
 
 ## Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
@@ -37,8 +38,7 @@ library(Distance)
 library(dsm)
 ```
 
-
-------------------------------------
+------------------------------------------------------------------------
 
 Importation des données
 
@@ -83,6 +83,7 @@ segdata <- effort_output$segdata
 ```
 
 # Sélection de la meilleure fonction de détection
+
 ```{r}
 selec_detfc_aic <- function(distancedata, list.cov, list.key) {
 	# On récupère le nombre de combinaisons possibles
@@ -179,7 +180,7 @@ res_detfc <- selec_detfc_aic(distancedata = distdata, list.cov = c("observerId",
 res_detfc
 ```
 
-On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key	`hn`.
+On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key `hn`.
 
 ```{r}
 detfc.null.hr <- res_detfc[[2]]$detfc$iter5
@@ -191,7 +192,7 @@ plot(detfc.null.hr)
 
 ## Fonction `selec_dsm_aic_fwd` : sans données de disponibilité
 
-On créé une fonction `selec_dsm_aic_fwd` qui va permettre de sélectionner de manière forward les covariables à inclure dans le modèle dsm. 
+On créé une fonction `selec_dsm_aic_fwd` qui va permettre de sélectionner de manière forward les covariables à inclure dans le modèle dsm.
 
 Cette fonction prend en arguments segdata, obsdata, la fonction de détection et un vecteur de toutes les covariables à tester. C'est une fonction récursive, elle peut donc aussi prendre en argument un vecteur des covariables déjà sélectionnées.
 
@@ -301,6 +302,7 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 ```
 
 ## dsm pour `availability = 1`
+
 ```{r}
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
@@ -314,6 +316,7 @@ dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$
 ```
 
 ## dsm pour `availability = 0.41`
+
 ```{r}
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
@@ -335,6 +338,7 @@ On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" s
 $$availability_{off shelf}=0,1357617$$
 
 $$availability_{on shelf}=0,6332016$$
+
 ```{r}
 distdata$availability = NA
 for (i in 1:nrow(distdata)) {
@@ -357,8 +361,8 @@ dsm_avshelf <- selec_dsm_avshelf$dsm.selec
 dsm_avshelf.pred <- predict(dsm_avshelf, predata_output$predata, predata_output$predata$Area)
 ```
 
-
 ## Comparaison des résultats selon la valeur de disponibilité
+
 ```{r echo=FALSE}
 print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_av1.pred), 1), "requins au total dans la zone."))
 
@@ -367,45 +371,331 @@ print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_av0.
 print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_avshelf.pred), 1), "requins au total dans la zone."))
 ```
 
+# Modèle de densité (séparation par session)
 
-## Visualisation
-```{r}
-plot_pred_by_term(dsm_av1, data = predata_output$segdata, location_cov=c("X","Y"))
-```
-
+On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`.
 
 ```{r}
-data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>% filter(detected == 1)
-segdata <- effort_output$segdata
-
-# Emplacement
-sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
-									 lat = c(min(data_occ$latitude), max(data_occ$latitude)),
-									 f = 1)
-
-# Création de la carte vide
-zone_obs <- get_map(location = sbbox,
-										zoom = 8,
-										maptype =  "terrain")
-
-zone_obs_map = ggmap(zone_obs) + theme_void()
+detfc.null.hr <- Distance::ds(
+						distdata,
+						max(distdata$distance),
+						formula = ~1,
+						key = "hr")
 ```
 
+## Fonction `selec_dsm_aic_fwd` : sans données de disponibilité
+
+On créé une fonction `selec_dsm_aic_fwd` qui va permettre de sélectionner de manière forward les covariables à inclure dans le modèle dsm.
+
+Cette fonction prend en arguments segdata, obsdata, la fonction de détection et un vecteur de toutes les covariables à tester. C'est une fonction récursive, elle peut donc aussi prendre en argument un vecteur des covariables déjà sélectionnées.
 
 ```{r}
-# Carte avec les points
-zone_obs_map +
-	geom_path(
-		data = segdata,
-		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
-		size = 0.3,
-		colour = alpha("black", 0.2)
-	) +
-	geom_point(data = data_occ,
-						 aes(x = longitude,
-						 		y = latitude,
-						 		col = session)) +
-	theme_void() +
-	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
+															vct.spline.test, availability, str.spline.selec = NULL,
+															nvar = 1, messages = TRUE, n_cov_tot = NULL, suivi_df = NULL){
+	
+	# Message : suivi de la progression
+	if(messages){print(paste0("----- Sélection de la covariable numéro ", nvar, " -----"))}
+	
+	# On récupère le nombre de covariables à tester en tout à l'itération 1
+	if(nvar == 1){n_cov_tot <- length(vct.spline.test)}
+	
+	# Initialisation du tableau de résultats pour chaque spline sélectionnée
+	res.spl.aic <- data.frame("nspline" = 1:length(vct.spline.test),
+														"formule.dsm" = rep(NA, length(vct.spline.test)),
+														"AIC" =  rep(NA, length(vct.spline.test)))
+	
+	# Initialisation de la liste de tous les modèles
+	dsm.tmp.all <- list()
+	
+	# Boucle sur les covariables à tester pour récupérer l'AIC
+	for (spl in 1:length(vct.spline.test)) {
+		
+		# Récupère la formule à mettre dans la fonction dsm
+		if (is.null(str.spline.selec)) {
+			formule.dsm <- paste0("count ~ ", vct.spline.test[spl])
+		} else {
+			formule.dsm <-
+				paste0(str.spline.selec, " + ", vct.spline.test[spl])
+		}
+		
+		# Faire tourner la fonction dsm
+		dsm.tmp <- eval(parse(
+			text = paste0(
+				"dsm(
+				formula = ", formule.dsm, ",
+				ddf.obj =  detfc,
+				segment.data = segdata,
+				observation.data = obsdata,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = ", availability, ")"
+			)
+		))
+		
+		# Ajout des résultats à res.spl.aic
+		res.spl.aic$formule.dsm[spl] <- formule.dsm
+		res.spl.aic$AIC[spl] <- dsm.tmp$aic
+		eval(parse(text = paste0("dsm.tmp.all$iter",spl," <- dsm.tmp")))
+	}
+
+	# Récupération des infos du modèle pour lequel l'AIC est minimal
+	nspline.selec <- res.spl.aic$nspline[res.spl.aic$AIC == min(res.spl.aic$AIC)]
+	str.spline.selec <- res.spl.aic$formule.dsm[nspline.selec]
+	str.spline.AIC <- res.spl.aic$AIC[nspline.selec]
+	dsm.selec <- eval(parse(text = paste0("dsm.tmp.all$iter",nspline.selec)))
+	
+	# On créé ou complète le tableau suivi_df
+	if (nvar == 1){
+		suivi_df = data.frame("iter" = 1, "formule" = str.spline.selec, "aic" = str.spline.AIC, stringsAsFactors = FALSE)
+	} else {suivi_df[nvar, 1] = nvar; suivi_df[nvar, 2] = str.spline.selec ; suivi_df[nvar, 3] = str.spline.AIC}
+
+	# Suppression de la variable sélectionnée de vct.spline.test pour réitérer la fonction
+	vct.spline.test <- vct.spline.test[-nspline.selec]
+	
+	res_final <- list(dsm.selec = dsm.selec,
+									aic = dsm.selec$aic,
+									formule.dsm = formule.dsm,
+									suivi = suivi_df)
+
+	# Si le nombre de coefficients estimés est inférieur au nombre de lignes de obsdata, on continue
+	if (length(dsm.selec$coefficients) < nrow(obsdata) & nvar <= n_cov_tot){
+		
+		# Si c'est la 1ère itération, on choisit ce modèle et on continue
+		if (nvar == 1) {
+			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
+																	 vct.spline.test = vct.spline.test,
+																	 str.spline.selec = str.spline.selec,
+																	 availability = availability,
+																	 nvar = nvar+1, messages = messages, 
+																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
+			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
+			
+		# Si l'AIC diminue, on choisit ce modèle et on continue
+		} else if (nvar > 1 & (res_final$suivi$aic[nvar] < res_final$suivi$aic[nvar-1])){
+			res_tmp <- selec_dsm_aic_fwd(segdata, obsdata, detfc,
+																	 vct.spline.test = vct.spline.test,
+																	 str.spline.selec = str.spline.selec,
+																	 availability = availability,
+																	 nvar = nvar+1, messages = messages, 
+																	 n_cov_tot = n_cov_tot, suivi_df = suivi_df)
+			if (res_tmp$aic < res_final$aic){res_final <- res_tmp}
+			
+		# Sinon, on arrête
+		} else {
+				print(paste0("L'AIC ne diminue plus en ajoutant une ", nvar, "ème covariable"))
+				return(res_final)
+		}
+	}
+	
+	return(res_final)
+}
 ```
 
+## dsm pour `availability = 1`
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
+# Fonction de sélection
+selec_dsm_s2_av1 <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = 1
+	)
+
+# Résultats
+selec_dsm_s2_av1
+dsm_s2_av1 <- selec_dsm_s2_av1$dsm.selec
+```
+
+| iter | formule                                         | aic      |
+|------|-------------------------------------------------|----------|
+| 1    | count \~ s(X, Y)                                | 729.9913 |
+| 2    | count \~ s(X, Y) + s(distCoast)                 | 729.0697 |
+| 3    | count \~ s(X, Y) + s(distCoast) + s(POC_4w_mea) | 728.7682 |
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
+# Fonction de sélection
+selec_dsm_s3_av1 <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = 1
+	)
+
+# Résultats
+selec_dsm_s3_av1
+dsm_s3_av1 <- selec_dsm_s3_av1$dsm.selec
+```
+
+| iter | formule          | aic      |
+|------|------------------|----------|
+| 1    | count \~ s(X, Y) | 445.4432 |
+
+## dsm pour `availability = 0.41`
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
+# Fonction de sélection
+selec_dsm_s2_av041 <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = 0.41
+	)
+
+# Résultats
+selec_dsm_s2_av041
+dsm_s2_av041 <- selec_dsm_s2_av041$dsm.selec
+```
+
+| iter | formule                                         | aic         |
+|------|-------------------------------------------------|-------------|
+| 1    | count \~ s(X, Y)                                | 924.3597    |
+| 2    | count \~ s(X, Y) + s(distCoast)                 | 729923.4381 |
+| 3    | count \~ s(X, Y) + s(distCoast) + s(POC_4w_mea) | 923.1367    |
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
+# Fonction de sélection
+selec_dsm_s3_av041 <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = 0.41
+	)
+
+# Résultats
+selec_dsm_s3_av041
+dsm_s3_av041 <- selec_dsm_s3_av041$dsm.selec
+```
+
+| iter | formule          | aic      |
+|------|------------------|----------|
+| 1    | count \~ s(X, Y) | 488.2399 |
+
+## dsm pour `availability` dépendante de on-shelf et off-shelf
+
+> shelf = plateau continental
+
+On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m.
+
+$$availability_{off shelf}=0,1357617$$
+
+$$availability_{on shelf}=0,6332016$$
+
+```{r}
+distdata$availability = NA
+for (i in 1:nrow(distdata)) {
+	if (distdata$depth[i] <= 150) {
+		distdata$availability[i] = 0.6332016
+	} else{
+		distdata$availability[i] = 0.1357617
+	}
+}
+availability <- distdata$availability
+```
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
+# Fonction de sélection
+selec_dsm_s2_avshelf <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = availability
+	)
+
+# Résultats
+selec_dsm_s2_avshelf
+dsm_s2_avshelf <- selec_dsm_s2_avshelf$dsm.selec
+```
+
+| iter | formule                                         | aic      |
+|------|-------------------------------------------------|----------|
+| 1    | count \~ s(X, Y)                                | 829.6100 |
+| 2    | count \~ s(X, Y) + s(distCoast)                 | 828.6884 |
+| 3    | count \~ s(X, Y) + s(distCoast) + s(POC_4w_mea) | 828.3870 |
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+# Vecteur des splines à tester
+vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
+
+# Sélection des données de la session 2
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
+# Fonction de sélection
+selec_dsm_s3_avshelf <-
+	selec_dsm_aic_fwd(
+		segdata = segdata_tmp,
+		obsdata = obsdata_tmp,
+		detfc = detfc.null.hr,
+		vct.spline.test = vct.spline.test,
+		availability = availability
+	)
+
+# Résultats
+selec_dsm_s3_avshelf
+dsm_s3_avshelf <- selec_dsm_s3_avshelf$dsm.selec
+```
+
+| iter | formule          | aic      |
+|------|------------------|----------|
+| 1    | count \~ s(X, Y) | 467.3776 |
