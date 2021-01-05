@@ -12,6 +12,7 @@ chunk_output_type: inline
 ---
 
 # Initialisation
+
 ```{r setup, include=FALSE}
 rm(list=ls())
 
@@ -25,6 +26,7 @@ knitr::opts_chunk$set(
 ```
 
 ## Importation des packages
+
 ```{r import_packages}
 # Packages
 library(dplyr)				# tidyverse
@@ -47,6 +49,7 @@ library(raster)
 ```
 
 # Importation des données
+
 ```{r import_donnees}
 load("../data/effort_output.RData")
 # effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
@@ -62,6 +65,7 @@ gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 ```
 
 # Transformation des données
+
 ```{r}
 # Jointure
 distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata,
@@ -89,72 +93,133 @@ segdata <- effort_output$segdata
 # Fonction de détection
 
 On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`
+
 ```{r}
 detfc.null.hr <- Distance::ds(
 						distdata,
 						max(distdata$distance),
 						formula = ~1,
 						key = "hr")
+
+# Paramètres de la fonction de détection
+detfc.null.hr$ddf$par
+
+summary(detfc.null.hr)
 ```
-# Fonction de densité
-## dsm pour $availability = 1$
-### Session 2 (mois 05 et 06)
+
 ```{r}
+plot(detfc.null.hr,
+		 breaks = seq(0, max(distdata$distance), 0.02),
+		 showpoints = FALSE,
+		 pl.col = "lightblue")
+
+
+x = seq(0,0.3, 0.001)
+y = 1-exp(-(x/detfc.null.hr$ddf$par[2])^(-detfc.null.hr$ddf$par[1]))
+plot(x,y)
+```
+
+# Fonction de densité
+
+## dsm pour $availability = 1$
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
 dsm_s2_av1 <- dsm(
 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 1)
+# dsm_s2_av1 <- dsm(
+# 				formula = count ~ s(X, Y),
+# 				ddf.obj = detfc.null.hr,
+# 				segment.data = segdata_tmp,
+# 				observation.data = obsdata_tmp,
+# 				method = 'REML',
+# 				family = tw(),
+# 				engine = 'gam',
+# 				gamma = 1.4,
+# 				availability = 1)
 ```
+
 ### Session 3 (mois 07 et 08)
+
 ```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
 dsm_s3_av1 <- dsm(
 				formula = count ~ s(X, Y),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 1)
 ```
+
 ## dsm pour $availability = 0.41$
+
 ### Session 2 (mois 05 et 06)
+
 ```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
 dsm_s2_av041 <- dsm(
 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 0.41)
+# dsm_s2_av041 <- dsm(
+# 				formula = count ~ s(X, Y),
+# 				ddf.obj = detfc.null.hr,
+# 				segment.data = segdata_tmp,
+# 				observation.data = obsdata_tmp,
+# 				method = 'REML',
+# 				family = tw(),
+# 				engine = 'gam',
+# 				gamma = 1.4,
+# 				availability = 0.41)
 ```
+
 ### Session 3 (mois 07 et 08)
+
 ```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
 dsm_s3_av041 <- dsm(
 				formula = count ~ s(X, Y),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 0.41)
 ```
+
 ## dsm pour $availability$ dépendante de on-shelf et off-shelf
-On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m.
-$$availability_{off shelf}=0,1357617$$
-$$availability_{on shelf}=0,6332016$$
+
+On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m. $$availability_{off shelf}=0,1357617$$ $$availability_{on shelf}=0,6332016$$
 
 ```{r}
 distdata$availability = NA
@@ -165,47 +230,77 @@ for (i in 1:nrow(distdata)) {
 		distdata$availability[i] = 0.1357617
 	}
 }
-availability <- distdata$availability
 ```
+
 ### Session 2 (mois 05 et 06)
+
 ```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+availability <- (distdata %>% filter(session == 2))$availability
+
 dsm_s2_avshelf <- dsm(
 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = availability)
+
+# dsm_s2_avshelf <- dsm(
+# 				formula = count ~ s(X, Y),
+# 				ddf.obj = detfc.null.hr,
+# 				segment.data = segdata_tmp,
+# 				observation.data = obsdata_tmp,
+# 				method = 'REML',
+# 				family = tw(),
+# 				engine = 'gam',
+# 				gamma = 1.4,
+# 				availability = availability)
 ```
+
 ### Session 3 (mois 07 et 08)
+
 ```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+availability <- (distdata %>% filter(session == 3))$availability
+
 dsm_s3_avshelf <- dsm(
 				formula = count ~ s(X, Y),
 				ddf.obj = detfc.null.hr,
-				segment.data = segdata,
-				observation.data = obsdata,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
 				method = 'REML',
 				family = tw(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = availability)
 ```
+
 # Prédiction de l'abondance
+
 ```{r}
 predata_output$predata$longitude %>% unique() %>% sort() %>% diff()
 predata_output$predata$latitude %>% unique() %>% sort() %>% diff()
 ```
 
-* Longitude-latitude
-	* La différence entre 2 longitudes / latitudes est 0.02 degrés (grilles de 0.02° de coté). Mais un degré ne fait pas forcément la même distance selon la zone.
-	* longitude latitude → shapefile (sf)→ projection lambert
-	* sf : st_transform → passer de WGS84 en L93 et checker si on retombe bien sur les valeurs X et Y
-* Travailler session par session
-*creuser tw()raisonner sur la manière dont on va expliquer ce qu'on a fait→ trame déployable sur le thon
-* envoyer doc la veille
+-   Longitude-latitude
+
+    -   La différence entre 2 longitudes / latitudes est 0.02 degrés (grilles de 0.02° de coté). Mais un degré ne fait pas forcément la même distance selon la zone.
+    -   longitude latitude → shapefile (sf)→ projection lambert
+    -   sf : st_transform → passer de WGS84 en L93 et checker si on retombe bien sur les valeurs X et Y
+
+-   Travailler session par session
+
+-   creuser tw()
+
+-   raisonner sur la manière dont on va expliquer ce qu'on a fait→ trame déployable sur le thon
+
+-   envoyer doc la veille
 
 ```{r}
 dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_output$predata, predata_output$predata$Area)
@@ -235,6 +330,7 @@ print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(
 ```
 
 ## Informations colonne Area
+
 Alors la colonne Area est exprimée en km²,Dans la plupart des tables (lorsqu'il ne s'agit pas d'une grille) Area va correspondre à l'aire total de la zone d'étude, par exemple pour distdata, la colonne Area va avoir une seule valeur qui est 14947 km² correspondant à l'aire de la zone SPEE.Dans les tables qui correspondent à des grilles (predata et gridata) Area correspond à l'aire de chaque cellule, les valeurs peuvent légèrement varier à cause du système de géoréférencement utilisé. Pour toutes les grilles la résolution est de 2 x 2 km.NB : les coordonnées "X" et "Y" ed predata sont en Lambert93
 
 ## Rasterisation
@@ -242,7 +338,7 @@ Alors la colonne Area est exprimée en km²,Dans la plupart des tables (lorsqu'i
 ```{r}
 datal93 <- as.data.frame(cbind(x = predata_output$predata$X,
 															 y = predata_output$predata$Y,
-															 pred = dsm_av1.pred))
+															 pred = dsm_s2_av1.pred))
 ```
 
 ```{r}
@@ -252,7 +348,12 @@ r <- raster(e, ncol=100, nrow=100)
 
 
 x <- rasterize(datal93[, 1:2], r, datal93[,3], fun=sum)
-plot(x)Visualisation
+plot(x)
+```
+
+```{r}
+summary(dsm_s2_av1.pred)
+summary((segdata %>% filter(month(date) == 5 | month(date) == 6))$POC_4w_mea)
 ```
 
 ```{r}
@@ -272,18 +373,13 @@ zone_obs <- get_map(location = sbbox,
 zone_obs_map = ggmap(zone_obs) + theme_void()
 ```
 
-```{r}
-# Carte avec les points
-zone_obs_map +
-	geom_path(
-		data = segdata,
-		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
-		size = 0.3,
-		colour = alpha("black", 0.2)
-	) +
-	geom_point(data = data_occ,
-						 aes(x = longitude,
-						 		y = latitude,
-						 		col = session)) +
-	theme_void() +
-	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+
+```{r} 
+# Carte avec les points 
+zone_obs_map + geom_path(
+	data = segdata,
+	mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+	size = 0.3,
+	colour = alpha("black", 0.2)
+) + geom_point(data = data_occ, aes(x = longitude, y = latitude, col = session)) + theme_void() + scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+```

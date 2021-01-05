@@ -180,7 +180,7 @@ res_detfc <- selec_detfc_aic(distancedata = distdata, list.cov = c("observerId",
 res_detfc
 ```
 
-On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~observerId+seaState` et la key `hn`.
+On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~1` et la key `hr`.
 
 ```{r}
 detfc.null.hr <- res_detfc[[2]]$detfc$iter5
@@ -583,11 +583,11 @@ selec_dsm_s2_av041
 dsm_s2_av041 <- selec_dsm_s2_av041$dsm.selec
 ```
 
-| iter | formule                                         | aic         |
-|------|-------------------------------------------------|-------------|
-| 1    | count \~ s(X, Y)                                | 924.3597    |
-| 2    | count \~ s(X, Y) + s(distCoast)                 | 729923.4381 |
-| 3    | count \~ s(X, Y) + s(distCoast) + s(POC_4w_mea) | 923.1367    |
+| iter | formule                                         | aic      |
+|------|-------------------------------------------------|----------|
+| 1    | count \~ s(X, Y)                                | 924.3597 |
+| 2    | count \~ s(X, Y) + s(distCoast)                 | 923.4381 |
+| 3    | count \~ s(X, Y) + s(distCoast) + s(POC_4w_mea) | 923.1367 |
 
 ### Session 3 (mois 07 et 08)
 
