@@ -2,13 +2,13 @@
 title: "Sélection des meilleurs modèles"
 subtitle: "Fonction de détection et dsm"
 output:
-html_document:
-highlight: zenburn
-number_sections: yes
-theme: yeti
-toc: yes
-editor_options:
-chunk_output_type: inline
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 # Initialisation

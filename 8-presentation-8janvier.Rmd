@@ -1,16 +1,14 @@
 ---
 title: "Projet requins peau bleue"
-date: "08 janvier 2021"
+date: "8 janvier 2021"
 author: "Rindra, Emma, Léa"
-output:
-html_document:
-highlight: zenburn
-number_sections: yes
-theme: yeti
-toc: yes
-editor_options:
-chunk_output_type: inline
+output: 
+  pdf_document:
+    toc: yes
+    highlight: zenburn
+    number_sections: yes
 ---
+
 
 # Importations et transformation des données
 
@@ -92,15 +90,12 @@ On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `
 ```{r}
 # distdata
 for (i in 20:28){distdata[,i] <- scale(distdata[,i])}
-head(distdata)
 
 # segdata
 for (i in 16:23){segdata[,i] <- scale(segdata[,i])}
-head(segdata)
 
 # predata
 for (i in 6:14){predata[,i] <- scale(predata[,i])}
-head(predata)
 ```
 
 # Fonction de détection
