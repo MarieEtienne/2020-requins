@@ -357,8 +357,9 @@ plot_pred_by_term(dsm_s2_av1,
 									predata_output$predata, 
 									c("longitude","latitude")) + scale_fill_viridis()
 ```
-```{r}
-plot(dsm_s2_av1)
+```{r fig.height = 8}
+par(mfrow = c(2,2))
+plot.gam(dsm_s2_av1)
 ```
 
 > Lignes pointillées : 95% confidence interval for the mean shape of the effect.
@@ -602,7 +603,7 @@ zone_obs_map +
 data_pred_carto = as.data.frame(cbind(x = predata$longitude, y = predata$latitude, abondance = dsm_s2_av1.pred))
 
 zone_obs_map + 
-	geom_raster(data = data_pred_carto %>% filter(abondance < 10),
+	geom_raster(data = data_pred_carto ,#%>% filter(abondance < 10),
 							aes(x = x, y = y, fill = abondance)) + 
   coord_fixed(ratio = 1) +
 	geom_path(
