@@ -40,7 +40,7 @@ library(dsm)
 
 ------------------------------------------------------------------------
 
-Importation des données
+# Importation des données
 
 ```{r import_donnees}
 load("../data/effort_output.RData")
@@ -56,11 +56,12 @@ gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 # gridata : equivalent to predata from predata_output but with a extended surface
 ```
 
-Transformation des données
+
+# Transformation des données
 
 ```{r}
 # Jointure
-distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata, 
+distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata,
 																	 cov_segment <- predata_output$segdata,
 																	 by = "Seg")
 
@@ -79,7 +80,32 @@ head(distdata)
 
 ```{r}
 obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+head(obsdata)
+```
+
+```{r}
 segdata <- effort_output$segdata
+head(segdata)
+```
+
+```{r}
+predata <- predata_output$predata
+head(predata)
+```
+
+## Centrage-réduction des covariables
+```{r}
+# distdata
+for (i in 20:28){distdata[,i] <- scale(distdata[,i])}
+head(distdata)
+
+# segdata
+for (i in 16:23){segdata[,i] <- scale(segdata[,i])}
+head(segdata)
+
+# predata
+for (i in 6:14){predata[,i] <- scale(predata[,i])}
+head(predata)
 ```
 
 # Sélection de la meilleure fonction de détection
@@ -181,11 +207,16 @@ res_detfc
 ```
 
 On choisit la fonction de détection avec l'AIC le plus faible, il s'agit de la fonction avec la formule `~1` et la key `hr`.
+A cause d'une erreur pour ajuster cette fonction, on préferera prendre la fonction avec la formule `~seaState` et la key `hr`, qui a un AIC très très proche.
 
 ```{r}
-detfc.null.hr <- res_detfc[[2]]$detfc$iter5
-summary(detfc.null.hr)
-plot(detfc.null.hr)
+detfc.sea.hr <- Distance::ds(
+						distdata,
+						max(distdata$distance),
+						formula = ~seaState,
+						key = "hr")
+summary(detfc.sea.hr)
+plot(detfc.sea.hr)
 ```
 
 # Modèle de densité `dsm`
@@ -307,7 +338,7 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
 selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
-									detfc = detfc.null.hr,
+									detfc = detfc.sea.hr,
 									vct.spline.test = vct.spline.test,
 									availability = 1)
 selec_dsm_av1
@@ -321,7 +352,7 @@ dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
 selec_dsm_av0.41 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
-									detfc = detfc.null.hr,
+									detfc = detfc.sea.hr,
 									vct.spline.test = vct.spline.test,
 									availability = 0.41)
 selec_dsm_av0.41
@@ -353,7 +384,7 @@ availability <- distdata$availability
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
 selec_dsm_avshelf <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
-									detfc = detfc.null.hr,
+									detfc = detfc.sea.hr,
 									vct.spline.test = vct.spline.test,
 									availability = availability)
 selec_dsm_avshelf
@@ -373,13 +404,13 @@ print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(
 
 # Modèle de densité (séparation par session)
 
-On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`.
+On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.sea.hr`.
 
 ```{r}
-detfc.null.hr <- Distance::ds(
+detfc.sea.hr <- Distance::ds(
 						distdata,
 						max(distdata$distance),
-						formula = ~1,
+						formula = ~seaState,
 						key = "hr")
 ```
 
@@ -511,7 +542,7 @@ selec_dsm_s2_av1 <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = 1
 	)
@@ -542,7 +573,7 @@ selec_dsm_s3_av1 <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = 1
 	)
@@ -573,7 +604,7 @@ selec_dsm_s2_av041 <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = 0.41
 	)
@@ -604,7 +635,7 @@ selec_dsm_s3_av041 <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = 0.41
 	)
@@ -655,7 +686,7 @@ selec_dsm_s2_avshelf <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = availability
 	)
@@ -686,7 +717,7 @@ selec_dsm_s3_avshelf <-
 	selec_dsm_aic_fwd(
 		segdata = segdata_tmp,
 		obsdata = obsdata_tmp,
-		detfc = detfc.null.hr,
+		detfc = detfc.sea.hr,
 		vct.spline.test = vct.spline.test,
 		availability = availability
 	)
