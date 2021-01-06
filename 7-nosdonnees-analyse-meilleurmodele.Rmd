@@ -31,12 +31,11 @@ knitr::opts_chunk$set(
 # Packages
 library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
-library(DT)						# interactive HTML datatables
-library(data.table)
 
 # Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
+library(viridis)
 
 # Packages calcul
 library(Distance)
@@ -87,39 +86,250 @@ head(distdata)
 
 ```{r}
 obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
-segdata <- effort_output$segdata
+head(obsdata)
 ```
+
+```{r}
+segdata <- effort_output$segdata
+head(segdata)
+```
+
+```{r}
+predata <- predata_output$predata
+head(predata)
+```
+
+## Centrage-réduction des covariables
+```{r}
+# distdata
+for (i in 20:28){distdata[,i] <- scale(distdata[,i])}
+head(distdata)
+
+# segdata
+for (i in 16:23){segdata[,i] <- scale(segdata[,i])}
+head(segdata)
+
+# predata
+for (i in 6:14){predata[,i] <- scale(predata[,i])}
+head(predata)
+```
+
 
 # Fonction de détection
 
-On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.null.hr`
+On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.sea.hr`
 
 ```{r}
-detfc.null.hr <- Distance::ds(
+detfc.sea.hr <- Distance::ds(
 						distdata,
 						max(distdata$distance),
-						formula = ~1,
+						formula = ~seaState,
 						key = "hr")
 
 # Paramètres de la fonction de détection
-detfc.null.hr$ddf$par
+detfc.sea.hr$ddf$par
 
-summary(detfc.null.hr)
+summary(detfc.sea.hr)
 ```
 
 ```{r}
-plot(detfc.null.hr,
+plot(detfc.sea.hr,
 		 breaks = seq(0, max(distdata$distance), 0.02),
 		 showpoints = FALSE,
 		 pl.col = "lightblue")
 
 
 x = seq(0,0.3, 0.001)
-y = 1-exp(-(x/detfc.null.hr$ddf$par[2])^(-detfc.null.hr$ddf$par[1]))
+y = 1-exp(-(x/detfc.sea.hr$ddf$par[1])^(-detfc.sea.hr$ddf$par[2]))
 plot(x,y)
 ```
 
-# Fonction de densité
+<!-- # Fonction de densité qui marche pas -->
+
+<!-- ## dsm pour $availability = 1$ -->
+
+<!-- ### Session 2 (mois 05 et 06) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
+
+<!-- dsm_s2_av1 <- dsm( -->
+<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = 1) -->
+
+<!-- # dsm_s2_av1 <- dsm( -->
+<!-- # 				formula = count ~ s(X, Y), -->
+<!-- # 				ddf.obj = detfc.sea.hr, -->
+<!-- # 				segment.data = segdata_tmp, -->
+<!-- # 				observation.data = obsdata_tmp, -->
+<!-- # 				method = 'REML', -->
+<!-- # 				family = tw(), -->
+<!-- # 				engine = 'gam', -->
+<!-- # 				gamma = 1.4, -->
+<!-- # 				availability = 1) -->
+
+<!-- ``` -->
+
+<!-- On peut visualiser le modèle GAM ajusté -->
+<!-- ```{r} -->
+<!-- plot_pred_by_term(dsm_s2_av1,  -->
+<!-- 									predata_output$predata,  -->
+<!-- 									c("longitude","latitude")) + scale_fill_viridis() -->
+<!-- ``` -->
+<!-- * Pas foufou -->
+<!-- * Ca fait des lignes moches -->
+
+<!-- ```{r} -->
+<!-- plot(dsm_s2_av1) -->
+<!-- ``` -->
+
+<!-- > Lignes pointillées : 95% confidence interval for the mean shape of the effect. -->
+
+<!-- * Graphe distCoast : pas du tout précis, les lignes de l'intervalle de confiance montrent des valeurs variant fortement pour la pente -->
+<!-- * Graphe POC_4w_mean : plus précis mais presque plat, très peu d'effet, et à nouveau intervalle de confiance montre qu'on pourrait dire que ça un impact positif ou négatif  -->
+
+<!-- Conclusion : pas fou le modèle en sélectionnant différemment les covariables avec les données de chaque session. Nous allons plutôt sélectionner les covariables du modèle sur toutes les données puis ajuster les paramètres par session. -->
+
+<!-- ### Session 3 (mois 07 et 08) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
+
+<!-- dsm_s3_av1 <- dsm( -->
+<!-- 				formula = count ~ s(X, Y), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = 1) -->
+<!-- ``` -->
+
+<!-- ## dsm pour $availability = 0.41$ -->
+
+<!-- ### Session 2 (mois 05 et 06) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
+
+<!-- dsm_s2_av041 <- dsm( -->
+<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = 0.41) -->
+<!-- # dsm_s2_av041 <- dsm( -->
+<!-- # 				formula = count ~ s(X, Y), -->
+<!-- # 				ddf.obj = detfc.sea.hr, -->
+<!-- # 				segment.data = segdata_tmp, -->
+<!-- # 				observation.data = obsdata_tmp, -->
+<!-- # 				method = 'REML', -->
+<!-- # 				family = tw(), -->
+<!-- # 				engine = 'gam', -->
+<!-- # 				gamma = 1.4, -->
+<!-- # 				availability = 0.41) -->
+<!-- ``` -->
+
+<!-- ### Session 3 (mois 07 et 08) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
+
+<!-- dsm_s3_av041 <- dsm( -->
+<!-- 				formula = count ~ s(X, Y), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = 0.41) -->
+<!-- ``` -->
+
+<!-- ## dsm pour $availability$ dépendante de on-shelf et off-shelf -->
+
+<!-- On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m. $$availability_{off shelf}=0,1357617$$ $$availability_{on shelf}=0,6332016$$ -->
+
+<!-- ```{r} -->
+<!-- distdata$availability = NA -->
+<!-- for (i in 1:nrow(distdata)) { -->
+<!-- 	if (distdata$depth[i] <= 150) { -->
+<!-- 		distdata$availability[i] = 0.6332016 -->
+<!-- 	} else{ -->
+<!-- 		distdata$availability[i] = 0.1357617 -->
+<!-- 	} -->
+<!-- } -->
+<!-- ``` -->
+
+<!-- ### Session 2 (mois 05 et 06) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
+<!-- availability <- (distdata %>% filter(session == 2))$availability -->
+
+<!-- dsm_s2_avshelf <- dsm( -->
+<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = availability) -->
+
+<!-- # dsm_s2_avshelf <- dsm( -->
+<!-- # 				formula = count ~ s(X, Y), -->
+<!-- # 				ddf.obj = detfc.sea.hr, -->
+<!-- # 				segment.data = segdata_tmp, -->
+<!-- # 				observation.data = obsdata_tmp, -->
+<!-- # 				method = 'REML', -->
+<!-- # 				family = tw(), -->
+<!-- # 				engine = 'gam', -->
+<!-- # 				gamma = 1.4, -->
+<!-- # 				availability = availability) -->
+<!-- ``` -->
+
+<!-- ### Session 3 (mois 07 et 08) -->
+
+<!-- ```{r} -->
+<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
+<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
+<!-- availability <- (distdata %>% filter(session == 3))$availability -->
+
+<!-- dsm_s3_avshelf <- dsm( -->
+<!-- 				formula = count ~ s(X, Y), -->
+<!-- 				ddf.obj = detfc.sea.hr, -->
+<!-- 				segment.data = segdata_tmp, -->
+<!-- 				observation.data = obsdata_tmp, -->
+<!-- 				method = 'REML', -->
+<!-- 				family = tw(), -->
+<!-- 				engine = 'gam', -->
+<!-- 				gamma = 1.4, -->
+<!-- 				availability = availability) -->
+<!-- ``` -->
+
+
+# Fonction de densité (covariables communes par session)
 
 ## dsm pour $availability = 1$
 
@@ -130,8 +340,8 @@ segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) 
 obsdata_tmp <- obsdata %>% filter(session == 2)
 
 dsm_s2_av1 <- dsm(
-				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -139,17 +349,19 @@ dsm_s2_av1 <- dsm(
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 1)
-# dsm_s2_av1 <- dsm(
-# 				formula = count ~ s(X, Y),
-# 				ddf.obj = detfc.null.hr,
-# 				segment.data = segdata_tmp,
-# 				observation.data = obsdata_tmp,
-# 				method = 'REML',
-# 				family = tw(),
-# 				engine = 'gam',
-# 				gamma = 1.4,
-# 				availability = 1)
 ```
+
+On peut visualiser le modèle GAM ajusté
+```{r}
+plot_pred_by_term(dsm_s2_av1, 
+									predata_output$predata, 
+									c("longitude","latitude")) + scale_fill_viridis()
+```
+```{r}
+plot(dsm_s2_av1)
+```
+
+> Lignes pointillées : 95% confidence interval for the mean shape of the effect.
 
 ### Session 3 (mois 07 et 08)
 
@@ -158,8 +370,8 @@ segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) 
 obsdata_tmp <- obsdata %>% filter(session == 3)
 
 dsm_s3_av1 <- dsm(
-				formula = count ~ s(X, Y),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -178,8 +390,8 @@ segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) 
 obsdata_tmp <- obsdata %>% filter(session == 2)
 
 dsm_s2_av041 <- dsm(
-				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -189,7 +401,7 @@ dsm_s2_av041 <- dsm(
 				availability = 0.41)
 # dsm_s2_av041 <- dsm(
 # 				formula = count ~ s(X, Y),
-# 				ddf.obj = detfc.null.hr,
+# 				ddf.obj = detfc.sea.hr,
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
@@ -206,8 +418,8 @@ segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) 
 obsdata_tmp <- obsdata %>% filter(session == 3)
 
 dsm_s3_av041 <- dsm(
-				formula = count ~ s(X, Y),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -240,8 +452,8 @@ obsdata_tmp <- obsdata %>% filter(session == 2)
 availability <- (distdata %>% filter(session == 2))$availability
 
 dsm_s2_avshelf <- dsm(
-				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -250,16 +462,6 @@ dsm_s2_avshelf <- dsm(
 				gamma = 1.4,
 				availability = availability)
 
-# dsm_s2_avshelf <- dsm(
-# 				formula = count ~ s(X, Y),
-# 				ddf.obj = detfc.null.hr,
-# 				segment.data = segdata_tmp,
-# 				observation.data = obsdata_tmp,
-# 				method = 'REML',
-# 				family = tw(),
-# 				engine = 'gam',
-# 				gamma = 1.4,
-# 				availability = availability)
 ```
 
 ### Session 3 (mois 07 et 08)
@@ -270,8 +472,8 @@ obsdata_tmp <- obsdata %>% filter(session == 3)
 availability <- (distdata %>% filter(session == 3))$availability
 
 dsm_s3_avshelf <- dsm(
-				formula = count ~ s(X, Y),
-				ddf.obj = detfc.null.hr,
+				formula = count ~ s(SST_4w_mea) + s(X, Y) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
@@ -373,13 +575,43 @@ zone_obs <- get_map(location = sbbox,
 zone_obs_map = ggmap(zone_obs) + theme_void()
 ```
 
+## Carte pour la session 2 et availability = 1
+
+```{r}
+(dsm_s2_av1.pred %>% sort(decreasing = TRUE))[0:50]
+```
 
 ```{r} 
-# Carte avec les points 
-zone_obs_map + geom_path(
-	data = segdata,
-	mapping = aes(x = longitude, y = latitude, group = Transect.Label),
-	size = 0.3,
-	colour = alpha("black", 0.2)
-) + geom_point(data = data_occ, aes(x = longitude, y = latitude, col = session)) + theme_void() + scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+zone_obs_map + 
+	geom_raster(data = as.data.frame(cbind(x = predata$longitude, y = predata$latitude, abondance = dsm_s2_av1.pred)),
+							aes(x = x, y = y, fill = abondance)) + 
+  coord_fixed(ratio = 1) +
+	geom_path(
+		data = segdata,
+		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+		size = 0.3,
+		colour = alpha("black", 0.2)) + 
+	geom_point(data = data_occ, aes(x = longitude, y = latitude, col = session)) + 
+	theme_void() + 
+	scale_fill_viridis() +
+	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+```
+
+
+```{r} 
+data_pred_carto = as.data.frame(cbind(x = predata$longitude, y = predata$latitude, abondance = dsm_s2_av1.pred))
+
+zone_obs_map + 
+	geom_raster(data = data_pred_carto %>% filter(abondance < 10),
+							aes(x = x, y = y, fill = abondance)) + 
+  coord_fixed(ratio = 1) +
+	geom_path(
+		data = segdata,
+		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+		size = 0.3,
+		colour = alpha("black", 0.2)) + 
+	geom_point(data = data_occ, aes(x = longitude, y = latitude, col = session)) + 
+	theme_void() + 
+	scale_fill_viridis() +
+	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
 ```

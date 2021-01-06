@@ -219,7 +219,7 @@ summary(detfc.sea.hr)
 plot(detfc.sea.hr)
 ```
 
-# Modèle de densité `dsm`
+# Modèle de densité `dsm` (sélection sans séparation sessions)
 
 ## Fonction `selec_dsm_aic_fwd` : sans données de disponibilité
 
