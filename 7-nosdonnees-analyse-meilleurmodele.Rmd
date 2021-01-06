@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 # Packages
 library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
-
+library(lubridate)		# dates
 # Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
