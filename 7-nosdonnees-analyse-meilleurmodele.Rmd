@@ -603,7 +603,7 @@ zone_obs_map +
 data_pred_carto = as.data.frame(cbind(x = predata$longitude, y = predata$latitude, abondance = dsm_s2_av1.pred))
 
 zone_obs_map + 
-	geom_raster(data = data_pred_carto ,#%>% filter(abondance < 10),
+	geom_raster(data = data_pred_carto %>% filter(abondance < 20),
 							aes(x = x, y = y, fill = abondance)) + 
   coord_fixed(ratio = 1) +
 	geom_path(
@@ -616,3 +616,18 @@ zone_obs_map +
 	scale_fill_viridis() +
 	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
 ```
+
+# Corrélation covariables
+```{r}
+library(corrplot)
+corrplot(cor(segdata[,16:23]), method="circle")
+corrplot(cor(predata[,6:14]), method="circle")
+```
+
+```{r}
+library(FactoMineR)
+library(Factoshiny)
+
+FactoMineR::PCA(predata[,6:14])
+```
+
