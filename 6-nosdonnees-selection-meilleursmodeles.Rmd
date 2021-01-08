@@ -11,53 +11,47 @@ editor_options:
   chunk_output_type: inline
 ---
 
+# Importations et transformation des données
+
 ```{r setup, include=FALSE}
 rm(list=ls())
 
 knitr::opts_chunk$set(
-	echo = TRUE,
+	echo = FALSE,
 	fig.align = "center",
 	message = FALSE,
 	warning = FALSE,
 	error = TRUE
 )
+```
 
+```{r import_packages}
 # Packages
 library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
-library(DT)						# interactive HTML datatables
-library(data.table)
 library(lubridate)		# dates
 
-## Graphes packages
+# Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
+library(viridis)
 
-## Packages calcul
+# Packages calcul
 library(Distance)
 library(dsm)
+
+# Packages raster/carto
+library(sp)
+library(rgdal)
+library(raster)
 ```
-
-------------------------------------------------------------------------
-
-# Importation des données
 
 ```{r import_donnees}
 load("../data/effort_output.RData")
-# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
-
 load("../data/list_prepare_obs_by_sp.RData")
-# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
-
 load("../data/predata_output.RData")
-# predata_output : A grid of 2km cells size with different covariable associated around the observation.
-
 gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
-# gridata : equivalent to predata from predata_output but with a extended surface
 ```
-
-
-# Transformation des données
 
 ```{r}
 # Jointure
@@ -72,41 +66,116 @@ colnames(distdata)[2] = "Seg"
 colnames(distdata)[3] = "Sample.Label"
 
 distdata$seaState = as.integer(distdata$seaState)
-distdata$observerId<-as.integer(distdata$observerId)
+distdata$observerId <- as.integer(distdata$observerId)
 
-# Affichages
-head(distdata)
+# Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
+distdata <- distdata[, c(1:19, 24:28, 20:23)]
 ```
 
 ```{r}
 obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
-head(obsdata)
 ```
 
 ```{r}
 segdata <- effort_output$segdata
-head(segdata)
 ```
 
 ```{r}
 predata <- predata_output$predata
-head(predata)
+predata$session <- factor(predata$session)
+unique(predata$session)
+
+# Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
+predata <- predata[, c(1:6, 11:15, 7:10)]
 ```
 
-## Centrage-réduction des covariables
+On récupère les données suivantes :
+
+-   `obsdata`, `segdate`et `predata`
+-   `distdata`, une jointure entre predata et obsdata sur le segment
+
+On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `predata`).
+
+
+			CHL SST SST POC depth...
+mean		1		2		3		2
+sd			
 ```{r}
-# distdata
-for (i in 20:28){distdata[,i] <- scale(distdata[,i])}
-head(distdata)
+# On récupère mean et sd de segdata pour les colonnes 15 à 23
+cov_names_mean_sd <- matrix(rep(NA, 9*2), ncol = 9)
+colnames(cov_names_mean_sd) <- names(segdata[, 15:23])
+rownames(cov_names_mean_sd) <- c("mean", "sd")
+
+# moyenne
+for (i in 1:9){
+	cov_names_mean_sd[1,i] = mean(segdata[,i+14], na.rm = TRUE)
+}
+# sd
+for (i in 1:9){
+	cov_names_mean_sd[2,i] = sd(segdata[,i+14], na.rm = TRUE)
+}
+cov_names_mean_sd
+
+# On centre-réduit les données de segdata, distdata et predata avec la moyenne et l'écart type de chaque covariable dans segdata
 
 # segdata
-for (i in 16:23){segdata[,i] <- scale(segdata[,i])}
-head(segdata)
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(segdata[, grep(colnames(cov_names_mean_sd)[i], colnames(segdata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	segdata[i+14] = column
+}
+
+# distdata
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(distdata[, grep(colnames(cov_names_mean_sd)[i], colnames(distdata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	distdata[i+19] = column
+}
 
 # predata
-for (i in 6:14){predata[,i] <- scale(predata[,i])}
-head(predata)
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(predata[, grep(colnames(cov_names_mean_sd)[i], colnames(predata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	predata[i+6] = column
+}
 ```
+
 
 # Sélection de la meilleure fonction de détection
 
