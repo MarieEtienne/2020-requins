@@ -83,7 +83,6 @@ segdata <- effort_output$segdata
 ```{r}
 predata <- predata_output$predata
 predata$session <- factor(predata$session)
-unique(predata$session)
 
 # Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
 predata <- predata[, c(1:6, 11:15, 7:10)]
@@ -96,10 +95,6 @@ On récupère les données suivantes :
 
 On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `predata`).
 
-
-			CHL SST SST POC depth...
-mean		1		2		3		2
-sd			
 ```{r}
 # On récupère mean et sd de segdata pour les colonnes 15 à 23
 cov_names_mean_sd <- matrix(rep(NA, 9*2), ncol = 9)

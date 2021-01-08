@@ -64,6 +64,8 @@ distdata <- distdata[, c(3, 5:11, 1:2, 14:31)]
 colnames(distdata)[1] = "Transect.Label"
 colnames(distdata)[2] = "Seg"
 colnames(distdata)[3] = "Sample.Label"
+colnames(distdata)[5] = "session"
+
 
 distdata$seaState = as.integer(distdata$seaState)
 distdata$observerId <- as.integer(distdata$observerId)
@@ -96,10 +98,6 @@ On récupère les données suivantes :
 
 On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `predata`).
 
-
-			CHL SST SST POC depth...
-mean		1		2		3		2
-sd			
 ```{r}
 # On récupère mean et sd de segdata pour les colonnes 15 à 23
 cov_names_mean_sd <- matrix(rep(NA, 9*2), ncol = 9)
@@ -206,191 +204,6 @@ y = 1-exp(-(x/detfc.sea.hr$ddf$par[1])^(-detfc.sea.hr$ddf$par[2]))
 plot(x,y)
 ```
 
-<!-- # Fonction de densité qui marche pas -->
-
-<!-- ## dsm pour $availability = 1$ -->
-
-<!-- ### Session 2 (mois 05 et 06) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
-
-<!-- dsm_s2_av1 <- dsm( -->
-<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = 1) -->
-
-<!-- # dsm_s2_av1 <- dsm( -->
-<!-- # 				formula = count ~ s(X, Y), -->
-<!-- # 				ddf.obj = detfc.sea.hr, -->
-<!-- # 				segment.data = segdata_tmp, -->
-<!-- # 				observation.data = obsdata_tmp, -->
-<!-- # 				method = 'REML', -->
-<!-- # 				family = tw(), -->
-<!-- # 				engine = 'gam', -->
-<!-- # 				gamma = 1.4, -->
-<!-- # 				availability = 1) -->
-
-<!-- ``` -->
-
-<!-- On peut visualiser le modèle GAM ajusté -->
-<!-- ```{r} -->
-<!-- plot_pred_by_term(dsm_s2_av1,  -->
-<!-- 									predata_output$predata,  -->
-<!-- 									c("longitude","latitude")) + scale_fill_viridis() -->
-<!-- ``` -->
-<!-- * Pas foufou -->
-<!-- * Ca fait des lignes moches -->
-
-<!-- ```{r} -->
-<!-- plot(dsm_s2_av1) -->
-<!-- ``` -->
-
-<!-- > Lignes pointillées : 95% confidence interval for the mean shape of the effect. -->
-
-<!-- * Graphe distCoast : pas du tout précis, les lignes de l'intervalle de confiance montrent des valeurs variant fortement pour la pente -->
-<!-- * Graphe POC_4w_mean : plus précis mais presque plat, très peu d'effet, et à nouveau intervalle de confiance montre qu'on pourrait dire que ça un impact positif ou négatif  -->
-
-<!-- Conclusion : pas fou le modèle en sélectionnant différemment les covariables avec les données de chaque session. Nous allons plutôt sélectionner les covariables du modèle sur toutes les données puis ajuster les paramètres par session. -->
-
-<!-- ### Session 3 (mois 07 et 08) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
-
-<!-- dsm_s3_av1 <- dsm( -->
-<!-- 				formula = count ~ s(X, Y), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = 1) -->
-<!-- ``` -->
-
-<!-- ## dsm pour $availability = 0.41$ -->
-
-<!-- ### Session 2 (mois 05 et 06) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
-
-<!-- dsm_s2_av041 <- dsm( -->
-<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = 0.41) -->
-<!-- # dsm_s2_av041 <- dsm( -->
-<!-- # 				formula = count ~ s(X, Y), -->
-<!-- # 				ddf.obj = detfc.sea.hr, -->
-<!-- # 				segment.data = segdata_tmp, -->
-<!-- # 				observation.data = obsdata_tmp, -->
-<!-- # 				method = 'REML', -->
-<!-- # 				family = tw(), -->
-<!-- # 				engine = 'gam', -->
-<!-- # 				gamma = 1.4, -->
-<!-- # 				availability = 0.41) -->
-<!-- ``` -->
-
-<!-- ### Session 3 (mois 07 et 08) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
-
-<!-- dsm_s3_av041 <- dsm( -->
-<!-- 				formula = count ~ s(X, Y), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = 0.41) -->
-<!-- ``` -->
-
-<!-- ## dsm pour $availability$ dépendante de on-shelf et off-shelf -->
-
-<!-- On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m. $$availability_{off shelf}=0,1357617$$ $$availability_{on shelf}=0,6332016$$ -->
-
-<!-- ```{r} -->
-<!-- distdata$availability = NA -->
-<!-- for (i in 1:nrow(distdata)) { -->
-<!-- 	if (distdata$depth[i] <= 150) { -->
-<!-- 		distdata$availability[i] = 0.6332016 -->
-<!-- 	} else{ -->
-<!-- 		distdata$availability[i] = 0.1357617 -->
-<!-- 	} -->
-<!-- } -->
-<!-- ``` -->
-
-<!-- ### Session 2 (mois 05 et 06) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 2) -->
-<!-- availability <- (distdata %>% filter(session == 2))$availability -->
-
-<!-- dsm_s2_avshelf <- dsm( -->
-<!-- 				formula = count ~ s(X, Y) + s(distCoast) + s(POC_4w_mea), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = availability) -->
-
-<!-- # dsm_s2_avshelf <- dsm( -->
-<!-- # 				formula = count ~ s(X, Y), -->
-<!-- # 				ddf.obj = detfc.sea.hr, -->
-<!-- # 				segment.data = segdata_tmp, -->
-<!-- # 				observation.data = obsdata_tmp, -->
-<!-- # 				method = 'REML', -->
-<!-- # 				family = tw(), -->
-<!-- # 				engine = 'gam', -->
-<!-- # 				gamma = 1.4, -->
-<!-- # 				availability = availability) -->
-<!-- ``` -->
-
-<!-- ### Session 3 (mois 07 et 08) -->
-
-<!-- ```{r} -->
-<!-- segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8) -->
-<!-- obsdata_tmp <- obsdata %>% filter(session == 3) -->
-<!-- availability <- (distdata %>% filter(session == 3))$availability -->
-
-<!-- dsm_s3_avshelf <- dsm( -->
-<!-- 				formula = count ~ s(X, Y), -->
-<!-- 				ddf.obj = detfc.sea.hr, -->
-<!-- 				segment.data = segdata_tmp, -->
-<!-- 				observation.data = obsdata_tmp, -->
-<!-- 				method = 'REML', -->
-<!-- 				family = tw(), -->
-<!-- 				engine = 'gam', -->
-<!-- 				gamma = 1.4, -->
-<!-- 				availability = availability) -->
-<!-- ``` -->
-
-
 # Fonction de densité (covariables communes par session)
 
 ## dsm pour $availability = 1$
@@ -462,16 +275,7 @@ dsm_s2_av041 <- dsm(
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 0.41)
-# dsm_s2_av041 <- dsm(
-# 				formula = count ~ s(X, Y),
-# 				ddf.obj = detfc.sea.hr,
-# 				segment.data = segdata_tmp,
-# 				observation.data = obsdata_tmp,
-# 				method = 'REML',
-# 				family = tw(),
-# 				engine = 'gam',
-# 				gamma = 1.4,
-# 				availability = 0.41)
+
 ```
 
 ### Session 3 (mois 07 et 08)
@@ -568,14 +372,17 @@ predata_output$predata$latitude %>% unique() %>% sort() %>% diff()
 -   envoyer doc la veille
 
 ```{r}
-dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_output$predata, predata_output$predata$Area)
-dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_output$predata, predata_output$predata$Area)
+predata_tmp2 <- predata_output$predata %>% filter(session == 2)
+predata_tmp3 <- predata_output$predata %>% filter(session == 3)
 
-dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_output$predata, predata_output$predata$Area)
-dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_output$predata, predata_output$predata$Area)
+dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_tmp3, predata_tmp3$Area)
 
-dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_output$predata, predata_output$predata$Area)
-dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_output$predata, predata_output$predata$Area)
+dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_tmp3, predata_tmp3$Area)
+
+dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_tmp2, predata_tmp2$Area)
+dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_tmp3, predata_tmp3$Area)
 ```
 
 ## Comparaison des résultats selon la valeur de disponibilité
