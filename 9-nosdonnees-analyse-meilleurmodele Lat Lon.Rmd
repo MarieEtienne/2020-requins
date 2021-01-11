@@ -1,0 +1,492 @@
+---
+title: "Sélection des meilleurs modèles"
+subtitle: "Fonction de détection et dsm"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Importations et transformation des données
+
+```{r setup, include=FALSE}
+rm(list=ls())
+
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	error = TRUE
+)
+```
+
+```{r import_packages}
+# Packages
+library(dplyr)				# tidyverse
+library(foreign)			# read.dbf
+library(lubridate)		# dates
+
+# Graphes packages
+library(ggplot2) ; ggplot2::theme_set(theme_light())
+library(ggmap)
+library(viridis)
+
+# Packages calcul
+library(Distance)
+library(dsm)
+
+# Packages raster/carto
+library(sp)
+library(rgdal)
+library(raster)
+```
+
+```{r import_donnees}
+load("C:/Users/rindr/Desktop/2020_requins/PRIGLA_envrt/data/effort_output.RData")
+# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
+
+load("C:/Users/rindr/Desktop/2020_requins/PRIGLA_envrt/data/list_prepare_obs_by_sp.RData")
+# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
+
+load("C:/Users/rindr/Desktop/2020_requins/PRIGLA_envrt/data/predata_output_2.RData")
+# predata_output : A grid of 2km cells size with different covariable associated around the observation.
+
+gridata <- read.dbf("C:/Users/rindr/Desktop/2020_requins/PRIGLA_envrt/data/SPEE_CAPECET_Grid2km_modified.dbf")
+# gridata : equivalent to predata from predata_output but with a extended surface
+```
+
+```{r}
+# Jointure
+distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata,
+																	 cov_segment <- predata_output$segdata,
+																	 by = "Seg")
+
+# Réarrangement des colonnes
+distdata <- distdata[, c(3, 5:11, 1:2, 14:31)]
+colnames(distdata)[1] = "Transect.Label"
+colnames(distdata)[2] = "Seg"
+colnames(distdata)[3] = "Sample.Label"
+colnames(distdata)[5] = "session"
+
+
+distdata$seaState = as.integer(distdata$seaState)
+distdata$observerId <- as.integer(distdata$observerId)
+
+# Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
+distdata <- distdata[, c(1:19, 24:28, 20:23)]
+```
+
+```{r}
+obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+```
+
+```{r}
+segdata <- effort_output$segdata
+```
+
+```{r}
+predata <- predata_output$predata
+predata$session <- factor(predata$session)
+unique(predata$session)
+
+# Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
+predata <- predata[, c(1:6, 11:15, 7:10)]
+```
+
+On récupère les données suivantes :
+
+-   `obsdata`, `segdate`et `predata`
+-   `distdata`, une jointure entre predata et obsdata sur le segment
+
+On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `predata`).
+
+```{r}
+# On récupère mean et sd de segdata pour les colonnes 15 à 23
+cov_names_mean_sd <- matrix(rep(NA, 9*2), ncol = 9)
+colnames(cov_names_mean_sd) <- names(segdata[, 15:23])
+rownames(cov_names_mean_sd) <- c("mean", "sd")
+
+# moyenne
+for (i in 1:9){
+	cov_names_mean_sd[1,i] = mean(segdata[,i+14], na.rm = TRUE)
+}
+# sd
+for (i in 1:9){
+	cov_names_mean_sd[2,i] = sd(segdata[,i+14], na.rm = TRUE)
+}
+cov_names_mean_sd
+
+# On centre-réduit les données de segdata, distdata et predata avec la moyenne et l'écart type de chaque covariable dans segdata
+
+# segdata
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(segdata[, grep(colnames(cov_names_mean_sd)[i], colnames(segdata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	segdata[i+14] = column
+}
+
+# distdata
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(distdata[, grep(colnames(cov_names_mean_sd)[i], colnames(distdata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	distdata[i+19] = column
+}
+
+# predata
+for (i in 1:9){
+	# On récupère la colonne du jeu de données non centré-réduit
+	column <- as.data.frame(predata[, grep(colnames(cov_names_mean_sd)[i], colnames(predata))])
+	
+	# On récupère la moyenne et l'écart type pour cette covariable
+	mean_cov <- cov_names_mean_sd[1, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	sd_cov <- cov_names_mean_sd[2, grep(colnames(cov_names_mean_sd)[i], colnames(cov_names_mean_sd))]
+	
+	# On applique le centrage-réduction
+	column <- apply(X = column, 
+									MARGIN = 1, 
+									FUN =  function(valeur){
+										return((valeur - mean_cov)/sd_cov)
+									}
+	)
+	predata[i+6] = column
+}
+```
+
+# Convert lat/lon to XY
+
+```{r}
+library(sp)
+library(rgdal)
+
+
+xy <- data.frame(predata[,1:2])
+coordinates(xy) <- c("latitude", "longitude")
+proj4string(xy) <- CRS("+init=epsg:2154")  ## for example
+
+res <- spTransform(xy, CRS("+init=epsg:2154"))
+res
+as(res, "SpatialPoints")
+
+```
+
+
+# Fonction de détection
+
+On a sélectionné la meilleure fonction de détection avec le script 6, pour gagner du temps on choisit la meilleure directement ici : `detfc.sea.hr`
+
+```{r}
+detfc.sea.hr <- Distance::ds(
+						distdata,
+						max(distdata$distance),
+						formula = ~seaState,
+						key = "hr")
+
+# Paramètres de la fonction de détection
+detfc.sea.hr$ddf$par
+
+summary(detfc.sea.hr)
+```
+
+```{r}
+plot(detfc.sea.hr,
+		 breaks = seq(0, max(distdata$distance), 0.02),
+		 showpoints = FALSE,
+		 pl.col = "lightblue")
+
+
+x = seq(0,0.3, 0.001)
+y = 1-exp(-(x/detfc.sea.hr$ddf$par[1])^(-detfc.sea.hr$ddf$par[2]))
+plot(x,y)
+```
+
+# Fonction de densité (covariables communes par session)
+
+## dsm pour $availability = 1$
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
+dsm_s2_av1 <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 1)
+```
+
+On peut visualiser le modèle GAM ajusté
+```{r}
+plot_pred_by_term(dsm_s2_av1, 
+									predata_output$predata, 
+									c("longitude","latitude")) + scale_fill_viridis()
+```
+```{r fig.height = 8}
+par(mfrow = c(2,2))
+plot.gam(dsm_s2_av1)
+```
+
+> Lignes pointillées : 95% confidence interval for the mean shape of the effect.
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
+dsm_s3_av1 <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 1)
+```
+
+## dsm pour $availability = 0.41$
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+
+dsm_s2_av041 <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 0.41)
+
+```
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+
+dsm_s3_av041 <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = 0.41)
+```
+
+## dsm pour $availability$ dépendante de on-shelf et off-shelf
+
+On note "on-shelf" quand la profondeur est inférieure à 150m, et "off-shelf" si la profondeur est supérieure à 150m. $$availability_{off shelf}=0,1357617$$ $$availability_{on shelf}=0,6332016$$
+
+```{r}
+distdata$availability = NA
+for (i in 1:nrow(distdata)) {
+	if (distdata$depth[i] <= 150) {
+		distdata$availability[i] = 0.6332016
+	} else{
+		distdata$availability[i] = 0.1357617
+	}
+}
+```
+
+### Session 2 (mois 05 et 06)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 5 | month(date) == 6)
+obsdata_tmp <- obsdata %>% filter(session == 2)
+availability <- (distdata %>% filter(session == 2))$availability
+
+dsm_s2_avshelf <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = availability)
+
+```
+
+### Session 3 (mois 07 et 08)
+
+```{r}
+segdata_tmp <- predata_output$segdata %>% filter(month(date) == 7 | month(date) == 8)
+obsdata_tmp <- obsdata %>% filter(session == 3)
+availability <- (distdata %>% filter(session == 3))$availability
+
+dsm_s3_avshelf <- dsm(
+				formula = count ~ s(SST_4w_mea) + s(latitude, longitude) + s(CHL_4w_mea),
+				ddf.obj = detfc.sea.hr,
+				segment.data = segdata_tmp,
+				observation.data = obsdata_tmp,
+				method = 'REML',
+				family = tw(),
+				engine = 'gam',
+				gamma = 1.4,
+				availability = availability)
+```
+
+# Prédiction de l'abondance
+
+```{r}
+predata_output$predata$longitude %>% unique() %>% sort() %>% diff()
+predata_output$predata$latitude %>% unique() %>% sort() %>% diff()
+```
+
+-   Longitude-latitude
+
+    -   La différence entre 2 longitudes / latitudes est 0.02 degrés (grilles de 0.02° de coté). Mais un degré ne fait pas forcément la même distance selon la zone.
+    -   longitude latitude → shapefile (sf)→ projection lambert
+    -   sf : st_transform → passer de WGS84 en L93 et checker si on retombe bien sur les valeurs X et Y
+
+-   Travailler session par session
+
+-   creuser tw()
+
+-   raisonner sur la manière dont on va expliquer ce qu'on a fait→ trame déployable sur le thon
+
+-   envoyer doc la veille
+
+```{r}
+predata_tmp2 <- predata_output$predata %>% filter(session == 2)
+predata_tmp3 <- predata_output$predata %>% filter(session == 3)
+
+dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_tmp3, predata_tmp3$Area)
+
+dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_tmp3, predata_tmp3$Area)
+
+dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_tmp2, predata_tmp2$Area)
+dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_tmp3, predata_tmp3$Area)
+```
+
+## Comparaison des résultats selon la valeur de disponibilité
+
+```{r echo=FALSE}
+print("-------- Session 2 --------")
+print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s2_av1.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s2_av041.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s2_avshelf.pred)), "requins au total dans la zone."))
+```
+
+[1] "-------- Session 2 --------"
+[1] "Avec availaibility = 1, on estime qu'il y a 4488 requins au total dans la zone."
+[1] "Avec availaibility = 0.41, on estime qu'il y a 10947 requins au total dans la zone."
+[1] "Avec availaibility selon on/off shelf, on estime qu'il y a 7088 requins au total dans la zone.
+
+```{r echo=FALSE}
+print("-------- Session 3 --------")
+print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s3_av1.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s3_av041.pred)), "requins au total dans la zone."))
+print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s3_avshelf.pred)), "requins au total dans la zone."))
+```
+
+## Informations colonne Area
+
+Alors la colonne Area est exprimée en km²,Dans la plupart des tables (lorsqu'il ne s'agit pas d'une grille) Area va correspondre à l'aire total de la zone d'étude, par exemple pour distdata, la colonne Area va avoir une seule valeur qui est 14947 km² correspondant à l'aire de la zone SPEE.Dans les tables qui correspondent à des grilles (predata et gridata) Area correspond à l'aire de chaque cellule, les valeurs peuvent légèrement varier à cause du système de géoréférencement utilisé. Pour toutes les grilles la résolution est de 2 x 2 km.NB : les coordonnées "X" et "Y" ed predata sont en Lambert93
+
+## Rasterisation
+
+## Carte pour la session 2 et availability = 1
+
+```{r}
+(dsm_s2_av1.pred %>% sort(decreasing = TRUE))[0:50]
+```
+
+```{r}
+data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>% filter(detected == 1)
+segdata <- effort_output$segdata
+
+# Emplacement
+sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
+									 lat = c(min(data_occ$latitude), max(data_occ$latitude)),
+									 f = 1)
+
+# Création de la carte vide
+zone_obs <- get_map(location = sbbox,
+										zoom = 8,
+										maptype = "terrain")
+
+zone_obs_map = ggmap(zone_obs) + theme_void()
+
+
+zone_obs_map + 
+	geom_raster(data = as.data.frame(cbind(x = predata_tmp2$longitude, y = predata_tmp2$latitude, abondance = dsm_s2_av1.pred)),
+							aes(x = x, y = y, fill = abondance)) + 
+  coord_fixed(ratio = 1) +
+	geom_path(
+		data = segdata,
+		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+		size = 0.3,
+		colour = alpha("black", 0.2)) + 
+	geom_point(data = data_occ, aes(x = longitude, y = latitude, col = session)) + 
+	theme_void() + 
+	scale_fill_viridis() +
+	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+```
+
+
+
+# Corrélation covariables
+```{r}
+library(corrplot)
+corrplot(cor(segdata[,16:23]), method="circle")
+corrplot(cor(predata[,6:14]), method="circle")
+```
+
+```{r}
+library(FactoMineR)
+library(Factoshiny)
+
+FactoMineR::PCA(predata[,6:14])
+```
+
