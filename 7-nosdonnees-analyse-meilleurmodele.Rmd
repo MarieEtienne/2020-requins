@@ -496,19 +496,6 @@ dsm_s3_avshelf <- dsm(
 # 				availability = availability)
 ```
 
-# plot_pred_by_term et plot.gam
-```{r}
-plot_pred_by_term(dsm_s2_av1, 
-									predata, 
-									c("longitude","latitude")) + scale_fill_viridis()
-
-```
-
-```{r}
-par(mfrow = c(2,2))
-plot.gam(dsm_s2_av1)
-```
-
 # Prédiction de l'abondance
 
 ```{r}
