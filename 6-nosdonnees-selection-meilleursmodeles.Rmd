@@ -25,6 +25,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Importations 
 ```{r import_packages}
 # Packages
 library(dplyr)				# tidyverse
@@ -53,6 +54,8 @@ load("../data/predata_output.RData")
 gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 ```
 
+## Sélection des données
+
 ```{r}
 # Jointure
 distdata <- dplyr::left_join(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata,
@@ -64,6 +67,8 @@ distdata <- distdata[, c(3, 5:11, 1:2, 14:31)]
 colnames(distdata)[1] = "Transect.Label"
 colnames(distdata)[2] = "Seg"
 colnames(distdata)[3] = "Sample.Label"
+colnames(distdata)[5] = "session"
+
 
 distdata$seaState = as.integer(distdata$seaState)
 distdata$observerId <- as.integer(distdata$observerId)
@@ -83,6 +88,7 @@ segdata <- effort_output$segdata
 ```{r}
 predata <- predata_output$predata
 predata$session <- factor(predata$session)
+unique(predata$session)
 
 # Changement de l'ordre des colonnes pour garder le même ordre pour les covariables que segdata
 predata <- predata[, c(1:6, 11:15, 7:10)]
@@ -92,6 +98,8 @@ On récupère les données suivantes :
 
 -   `obsdata`, `segdate`et `predata`
 -   `distdata`, une jointure entre predata et obsdata sur le segment
+
+## Centrage-réduction
 
 On centre et réduit les covariables (présentes dans `distdata`, `segdata` et `predata`).
 
@@ -169,6 +177,79 @@ for (i in 1:9){
 	)
 	predata[i+6] = column
 }
+```
+
+## On transforme longitude, latitude en X et Y en lambert93
+
+### `predata`
+
+```{r}
+predata_save <- predata
+
+## On récupère les coordonnées et on les transforme en Lambert 93
+coordinates(predata) <- c("longitude", "latitude")
+proj4string(predata) <- CRS("+init=epsg:4326") # Actuellement, epsg = 4326 : WGS84
+
+## On créé un predata temporaire avec toutes les informations nécessaires
+predata_l93 <- spTransform(predata, CRS("+init=epsg:2154")) # on veut, epsg = 2154 : Lambert93
+
+## On récupère les coordonnées en X et Y
+coord_l93 <- as.data.frame(coordinates(predata_l93))
+
+## On remplace dans predata les X, Y faux par les nouvelles coordonnées X, Y en L93
+predata <- predata_save
+predata$X <- coord_l93$longitude
+predata$Y <- coord_l93$latitude
+```
+
+### `distdata`
+
+```{r}
+distdata_save <- distdata
+
+## On récupère les coordonnées et on les transforme en Lambert 93
+coordinates(distdata) <- c("longitude", "latitude")
+proj4string(distdata) <- CRS("+init=epsg:4326") # Actuellement, epsg = 4326 : WGS84
+
+## On créé un predata temporaire avec toutes les informations nécessaires
+distdata_l93 <- spTransform(distdata, CRS("+init=epsg:2154")) # on veut, epsg = 2154 : Lambert93
+
+## On récupère les coordonnées en X et Y
+coord_l93 <- as.data.frame(coordinates(distdata_l93))
+
+## On remplace dans predata les X, Y faux par les nouvelles coordonnées X, Y en L93
+distdata <- distdata_save
+distdata$X <- coord_l93$longitude
+distdata$Y <- coord_l93$latitude
+```
+
+### `gridata`
+
+```{r}
+gridata_save <- gridata
+## On récupère les coordonnées et on les transforme en Lambert 93
+coordinates(gridata) <- c("lon", "lat")
+proj4string(gridata) <- CRS("+init=epsg:4326") # Actuellement, epsg = 4326 : WGS84
+
+## On créé un predata temporaire avec toutes les informations nécessaires
+gridata_l93 <- spTransform(gridata, CRS("+init=epsg:2154")) # on veut, epsg = 2154 : Lambert93
+
+## On récupère les coordonnées en X et Y
+coord_l93 <- as.data.frame(coordinates(gridata_l93))
+
+## On remplace dans predata les X, Y faux par les nouvelles coordonnées X, Y en L93
+gridata <- gridata_save
+gridata$X <- coord_l93$longitude
+gridata$Y <- coord_l93$latitude
+```
+
+## Nettoyage de l'environnement
+```{r}
+rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
+						"distata_l93", "effort_output", "list_prepare_obs_by_sp",
+						"distdata_l93", "predata_l93", "gridata_l93",
+						"predata_output", "column", "i", "mean_cov", "sd_cov",
+						"gridata_save", "predata_save", "obsdata_save", "distdata_save"))
 ```
 
 
@@ -401,13 +482,13 @@ selec_dsm_aic_fwd <- function(segdata, obsdata, detfc,
 ```{r}
 vct.spline.test = c("s(X, Y)", "s(depth)", "s(slopeP)", "s(distCoast)", "s(dist200)", "s(CHL_4w_mea)", "s(CHL_4w_sd)", "s(SST_4w_mea)", "s(SST_4w_sd)", "s(POC_4w_mea)")
 
-selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = predata_output$segdata, obsdata = obsdata, 
+selec_dsm_av1 <- selec_dsm_aic_fwd(segdata = segdata, obsdata = obsdata, 
 									detfc = detfc.sea.hr,
 									vct.spline.test = vct.spline.test,
 									availability = 1)
 selec_dsm_av1
 dsm_av1 <- selec_dsm_av1$dsm.selec
-dsm_av1.pred <- predict(dsm_av1, predata_output$predata, predata_output$predata$Area)
+dsm_av1.pred <- predict(dsm_av1, predata, predata$Area)
 ```
 
 ## dsm pour `availability = 0.41`
