@@ -97,7 +97,7 @@ segdata2
 
 segdata3 <- predata_output$segdata
 segdata4 <- segdata
-segdata4$Sample.Label <- factor(segdata4$Seg)
+segdata4$Sample.Label <- factor(segdata4$Sample.Label)
 
 ```
 
@@ -174,7 +174,7 @@ detfc.sea <- Distance::ds(distdata,
 summary(detfc.sea)
 par(mfrow=c(1,2))
 plot(detfc.sea, showpoints=FALSE, pl.den=0, lwd=2)
-add_df_covar_line(detfc.sea, data.frame(seaState=levels(distdata$seaState)), pdf=TRUE)
+add_df_covar_line(detfc.sea, data.frame(seaState=na.omit(unique(distdata$seaState))), pdf=TRUE)
 legend(1.5, 1, 0:3, lty=1:4)
 
 ddf.gof(detfc.sea$ddf)
