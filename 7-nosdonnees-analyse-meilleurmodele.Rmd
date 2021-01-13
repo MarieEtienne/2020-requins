@@ -567,74 +567,82 @@ empty.map <- ggmap(get_map(
 		f = 1
 	),
 	zoom = 8,
-	maptype = "terrain"
+	maptype = "satellite"
 ))
+empty.map
 ```
 
 ### Session 2 et availability = 1
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s2_av1.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 2,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
 ```
 
 ### Session 3 et availability = 1
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s3_av1.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 3,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
+
 ```
 
 ### Session 2 et availability = 0.41
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s2_av041.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 2,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
 ```
 
 ### Session 3 et availability = 0.41
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s3_av041.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 3,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
 ```
 
 ### Session 2 et availability = off/on shelf
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s2_avshelf.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 2,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
 ```
 
 ### Session 3 et availability = off/on shelf
 
-```{r}
+```{r, fig.height=10, fig.width=7}
 get_map_abundance(empty.map = empty.map,
 									dsm.pred = dsm_s3_avshelf.pred,
 									predata_tmp = predata_tmp2, 
 									session_selec = 3,
 									segdata = segdata,
-									distdata = distdata)
+									distdata = distdata,
+									pal = c("#4B5755", "#D68763"))
 ```
 
 # Corrélation covariables
@@ -649,5 +657,20 @@ library(FactoMineR)
 library(Factoshiny)
 
 FactoMineR::PCA(predata[,7:15])
+```
+
+# Extrapolation sur gridata
+```{r}
+predata_tmp2 <- predata %>% filter(session == 2)
+predata_tmp3 <- predata %>% filter(session == 3)
+
+dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_tmp3, predata_tmp3$Area)
+
+dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_tmp2, predata_tmp2$Area)
+dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_tmp3, predata_tmp3$Area)
+
+dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_tmp2, predata_tmp2$Area)
+dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_tmp3, predata_tmp3$Area)
 ```
 
