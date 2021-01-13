@@ -1,14 +1,24 @@
-get_map_abundance <- function(empty.map,
+get_map_abundance_extr <- function(empty.map,
 															dsm.pred,
-															predata_tmp,
+															dsm.pred.extr,
+															predata_tmp, gridata_tmp,
 															session_selec,
-															segdata,
-															distdata,
+															segdata, distdata,
 															pal){
 	# Carte vide
 	res <- empty.map +
-
-		# Raster d'abondance des requins
+		
+		# Raster d'abondance des requins (extrapolé)
+		geom_raster(data = as.data.frame(
+			cbind(
+				x = gridata_tmp$lon,
+				y = gridata_tmp$lat,
+				abondance = dsm.pred.extr
+			)
+		),
+		aes(x = x, y = y, fill = abondance, alpha = 0.3)) +
+		
+		# Raster d'abondance des requins (zone d'étude)
 		geom_raster(data = as.data.frame(
 			cbind(
 				x = predata_tmp$longitude,
@@ -25,22 +35,19 @@ get_map_abundance <- function(empty.map,
 			size = 0.3,
 			colour = alpha("black", 0.2)
 		) +
-
+		
 		# Points de la session
 		geom_point(data = (distdata %>% filter(session == session_selec)),
 							 aes(x = longitude, y = latitude, col = session)) +
-
+		
 		# Thème et couleurs
 		theme_void() +
-		theme(legend.position = "bottom",
-					legend.background = element_rect(fill = "#D7E0E0", color = NA)) +
+		# scale_fill_viridis() +
 		scale_fill_gradientn(colours = pal, name = " ") +
 		scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4)) +
 		coord_fixed(ratio = 1.5) +
 		guides(col = FALSE,
-					 fill = guide_colourbar(ticks = F, barwidth = 10, barheight = 1,
-					 											 label.theme = element_text(size = 12),
-					 											 direction = "horizontal"))
+					 fill = guide_colourbar(barwidth = 0.5, barheight = 10))
 	
 	return(res)
 	
