@@ -35,12 +35,12 @@ get_map_abundance <- function(empty.map,
 		theme(legend.position = "bottom") +
 		scale_fill_gradientn(colours = pal, name = " ", 
 												 limits=c(0,ceiling(max(dsm.pred))),
-												 breaks = seq(from = 0, to = ceiling(max(dsm.pred)), length.out = 5)
+												 breaks = round(seq(from = 0, to = ceiling(max(dsm.pred)), length.out = 5),1)
 												 ) +
 		scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4)) +
 		coord_fixed(ratio = 1.5) +
 		guides(col = FALSE,
-					 fill = guide_colourbar(ticks = F, barwidth = 35, barheight = 4,
+					 fill = guide_colourbar(ticks = F, barwidth = 28, barheight = 4,
 					 											 label.theme = element_text(color = "#4B5755", size = 40),
 					 											 direction = "horizontal"))
 	
