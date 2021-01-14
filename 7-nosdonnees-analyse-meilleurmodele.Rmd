@@ -439,7 +439,7 @@ dsm_s2_av1 <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 1)
@@ -451,7 +451,7 @@ dsm_s2_av1 <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = 1)
@@ -492,7 +492,7 @@ dsm_s3_av1 <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 1)
@@ -504,7 +504,7 @@ dsm_s3_av1 <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = 1)
@@ -524,7 +524,7 @@ dsm_s2_av041 <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 0.41)
@@ -536,7 +536,7 @@ dsm_s2_av041 <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = 0.41)
@@ -554,7 +554,7 @@ dsm_s3_av041 <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = 0.41)
@@ -566,7 +566,7 @@ dsm_s3_av041 <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = 0.41)
@@ -600,7 +600,7 @@ dsm_s2_avshelf <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = availability)
@@ -612,7 +612,7 @@ dsm_s2_avshelf <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = availability)
@@ -632,7 +632,7 @@ dsm_s3_avshelf <- dsm(
 				segment.data = segdata_tmp,
 				observation.data = obsdata_tmp,
 				method = 'REML',
-				family = tw(),
+				family = nb(),
 				engine = 'gam',
 				gamma = 1.4,
 				availability = availability)
@@ -644,7 +644,7 @@ dsm_s3_avshelf <- dsm(
 # 				segment.data = segdata_tmp,
 # 				observation.data = obsdata_tmp,
 # 				method = 'REML',
-# 				family = tw(),
+# 				family = nb(),
 # 				engine = 'gam',
 # 				gamma = 1.4,
 # 				availability = availability)
