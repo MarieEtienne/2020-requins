@@ -887,3 +887,20 @@ get_map_abundance_extr(empty.map = empty.map2,
 									pal = c("#4B5755", "#D68763"))
 ```
 
+# Exportation des résultats en Rdata
+```{r}
+# Fonction de détection
+save(detfc.sea.hr,
+		 file = "resultats/detfc.Rdata")
+
+# Modèles : dsm
+save(dsm_s2_av1, dsm_s2_av041, dsm_s2_avshelf,
+		 dsm_s3_av1, dsm_s3_av041, dsm_s3_avshelf,
+		 file = "resultats/modeles_dsm.RData")
+
+# Résultats de la prédiction : dsm.pred
+save(dsm_s2_av1.pred, dsm_s2_av041.pred, dsm_s2_avshelf.pred,
+		 dsm_s3_av1.pred, dsm_s3_av041.pred, dsm_s3_avshelf.pred,
+		 file = "resultats/modeles_dsm.pred.RData")
+```
+
