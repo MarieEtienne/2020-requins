@@ -175,10 +175,14 @@ h5, .h5 {
 }
 
 h6, .h6 {
-    font-size: 1.3rem;
-    line-height: 1.385;
-    text-transform: uppercase;
-    letter-spacing: .16rem;
+    font-family: "montserrat-bold", sans-serif;
+    font-size: 6rem;
+    line-height: 1;
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 p img {
