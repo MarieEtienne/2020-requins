@@ -25,7 +25,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Importations 
+## Importations
+
 ```{r import_packages}
 # Packages
 library(dplyr)				# tidyverse
@@ -36,6 +37,11 @@ library(lubridate)		# dates
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
 library(viridis)
+<<<<<<< Updated upstream
+=======
+library(ggpubr)
+library(plotly)
+>>>>>>> Stashed changes
 
 # Packages calcul
 library(Distance)
@@ -254,6 +260,7 @@ gridata$Y <- coord_l93$lat
 ```
 
 ## Nettoyage de l'environnement
+
 ```{r}
 rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
 						"distata_l93", "effort_output", "list_prepare_obs_by_sp",
@@ -261,7 +268,6 @@ rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
 						"predata_output", "column", "i", "mean_cov", "sd_cov",
 						"gridata_save", "predata_save", "obsdata_save", "distdata_save"))
 ```
-
 
 # Fonction de détection
 
@@ -291,6 +297,7 @@ add_df_covar_line(detfc.sea.hr, data.frame(seaState=na.omit(unique(distdata$seaS
 
 legend(1.5, 1, 0:3, lty=1:5)
 ```
+
 ```{r}
 plot(
 	detfc.sea.hr,
@@ -305,6 +312,7 @@ plot(
 add_df_covar_line(detfc.sea.hr, data.frame(seaState = na.omit(unique(distdata$seaState))), pdf = TRUE)
 
 ```
+
 ```{r}
 # Scaling factor needed for correct plotting
 # From mrds:::scalevalue
@@ -374,10 +382,10 @@ expected.counts <-
 expected.counts <-
 	apply(expected.counts, 1, sumit, n = 1001, wt = pdot)
 
+h1 <- hist(distdata[distdata$distance <= 0.30, ]$distance, breaks = seq(0, 0.3, 0.3/11))
 # Re-scale the counts
 h1$counts <- h1$counts / expected.counts
 ```
-
 
 ```{r fig.height=6, fig.}
 gghist <- obsdata %>% 
@@ -421,7 +429,6 @@ dev.off()
 
 ```
 
-
 # Fonction de densité (covariables communes par session)
 
 ## dsm pour $availability = 1$
@@ -458,11 +465,13 @@ dsm_s2_av1 <- dsm(
 ```
 
 On peut visualiser le modèle GAM ajusté
+
 ```{r}
 plot_pred_by_term(dsm_s2_av1, 
 									predata, 
 									c("longitude","latitude")) + scale_fill_viridis()
 ```
+
 ```{r fig.height = 8}
 par(mfrow = c(2,2))
 plot.gam(dsm_s2_av1)
@@ -470,15 +479,11 @@ plot.gam(dsm_s2_av1)
 
 > Lignes pointillées : 95% confidence interval for the mean shape of the effect.
 
-
 ```{r}
 # pred_splines(segdata = segdata,
 # 						 dsm_model = dsm_s2_av1,
 # 						 splines_by = "session")
 ```
-
-
-
 
 ### Session 3 (mois 07 et 08)
 
@@ -686,7 +691,6 @@ print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(
 
 Alors la colonne Area est exprimée en km²,Dans la plupart des tables (lorsqu'il ne s'agit pas d'une grille) Area va correspondre à l'aire total de la zone d'étude, par exemple pour distdata, la colonne Area va avoir une seule valeur qui est 14947 km² correspondant à l'aire de la zone SPEE.Dans les tables qui correspondent à des grilles (predata et gridata) Area correspond à l'aire de chaque cellule, les valeurs peuvent légèrement varier à cause du système de géoréférencement utilisé. Pour toutes les grilles la résolution est de 2 x 2 km.NB : les coordonnées "X" et "Y" ed predata sont en Lambert93
 
-
 ```{r}
 summary(dsm_s2_av1.pred)
 summary((segdata %>% filter(month(date) == 5 | month(date) == 6))$POC_4w_mea)
@@ -815,7 +819,19 @@ map
 dev.off()
 ```
 
+```{r}
+map <- get_map_abundance(empty.map = empty.map,
+									dsm.pred = dsm_s3_avshelf.pred,
+									predata_tmp = predata_tmp3, 
+									session_selec = 3,
+									segdata = segdata,
+									distdata = distdata)
+
+map
+```
+
 # Corrélation covariables
+
 ```{r}
 library(corrplot)
 corrplot(cor(segdata[,15:23]), method="circle")
@@ -830,7 +846,9 @@ FactoMineR::PCA(predata[,7:15])
 ```
 
 # Extrapolation sur gridata
+
 ## predict
+
 ```{r}
 gridata_tmp2 <- gridata %>% filter(session == 2)
 gridata_tmp3 <- gridata %>% filter(session == 3)
@@ -850,6 +868,7 @@ sum(dsm.pred.extr)
 ```
 
 ## Carte
+
 ```{r}
 empty.map = empty.map;dsm.pred = dsm_s2_av1.pred; dsm.pred.extr = dsm_s2_av1.pred.extr; predata_tmp = predata_tmp2; gridata_tmp = gridata_tmp2; session_selec = 2; segdata = segdata; distdata = distdata; pal = c("#4B5755", "#D68763")
 
@@ -871,8 +890,7 @@ empty.map2 <- ggmap(get_map(
 	location = make_bbox(
 		lon = c(min(gridata$lon), max(gridata$lon)),
 		lat = c(min(gridata$lat), max(gridata$lat)),
-		f = 0.
-	),
+		f = 1),
 	zoom = 6,
 	maptype = "satellite"
 ))
@@ -888,6 +906,7 @@ get_map_abundance_extr(empty.map = empty.map2,
 ```
 
 # Exportation des résultats en Rdata
+
 ```{r}
 # Fonction de détection
 save(detfc.sea.hr,
@@ -903,4 +922,3 @@ save(dsm_s2_av1.pred, dsm_s2_av041.pred, dsm_s2_avshelf.pred,
 		 dsm_s3_av1.pred, dsm_s3_av041.pred, dsm_s3_avshelf.pred,
 		 file = "resultats/modeles_dsm.pred.RData")
 ```
-
