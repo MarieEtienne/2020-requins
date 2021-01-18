@@ -9,84 +9,35 @@ server <- function(input, output) {
   
   # Basic Numbers Page --------------------------------------------------------------
   
-  # Number of trips text in UI
+  # Nombres de requins dans session 2
   output$num_sharks_s2_av1 <- reactive({
     dsm_s2_av1.pred %>% sum() %>% round()
   })
   
-  # Number of kilometers
-  n_distance <- reactive({
-    d_clean %>% 
-      pull(distance_miles) %>% 
-      sum() * 1.6
+  output$num_sharks_s2_av041 <- reactive({
+    dsm_s2_av041.pred %>% sum() %>% round()
   })
   
-  # Number of kilometers in UI
-  output$num_distance <- renderText({
-    d_clean %>% 
-      pull(distance_miles) %>% 
-      sum(na.rm = T) * 1.6
+  output$num_sharks_s2_avshelf <- reactive({
+    dsm_s2_avshelf.pred %>% sum() %>% round()
   })
   
-  output$longest_trip_distance_text <- renderText({
-    d_clean %>% 
-      pull(distance_miles) %>% 
-      max(na.rm = T) * 1.6
+  # Nombres de requins dans session 3
+  output$num_sharks_s3_av1 <- reactive({
+    dsm_s3_av1.pred %>% sum() %>% round()
   })
   
-  # Number of hours spent calculation
-  d_duration <- reactive({
-    d_clean %>% 
-      mutate(duration = dropoff_time - begin_trip_time) %>% 
-      select(duration) %>% 
-      filter(duration > 0) %>% 
-      pull(duration) 
+  output$num_sharks_s3_av041 <- reactive({
+    dsm_s3_av041.pred %>% sum() %>% round()
   })
   
-  # Number of hours in UI
-  output$num_hours <- renderText({
-    d_duration() %>% 
-      sum() %>% 
-      as.numeric()/3600 %>% 
-      round(., 1)
+  output$num_sharks_s3_avshelf <- reactive({
+    dsm_s3_avshelf.pred %>% sum() %>% round()
   })
+
   
-  # Longest trip time
-  output$longest_trip_time_text <- renderText({
-    d_duration() %>% 
-      max(na.rm = T) %>% 
-      as.numeric()/60 %>% 
-      round(., 1)
-  })
   
-  # Calculation for number of USD spent
-  n_dollars_spent <- reactive({
-    d_clean %>% 
-      left_join(d_currency_rates, by = "fare_currency") %>% 
-      mutate(usd_spent = fare_amount * rate) %>% 
-      select(usd_spent) %>% 
-      pull(usd_spent) %>% 
-      sum(na.rm = T) %>% 
-      round()
-  })
-  
-  # Number of USD spent
-  output$num_dollars_spent <- renderText({
-    n_dollars_spent()
-  })
-  
-  most_expensive_trip <- reactive({
-    d_clean %>% 
-      left_join(d_currency_rates, by = "fare_currency") %>% 
-      mutate(usd_spent = fare_amount * rate) %>% 
-      filter(usd_spent == max(usd_spent, na.rm = T))
-  })
-  
-  output$most_expensive_trip_text <- renderText({
-    most_expensive_trip() %>% 
-      pull(usd_spent)
-  })
-  
+
 
   
   

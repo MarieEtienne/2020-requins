@@ -1785,7 +1785,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     width: 100%;
     height: 100%;
     vertical-align: middle;
-    padding-bottom: 15.6rem;
+    padding-bottom: 5rem;
     position: relative;
     overflow: hidden;
 }
@@ -1811,12 +1811,12 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 .home-content__main {
-    padding-top: 24rem;
+    padding-top: 0rem; /* pour remonter le titre abondance etc */
     position: relative;
 }
 
 .home-content__buttons {
-    padding-top: 6rem;
+    padding-top: 0rem;
     text-align: left;
 }
 
@@ -2078,7 +2078,7 @@ html.no-csstransitions .home-content__main {
         display: none;
     }
     .home-content__main {
-        padding-top: 21rem;
+        padding-top: 10rem;
         padding-right: 80px;
         max-width: 680px;
     }
@@ -2198,7 +2198,7 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-about {
-    padding-top: 16.2rem;
+    padding-top: 7rem; /*16.2 changé en 10 pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
     padding-bottom: 9rem;
     background-color: #4B5755;
     color: #010507;
@@ -2368,7 +2368,7 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-services {
-    padding-top: 16.2rem;
+    padding-top: 8rem;
     padding-bottom: 13.2rem;
     background-color: #FFFFFF;
     color: #757575;

@@ -9,47 +9,43 @@ ui = shiny::htmlTemplate(
   # Index Page
   "www/index.html",
   
-  # Number of trips
+  # Nombre de session
   number_of_trips = "4",
   
   
-  number_sharks_s2_av1 = textOutput(
+  #SESSION 2 AV1
+  num_sharks_s2_av1 = textOutput(
     "num_sharks_s2_av1",
     inline = T
   ),
   
-  # Number of hours
-  num_hours_text = textOutput(
-    "num_hours",
+  #SESSION 2 AV041
+  num_sharks_s2_av041 = textOutput(
+    "num_sharks_s2_av041",
+    inline = T
+  ),
+
+  #SESSION 2 AVSHELF
+  num_sharks_s2_avshelf = textOutput(
+    "num_sharks_s2_avshelf",
     inline = T
   ),
   
-  # Longest Trip
-  longest_trip_time = textOutput(
-    "longest_trip_time_text",
+  #SESSION 3 AV1
+  num_sharks_s3_av1 = textOutput(
+    "num_sharks_s3_av1",
     inline = T
   ),
   
-  # Number of Kms
-  num_distance_text = textOutput(
-    "num_distance",
+  #SESSION 3 AV041
+  num_sharks_s3_av041 = textOutput(
+    "num_sharks_s3_av041",
     inline = T
   ),
   
-  longest_trip_distance = textOutput(
-    "longest_trip_distance_text",
-    inline = T
-  ),
-  
-  # Expensive Trip
-  
-  num_dollars_spent = textOutput(
-    "num_distance",
-    inline = T
-  ),
-  
-  expensive_trip = textOutput(
-    "most_expensive_trip_text",
+  #SESSION 3 AVSHELF
+  num_sharks_s3_avshelf = textOutput(
+    "num_sharks_s3_avshelf",
     inline = T
   ),
   
