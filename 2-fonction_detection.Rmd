@@ -1,0 +1,445 @@
+---
+title: "Appropriation des données"
+subtitle: "Histogramme des distances au transect et fonction de détection"
+author: "Léa Pautrel"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	error = TRUE
+)
+
+# Packages
+library(dplyr)				# tidyverse
+library(foreign)			# read.dbf
+library(DT)						# interactive HTML datatables
+
+## Graphes packages
+library(ggplot2) ; ggplot2::theme_set(theme_light())
+library(ggmap)
+library(wesanderson)
+library(ggpubr)
+library(plotly)
+library(cowplot)
+
+## Packages calcul
+library(Rdistance)
+```
+
+------------------------------------
+
+Importation des données
+
+```{r import_donnees}
+load("../data/effort_output.RData")
+# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
+
+load("../data/list_prepare_obs_by_sp.RData")
+# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
+
+load("../data/predata_output.RData")
+# predata_output : A grid of 2km cells size with different covariable associated around the observation.
+
+gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+# gridata : equivalent to predata from predata_output but with a extended surface
+```
+
+# Distances au transect
+## Histogramme : comptage
+```{r fig.height = 4}
+list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>% 
+  ggplot(aes(x = distance)) +
+  geom_histogram(bins = 15, col = "white")
+```
+
+## Histogramme : densité
+```{r fig.height = 4}
+list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata %>%
+	gghistogram(
+		x = "distance",
+		y = "..density..",
+		bins = 15,
+		add = "mean",
+		rug = TRUE,
+		fill = "blue",
+		col = "darkblue",
+		add_density = TRUE
+	)
+```
+
+## Calcul de la fonction de détection : sans covariables
+
+```{r fig.width=10}
+obsdata <- list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata
+```
+
+### Comparaison des effets des différentes loi pour la vraisemblance
+
+Création d'une fonction `compare_loi_vrais` qui prend en arguments le tableau de données et la formula (`distance ~ 1` ou `distance ~ covar1 + covar2`), et renvoie un graphique qui compare les 5 lois de distributions disponibles pour la vraisemblance.
+
+Remarque : pointSurvey = FALSE car transects
+```{r fig.width=10, include=FALSE}
+compare_loi_vrais <- function(tableau, formula){
+	
+	dfunc1 <- Rdistance::dfuncEstim(
+		formula = formula,
+		detectionData = tableau,
+		siteData = tableau,
+		likelihood = "uniform",
+		w.hi = 0.3
+	)
+	
+	dfunc2 <- Rdistance::dfuncEstim(
+		formula = formula,
+		detectionData = tableau,
+		siteData = tableau,
+		likelihood = "halfnorm",
+		w.hi = 0.3
+	)
+	
+	
+	dfunc3 <- Rdistance::dfuncEstim(
+		formula = formula,
+		detectionData = tableau,
+		siteData = tableau,
+		likelihood = "hazrate",
+		w.hi = 0.3
+	)
+	
+	
+	dfunc4 <- Rdistance::dfuncEstim(
+		formula = formula,
+		detectionData = tableau,
+		siteData = tableau,
+		likelihood = "negexp",
+		w.hi = 0.3
+	)
+	
+	
+	dfunc5 <- Rdistance::dfuncEstim(
+		formula = formula,
+		detectionData = tableau,
+		siteData = tableau,
+		likelihood = "Gamma",
+		w.hi = 0.3
+	)
+	
+	par(mfrow = c(2, 3))
+	plot(dfunc1)
+	plot(dfunc2)
+	plot(dfunc3)
+	plot(dfunc4)
+	plot(dfunc5)
+}
+```
+
+Sans covariables, on obtient ceci :
+
+```{r fig.width=10}
+compare_loi_vrais(tableau = list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[,c(1,3)],
+									formula = "distance ~ 1")
+```
+
+## Fonction de détection : ajout des covariables
+
+```{r, echo = TRUE}
+head(obsdata[,c(3,5,6)])
+```
+
+Dans obsdata, on a aussi les segments de transect `Seg` et le `Sample.Label`. On pourra donc lier les données obs et les données covariables sur l'une de ces variables.
+```{r, echo = TRUE}
+cov_segment <- predata_output$segdata
+dim(cov_segment)
+head(cov_segment[, c(3,5,4)])
+```
+
+On va alors pouvoir récupérer plusieurs covariables intéressantes :
+
+```{r}
+cov_segment[1:3,15:23] %>% as_tibble()
+```
+
+* La profondeur `depth`
+* La distance par rapport à la côte `distCoast`
+* ?? `dist200`
+* La pente `slopeP`
+* ?? `CHL_4w_mea` `CHL_4w_sd`  `SST_4w_mea` `SST_4w_sd`  `POC_4w_mea`
+
+### Manipulation des données : création d'une table avec les observations et les covariables
+
+**Quelle est la clé unique de cov_segment ? Seg ou Sample.Label ?**
+
+```{r, echo = TRUE}
+nrow(cov_segment)
+nrow(distinct(cov_segment, Seg))
+nrow(distinct(cov_segment, Sample.Label))
+```
+
+Il s'agit de Seg. On va donc joindre sur Seg. On obtient le tableau suivant
+
+```{r}
+# Jointure
+obs_cov_sample <- dplyr::left_join(obsdata, cov_segment, by = "Seg")
+
+# Réarrangement des colonnes
+obs_cov_sample <- obs_cov_sample[, c(3, 5:11, 1:2, 14:31)]
+colnames(obs_cov_sample)[1] = "Transect.Label"
+colnames(obs_cov_sample)[2] = "Seg"
+
+# Affichages
+DT::datatable(obs_cov_sample)
+```
+
+# Fonctions de détection avec covariables
+## Fonction de détection en fonction de l'état de la mer
+
+```{r echo=TRUE}
+# Initialisation
+formula <- "distance ~ seaState"
+sharkDetectionData <- data.frame("Seg" = obs_cov_sample$Seg,
+														"groupsize" = obs_cov_sample$size,
+														"distance" = obs_cov_sample$distance)
+head(sharkDetectionData)
+
+sharkSiteData <- data.frame("Seg" = obs_cov_sample$Seg,
+											 "seaState" = as.factor(obs_cov_sample$seaState))
+head(sharkSiteData)
+
+# Estimation de la fonction de détection
+shark_dfunc <- Rdistance::dfuncEstim(
+	formula = formula,
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+
+# Affichage
+plot(shark_dfunc,
+		 newdata = data.frame(seaState = levels(sharkSiteData$seaState)))
+```
+
+## Fonction de détection en fonction de la profondeur, la distance par rapport à la côte et la pente
+```{r}
+# sharkDetectionData
+sharkDetectionData <- data.frame(
+	"Seg" = obs_cov_sample$Seg,
+	"groupsize" = obs_cov_sample$size,
+	"distance" = obs_cov_sample$distance
+)
+head(sharkDetectionData)
+
+#sharkSiteData
+sharkSiteData <- data.frame(
+	"Seg" = obs_cov_sample$Seg,
+	"depth" = obs_cov_sample$depth,
+	"distCoast" = obs_cov_sample$distCoast,
+	"slopeP" = obs_cov_sample$slopeP
+)
+
+# Discrétisation des covariables
+sharkSiteData$depth = factor(cut(
+	x = sharkSiteData$depth,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+sharkSiteData$distCoast = factor(cut(
+	x = sharkSiteData$distCoast,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+sharkSiteData$slopeP = factor(cut(
+	x = sharkSiteData$slopeP,
+	breaks = 3,
+	labels = c("Faible", "Moyen", "Eleve")
+))
+# Affichage
+head(sharkSiteData)
+```
+
+
+### depth (profondeur)
+```{r}
+shark_dfunc_p <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p
+```
+
+### distCoast
+```{r}
+shark_dfunc_d <- Rdistance::dfuncEstim(
+	formula = "distance ~ distCoast",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_d
+```
+
+### slopeP
+```{r}
+shark_dfunc_s <- Rdistance::dfuncEstim(
+	formula = "distance ~ slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_s
+```
+
+### depth (p) + distCoast
+```{r}
+shark_dfunc_p_d <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + distCoast",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_d
+```
+
+### depth (p) + slopeP
+```{r}
+shark_dfunc_p_s <- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_s
+```
+
+### distCoast + slopeP
+```{r}
+shark_dfunc_d_s<- Rdistance::dfuncEstim(
+	formula = "distance ~ distCoast + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_d_s
+```
+
+### depth (p) + distCoast + slopeP
+```{r}
+shark_dfunc_p_d_s<- Rdistance::dfuncEstim(
+	formula = "distance ~ depth + distCoast + slopeP",
+	detectionData = sharkDetectionData,
+	siteData = sharkSiteData,
+	likelihood = "halfnorm",
+	w.hi = 0.3,
+	pointSurvey = FALSE
+)
+shark_dfunc_p_d_s
+```
+
+### Resultats graphiques
+
+**Résultats **
+
+```{r fig.height = 15, fig.width=10}
+plot_dfunc_lea <- function(dfunc_res, newdata, titre = "") {
+	plot(
+		dfunc_res,
+		newdata = newdata,
+		nbins = 15,
+		col = "#BDD9D6",
+		border = 0,
+		vertLines = FALSE,
+		main = titre
+	)
+}
+
+par(mfrow = c(3, 2))
+
+### depth (profondeur)
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p,
+	newdata = data.frame(depth = levels(sharkSiteData$depth)),
+	titre = "depth"
+)
+
+### distCoast
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_d,
+	newdata = data.frame(distCoast = levels(sharkSiteData$distCoast)),
+	titre = "distCoast"
+)
+
+### slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_s,
+	newdata = data.frame(slopeP = levels(sharkSiteData$slopeP)),
+	titre = "slopeP"
+)
+
+### depth (p) + distCoast
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_d,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		distCoast = levels(sharkSiteData$distCoast)
+	),
+	titre = "depth + distCoast"
+)
+
+### depth (p) + slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_s,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "depth  + slopeP"
+)
+
+### distCoast + slopeP
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_d_s,
+	newdata = expand.grid(
+		distCoast = levels(sharkSiteData$distCoast),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "distCoast + slopeP"
+)
+```
+
+
+```{r fig.height = 8, fig.width=10}
+plot_dfunc_lea(
+	dfunc_res = shark_dfunc_p_d_s,
+	newdata = expand.grid(
+		depth = levels(sharkSiteData$depth),
+		distCoast = levels(sharkSiteData$distCoast),
+		slopeP = levels(sharkSiteData$slopeP)
+	),
+	titre = "depth + distCoast + slopeP"
+)
+```

@@ -1,0 +1,167 @@
+---
+title: "Appropriation des données"
+subtitle: "Exploration des tableaux de données et carte d'occurrences"
+author: "Léa Pautrel"
+output:
+  html_document:
+    highlight: zenburn
+    number_sections: yes
+    theme: yeti
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE
+)
+
+# Packages
+library(dplyr)				# tidyverse
+library(foreign)			# read.dbf
+library(DT)						# interactive HTML datatables
+
+## Graphes packages
+library(ggplot2) ; ggplot2::theme_set(theme_light())
+library(ggmap)
+library(wesanderson)
+library(ggpubr)
+library(plotly)
+library(cowplot)
+
+
+## Packages calcul
+library(Rdistance)
+```
+
+------------------------------------
+
+# Importation des données
+```{r import_donnees}
+load("../data/effort_output.RData")
+# effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
+
+load("../data/list_prepare_obs_by_sp.RData")
+# list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
+
+load("../data/predata_output.RData")
+# predata_output : A grid of 2km cells size with different covariable associated around the observation.
+
+gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+# gridata : equivalent to predata from predata_output but with a extended surface
+```
+
+## effort_ouput : données d'effort (sous-données selon échelle d'étude)
+```{r}
+DT::datatable(summary(effort_output))
+```
+
+### legdata (transposé)
+```{r}
+DT::datatable(t(effort_output$legdata[1:3,]))
+```
+
+### segdata
+```{r}
+DT::datatable(t(effort_output$segdata[1:3,]))
+```
+
+## list_prepare_obs_by_sp$PRIGLA_obs_output : données d'observation pour le requin peau bleue (sous-données selon échelle d'étude)
+```{r}
+DT::datatable(summary(list_prepare_obs_by_sp$PRIGLA_obs_output))
+```
+
+### distdata
+```{r}
+DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$distdata[1:3,]))
+```
+
+### obsdata
+```{r}
+DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$obsdata[1:3,]))
+```
+
+### countdata_leg : nombre de requins comptés au total pour chacun des 35 transects
+```{r, echo = TRUE}
+dim(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_leg)
+DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_leg[1:3,]))
+```
+
+### countdata_seg : nombre de requins comptés au total pour les différents segments des 35 transects
+```{r, echo = TRUE}
+dim(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_seg)
+DT::datatable(t(list_prepare_obs_by_sp$PRIGLA_obs_output$countdata_seg[1:3,]))
+```
+
+
+## predata_output : covariables, grille de 2 km
+```{r, echo = TRUE}
+DT::datatable(summary(predata_output))
+DT::datatable(t(predata_output$predata[1:3,]))
+DT::datatable(t(predata_output$segdata[1:3,]))
+```
+
+## gridata : covariables, surface étendue
+```{r}
+DT::datatable(t(gridata[1:3,]))
+```
+
+
+# Quelques infos utiles
+## Dates des sessions
+```{r}
+DT::datatable(
+	data.frame(
+		session = effort_output$segdata$session,
+		date = effort_output$segdata$date
+	) %>%
+		unique() %>%
+		arrange(session, date) %>%
+		group_by(session) %>%
+		mutate(dates_session = paste0(date, collapse = " + "))  %>%
+		select(session, dates_session) %>%
+		unique()
+)
+```
+
+```{r}
+summary(list_prepare_obs_by_sp$PRIGLA_obs_output$distdata$detected)
+```
+
+# Carte d'occurrences
+```{r fig.height = 8}
+data_occ <- list_prepare_obs_by_sp$PRIGLA_obs_output$distdata %>%
+	filter(detected == 1)
+segdata <- effort_output$segdata
+
+# Emplacement
+sbbox <- make_bbox(lon = c(min(data_occ$longitude), max(data_occ$longitude)),
+									 lat = c(min(data_occ$latitude), max(data_occ$latitude)),
+									 f = 1.4)
+
+# Création de la carte vide
+zone_obs <- get_map(location = sbbox,
+										zoom = 8,
+										maptype =  "terrain")
+
+zone_obs_map = ggmap(zone_obs) + theme_void()
+
+# Carte avec les points
+zone_obs_map +
+	geom_path(
+		data = segdata,
+		mapping = aes(x = longitude, y = latitude, group = Transect.Label),
+		size = 0.3,
+		colour = alpha("black", 0.2)
+	) +
+	geom_point(data = data_occ,
+						 aes(x = longitude,
+						 		y = latitude,
+						 		col = session)) +
+	theme_void() +
+	scale_color_manual(values = wesanderson::wes_palette("BottleRocket1", n = 4))
+	
+```
+
