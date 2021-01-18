@@ -9,20 +9,20 @@
 
     <!--- basic page needs
     ================================================== -->
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Abondance et répartition du requin peau bleue dans le golfe de Gascogne</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <!-- mobile specific metas
     ================================================== -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- CSS
     ================================================== -->
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/vendor.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/base.css"> <!--pas touche / style par defaut-->
+    <link rel="stylesheet" href="css/vendor.css"> <!--pas touche / preexistant-->
+    <link rel="stylesheet" href="css/main.css"> <!-- pour changer les formes-->
 
     <!-- script
     ================================================== -->
@@ -41,13 +41,13 @@
     
     <style>.selectize-dropdown {z-index: 10000}</style>
     
-</head>
+</head> <!--pas de contenu-->
 
-<body id="top">
+<body id="top"> <!--contenu-->
 
     <!-- header
     ================================================== -->
-    <header class="s-header">
+    <header class="s-header"> <!--MENU-->
 
         <nav class="header-nav">
 
@@ -66,13 +66,13 @@
     
                 <ul class="header-nav__social">
                     <li>
-                        <a href="https://www.agrocampus-ouest.fr/"><i class="fa fa-graduation-cap"></i></a>
+                        <a href="https://www.agrocampus-ouest.fr/" target="_blank"><i class="fa fa-graduation-cap"></i></a> <!--target = "_blank" : ouvre une nouvelle fenetre-->
                     </li>
                     <li>
-                        <a href="https://observatoire-pelagis.cnrs.fr/"><i class="fa fa-ship"></i></a>
+                        <a href="https://observatoire-pelagis.cnrs.fr/" target="_blank"><i class="fa fa-ship"></i></a>
                     </li>
                     <li>
-                        <a href="https://parc-marin-gironde-pertuis.fr/"><i class="fa fa-life-ring"></i></a>
+                        <a href="https://parc-marin-gironde-pertuis.fr/" target="_blank"><i class="fa fa-life-ring"></i></a>
                     </li>
                 </ul>
 
@@ -80,7 +80,7 @@
 
         </nav>  <!-- end header-nav -->
 
-        <a class="header-menu-toggle" href="#0">
+        <a class="header-menu-toggle" href="#0"> <!--bouton-->
             <span class="header-menu-text">Menu</span>
             <span class="header-menu-icon"></span>
         </a>
@@ -92,7 +92,7 @@
     ================================================== -->
     <section id="home" class="s-home target-section" data-parallax="scroll" data-image-src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Prionace_glauca_1.jpg" data-natural-width=3000 data-natural-height=2000 data-position-y=center>
 
-        <div class="overlay"></div>
+        <div class="overlay"></div> <!---->
         <div class="shadow-overlay"></div>
 
         <div class="home-content">
@@ -140,10 +140,15 @@
 
         <div class="row section-header has-bottom-sep" data-aos="fade-up">
             <div class="col-full">
-                <h3 class="subhead subhead--dark">Les données</h3>
-                <h1 class="display-1">
-                  Check out this data from our {{number_of_trips}} shark sessions
-                  </h1>
+                <h3 class="subhead subhead--dark">Les données</h3>  <!-- à mettre ici : données -->
+                <p> Les données sont blablabla </p> <!-- pour mettre un texte, faut rajouter la forme du text avec une class de CSS -->
+                <h3 class="subhead subhead--dark">Nombre de session</h3>  <!-- à mettre ici : données -->
+                <p> Liste session + dates </p>
+                <h3 class="subhead subhead--dark">Fonction de détection</h3>  <!-- à mettre ici : Fonction -->
+                <p> Fonction blablabla </p>
+                <img alt="Hi!" src="images/test.PNG"/> <!-- alt : alternative text, si jamais ca apparait pas --> <!-- image capture , test, faut mettre lhistogramme -->
+                <h3 class="subhead subhead--dark">Fonction de densité</h3>  <!-- à mettre ici : Fonction -->
+                <p> Fonction blablabla </p>
             </div>
         </div> <!-- end section-header -->
 
@@ -151,51 +156,54 @@
 
 
 
-        <div class="about__line"></div>
+        <div class="about__line"></div>   <!-- SEPARATEUR -->
 
     </section> 
     <!-- end methodes -->
     
     
-    <!-- estimation
+    <!-- estimation session 2
     ================================================== -->
     <section id='estimation' class="s-about">
 
         <div class="row section-header has-bottom-sep" data-aos="fade-up">
             <div class="col-full">
-                <h3 class="subhead subhead--dark">Hello There</h3>
-                <h1 class="display-1 display-1--light">
-                  Check out this data from our {{number_of_trips}} shark sessions
-                  </h1>
+                <h2 class="display-1--light">
+                  Estimation du nombre de requins 
+                </h2>
+                
+                <h3 class="display-1--light">
+                  Session 2 (Printemps)
+                </h3>
             </div>
-        </div> <!-- end section-header -->
-
-        <!-- end about-desc -->
+        </div> 
 
         <!--- NUMBERS BY INTEGRATING SHINY OUTPUT -->
         <div class="row about-stats stats block-1-3 block-m-1-2 block-mob-full" data-aos="fade-up">
                 
             <div class="col-block stats__col">
-                <div class="stats__count">
-                  {{number_sharks_s2_av1}}
+                <div class="stats__count">   <!-- problème avec l'animation, ca ne marche plus quand on rafraichit la page -->
+                  {{num_sharks_s2_av1}}
                 </div>
-                <h5>Hours Travelled</h5>
-                <h6>Longest trip (time) {{longest_trip_time}} minutes</h6>
+                <h5> Disponibilité 1</h5>
+
             </div>
+            
             <div class="col-block stats__col">
                 <div class="stats__count">
-                  {{num_distance_text}}
+                  {{num_sharks_s2_av041}}
                 </div>
-                <h5>Kilometres Travelled</h5>
-                <h6>Longest trip (distance) {{longest_trip_distance}} kms</h6>
+                <h5> Disponibilité 0.41</h5>
+
             </div>
+            
             <div class="col-block stats__col">
                 <div class="stats__count">
-                  <pre id="num_dollars_spent" class="shiny-text-output"></pre>
+                  {{num_sharks_s2_avshelf}}
                 </div>
-                <h5>US Dollars Spent</h5> 
-                <h6>Most expensive trip $ {{expensive_trip}} </h6>
-            </div> 
+                <h5>Disponibilité onshelf/offshelf</h5>
+
+            </div>
 
         </div> 
          <!--- END NUMBERS BY INTEGRATING SHINY OUTPUT -->
@@ -205,6 +213,60 @@
 
     </section> 
     <!-- end s-estimation -->
+
+<!-- estimation session 3
+    ================================================== -->
+    <section id='estimation' class="s-about">
+
+        <div class="row section-header has-bottom-sep" data-aos="fade-up">
+            <div class="col-full">
+                <h2 class="display-1--light">
+                  Estimation du nombre de requins 
+                </h2>
+                
+                <h3 class="display-1--light">
+                  Session 3 (Été)
+                </h3>
+            </div>
+        </div> 
+
+        <!--- NUMBERS BY INTEGRATING SHINY OUTPUT -->
+        <div class="row about-stats stats block-1-3 block-m-1-2 block-mob-full" data-aos="fade-up">
+                
+            <div class="col-block stats__col">
+                <div class="stats__count">
+                  {{num_sharks_s3_av1}}
+                </div>
+                <h5> Disponibilité 1</h5>
+
+            </div>
+            
+            <div class="col-block stats__col">
+                <div class="stats__count">
+                  {{num_sharks_s3_av041}}
+                </div>
+                <h5> Disponibilité 0.41</h5>
+
+            </div>
+            
+            <div class="col-block stats__col">
+                <div class="stats__count">
+                  {{num_sharks_s3_avshelf}}
+                </div>
+                <h5>Disponibilité onshelf/offshelf</h5>
+
+            </div>
+
+        </div> 
+         <!--- END NUMBERS BY INTEGRATING SHINY OUTPUT -->
+
+
+        <div class="about__line"></div>
+
+    </section> 
+    <!-- end s-estimation -->
+
+
 
 
     <!-- cartes ================================================== -->
