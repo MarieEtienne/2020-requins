@@ -9,6 +9,7 @@ get_map_abundance <- function(empty.map,
 															transects = TRUE,
 															observations = TRUE,
 															poster = FALSE) {
+	
 	# Carte vide
 	res <- empty.map
 	
