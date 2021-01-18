@@ -374,6 +374,7 @@ expected.counts <-
 expected.counts <-
 	apply(expected.counts, 1, sumit, n = 1001, wt = pdot)
 
+h1 <- hist(distdata[distdata$distance <= 0.30, ]$distance, breaks = seq(0, 0.3, 0.3/11))
 # Re-scale the counts
 h1$counts <- h1$counts / expected.counts
 ```
