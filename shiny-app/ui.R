@@ -52,7 +52,10 @@ ui = shiny::htmlTemplate(
   
   # notre carte
   notre_carte = plotOutput("notre_carte"),
+
   
+  
+  ###########################################################################
   
   # City Selector
   city_selector = selectInput(

@@ -47,7 +47,6 @@ server <- function(input, output) {
   
   
 
-
   # Create Map Plot ---------------------------------------------------------
 
   
