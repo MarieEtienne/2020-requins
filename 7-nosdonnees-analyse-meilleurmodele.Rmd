@@ -36,6 +36,7 @@ library(lubridate)		# dates
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
 library(viridis)
+library(ggpubr)
 
 # Packages calcul
 library(Distance)
