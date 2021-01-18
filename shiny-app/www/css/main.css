@@ -119,8 +119,8 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
-    margin-top: 6rem;
-    margin-bottom: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
 }
 
 @media only screen and (max-width: 600px) {
@@ -2198,8 +2198,8 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-about {
-    padding-top: 7rem; /*16.2 changé en 10 pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
-    padding-bottom: 9rem;
+    padding-top: 0rem; /*16.2 changé en 0 pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
+    padding-bottom: 0rem;
     background-color: #4B5755;
     color: #010507;
     position: relative;
@@ -2225,8 +2225,8 @@ html.no-csstransitions .home-content__main {
 }
 
 .stats__col {
-    margin: 5.4rem 0;
-    padding: 0 2rem;
+    margin: 1rem 0;
+    padding: 0 0.3rem;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
@@ -2239,7 +2239,7 @@ html.no-csstransitions .home-content__main {
 
 .stats__count {
     font-family: "montserrat-bold", sans-serif;
-    font-size: 8.4rem;
+    font-size: 6rem;
     line-height: 1;
     color: #FFFFFF;
     position: relative;
