@@ -39,7 +39,11 @@ server <- function(input, output) {
   
 
 
+  # Notre carte ----------------------------------------------------
   
+  output$notre_carte <- renderPlot({
+    empty.map
+  })
   
   
 
