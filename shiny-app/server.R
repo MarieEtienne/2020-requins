@@ -1,8 +1,8 @@
 ###############################################################################
 # Defining Server Logic behind App to explore UBER data
 #
-# Author: Vivek Katial
-# Created 2019-01-30 20:32:44
+# Léa Pautrel - Rindra Ranaivomanana - Emma Rouault
+# Janvier 2021
 ###############################################################################
 
 server <- function(input, output) {

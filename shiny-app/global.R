@@ -1,8 +1,8 @@
 ###############################################################################
 # Entrypoint for the shiny app
 #
-# Author: Léa Pautrel, Rindra Ranaivomanana, Emma Rouault
-# Created 2019-01-30 19:34:54
+# Léa Pautrel - Rindra Ranaivomanana - Emma Rouault
+# Janvier 2021
 ###############################################################################
 
 
