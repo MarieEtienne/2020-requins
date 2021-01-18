@@ -37,11 +37,8 @@ library(lubridate)		# dates
 library(ggplot2) ; ggplot2::theme_set(theme_light())
 library(ggmap)
 library(viridis)
-<<<<<<< Updated upstream
-=======
 library(ggpubr)
 library(plotly)
->>>>>>> Stashed changes
 
 # Packages calcul
 library(Distance)
@@ -384,6 +381,7 @@ expected.counts <-
 
 h1 <- hist(distdata[distdata$distance <= 0.30, ]$distance, breaks = seq(0, 0.3, 0.3/11))
 # Re-scale the counts
+h1 <- hist(distdata[distdata$distance <= 0.30, ]$distance, breaks = seq(0, 0.3, 0.3/11))
 h1$counts <- h1$counts / expected.counts
 ```
 

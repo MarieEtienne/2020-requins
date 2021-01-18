@@ -175,10 +175,14 @@ h5, .h5 {
 }
 
 h6, .h6 {
-    font-size: 1.3rem;
-    line-height: 1.385;
-    text-transform: uppercase;
-    letter-spacing: .16rem;
+    font-family: "montserrat-bold", sans-serif;
+    font-size: 6rem;
+    line-height: 1;
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 p img {
@@ -2225,8 +2229,8 @@ html.no-csstransitions .home-content__main {
 }
 
 .stats__col {
-    margin: 5.4rem 0;
-    padding: 0 2rem;
+    margin: 1rem 0;
+    padding: 0 0.3rem;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
@@ -2239,7 +2243,7 @@ html.no-csstransitions .home-content__main {
 
 .stats__count {
     font-family: "montserrat-bold", sans-serif;
-    font-size: 8.4rem;
+    font-size: 6rem;
     line-height: 1;
     color: #FFFFFF;
     position: relative;

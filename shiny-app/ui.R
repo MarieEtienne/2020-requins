@@ -1,8 +1,8 @@
 ###############################################################################
 # UI Access for Dashboard
 #
-# Author: Vivek Katial
-# Created 2019-01-30 20:32:15
+# Léa Pautrel - Rindra Ranaivomanana - Emma Rouault
+# Janvier 2021
 ###############################################################################
 
 ui = shiny::htmlTemplate(
