@@ -11,29 +11,9 @@ library(shiny)
 library(tidyverse)
 library(janitor)
 library(lubridate)
-library(plotly)
+library(leaflet)
 library(shinycssloaders)
 library(sp)
-# Packages
-library(dplyr)				# tidyverse
-library(foreign)			# read.dbf
-library(lubridate)		# dates
-
-# Graphes packages
-library(ggplot2) ; ggplot2::theme_set(theme_light())
-library(ggmap)
-library(viridis)
-library(ggpubr)
-library(plotly)
-
-# Packages calcul
-library(Distance)
-library(dsm)
-
-# Packages raster/carto
-library(sp)
-library(rgdal)
-library(raster)
 
 #  Clean Scripts ----------------------------------------------------------
 source("utils/clean_uber_data.R")
@@ -42,5 +22,3 @@ source("utils/clean_uber_data.R")
 load("../resultats/detfc.Rdata")
 load("../resultats/modeles_dsm.RData")
 load("../resultats/modeles_dsm.pred.RData")
-load("../../data/donnees_nettoyees.RData")
-load("../resultats/emptymap.RData")

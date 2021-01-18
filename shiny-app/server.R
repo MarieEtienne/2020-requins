@@ -109,9 +109,26 @@ server <- function(input, output) {
     
   })
   
-  output$map <- renderPlotly({
+  output$map <- renderLeaflet({
     # Base map
-    empty.map
+    leaflet(points_full()) %>%
+      addProviderTiles(providers$CartoDB.DarkMatterNoLabels)
+    
   })
+  
+  observe({
+    req(!is.null(points()))
+    # create the map
+    leafletProxy("map", data = points()) %>% 
+      clearShapes() %>% 
+      addPolylines(weight = 1, color = "violet") %>% 
+      fitBounds(
+        points_full()@bbox[1], 
+        points_full()@bbox[2], 
+        points_full()@bbox[3], 
+        points_full()@bbox[4]
+      )
+  })
+  
 
 }
