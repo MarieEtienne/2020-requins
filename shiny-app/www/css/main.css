@@ -2225,8 +2225,8 @@ html.no-csstransitions .home-content__main {
 }
 
 .stats__col {
-    margin: 5.4rem 0;
-    padding: 0 2rem;
+    margin: 1rem 0;
+    padding: 0 0.3rem;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
