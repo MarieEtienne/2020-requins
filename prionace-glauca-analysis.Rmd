@@ -271,6 +271,18 @@ rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
 						"gridata_save", "predata_save", "obsdata_save", "distdata_save"))
 ```
 
+## Dates des sessions
+
+```{r}
+(data.frame(session = segdata$session,
+					 date = segdata$date) %>%
+	unique() %>%
+	arrange(session, date) %>%
+	group_by(session) %>%
+	mutate(dates_session = paste0(date, collapse = " + ")))[,c(1,3)] %>%
+	unique()
+```
+
 # Fonction de détection
 
 ## Sélection
