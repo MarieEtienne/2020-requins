@@ -51,19 +51,19 @@ library(raster)
 ```
 
 ```{r import_donnees}
-load("../data/effort_output.RData")
-load("../data/list_prepare_obs_by_sp.RData")
-load("../data/predata_output.RData")
-gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+load("../../data/effort_output.RData")
+load("../../data/list_prepare_obs_by_sp.RData")
+load("../../data/predata_output.RData")
+gridata <- read.dbf("../../data/SPEE_CAPECET_Grid2km_modified.dbf")
 ```
 
 ```{r import_functions'}
 # On importe la fonction pred_splines
-source("./Fonctions/pred_splines.R")
+source("../Fonctions/pred_splines.R")
 
 # On importe les fonctions get_map_abundance
-source("./Fonctions/get_map_abundance.R")
-source("./Fonctions/get_map_abundance_extr.R")
+source("../Fonctions/get_map_abundance.R")
+source("../Fonctions/get_map_abundance_extr.R")
 
 ```
 
@@ -908,15 +908,21 @@ get_map_abundance_extr(empty.map = empty.map2,
 ```{r}
 # Fonction de détection
 save(detfc.sea.hr,
-		 file = "resultats/detfc.Rdata")
+		 file = "../resultats/detfc.Rdata")
 
 # Modèles : dsm
 save(dsm_s2_av1, dsm_s2_av041, dsm_s2_avshelf,
 		 dsm_s3_av1, dsm_s3_av041, dsm_s3_avshelf,
-		 file = "resultats/modeles_dsm.RData")
+		 file = "../resultats/modeles_dsm.RData")
 
 # Résultats de la prédiction : dsm.pred
 save(dsm_s2_av1.pred, dsm_s2_av041.pred, dsm_s2_avshelf.pred,
 		 dsm_s3_av1.pred, dsm_s3_av041.pred, dsm_s3_avshelf.pred,
-		 file = "resultats/modeles_dsm.pred.RData")
+		 file = "../resultats/modeles_dsm.pred.RData")
+
+
+#données predata_tmp
+save(predata_tmp2, predata_tmp3, 
+		 file = "../resultats/predata_tmp.RData")
 ```
+
