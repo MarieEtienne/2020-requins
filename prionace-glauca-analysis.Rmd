@@ -35,6 +35,7 @@ knitr::opts_chunk$set(
 library(dplyr)				# tidyverse
 library(foreign)			# read.dbf
 library(lubridate)		# dates
+library(data.table)
 
 # Graphes packages
 library(ggplot2) ; ggplot2::theme_set(theme_light())
@@ -620,37 +621,52 @@ plot.gam(dsm_s2_av1)
 predata_tmp2 <- predata %>% filter(session == 2)
 predata_tmp3 <- predata %>% filter(session == 3)
 
-dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_tmp2, predata_tmp2$Area)
-dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_tmp3, predata_tmp3$Area)
+dsm_s2_av1.pred <- predict(dsm_s2_av1, predata_tmp2, predata_tmp2$Area, se.fit = TRUE)
+dsm_s3_av1.pred <- predict(dsm_s3_av1, predata_tmp3, predata_tmp3$Area, se.fit = TRUE)
 
-dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_tmp2, predata_tmp2$Area)
-dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_tmp3, predata_tmp3$Area)
+dsm_s2_av041.pred <- predict(dsm_s2_av041, predata_tmp2, predata_tmp2$Area, se.fit = TRUE)
+dsm_s3_av041.pred <- predict(dsm_s3_av041, predata_tmp3, predata_tmp3$Area, se.fit = TRUE)
 
-dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_tmp2, predata_tmp2$Area)
-dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_tmp3, predata_tmp3$Area)
+dsm_s2_avshelf.pred <- predict(dsm_s2_avshelf, predata_tmp2, predata_tmp2$Area, se.fit = TRUE)
+dsm_s3_avshelf.pred <- predict(dsm_s3_avshelf, predata_tmp3, predata_tmp3$Area, se.fit = TRUE)
 ```
+
 
 ## Comparaison des résultats selon la valeur de disponibilité
 
-```{r echo=FALSE}
-print("-------- Session 2 --------")
-print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s2_av1.pred)), "requins au total dans la zone."))
-print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s2_av041.pred)), "requins au total dans la zone."))
-print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s2_avshelf.pred)), "requins au total dans la zone."))
-```
-
-```{r echo=FALSE}
-print("-------- Session 3 --------")
-print(paste("Avec availaibility = 1, on estime qu'il y a", round(sum(dsm_s3_av1.pred)), "requins au total dans la zone."))
-print(paste("Avec availaibility = 0.41, on estime qu'il y a", round(sum(dsm_s3_av041.pred)), "requins au total dans la zone."))
-print(paste("Avec availaibility selon on/off shelf, on estime qu'il y a", round(sum(dsm_s3_avshelf.pred)), "requins au total dans la zone."))
-```
-
-
 ```{r}
-summary(dsm_s2_av1.pred)
-summary((segdata %>% filter(month(date) == 5 | month(date) == 6))$POC_4w_mea)
+res_abondance <- data.frame(
+	"Session" = c(2, 3, 2, 3, 2, 3),
+	"Disponibilité" = c("1", "1", "0.41", "0.41", "on-shelf/off-shelf", "on-shelf/off-shelf"),
+	"Min" = c(
+		sum(dsm_s2_av1.pred$fit - (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_av1.pred$fit - (2 * dsm_s3_av1.pred$se.fit)),
+		sum(dsm_s2_av041.pred$fit - (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_av041.pred$fit - (2 * dsm_s3_av1.pred$se.fit)),
+		sum(dsm_s2_avshelf.pred$fit - (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_avshelf.pred$fit - (2 * dsm_s3_av1.pred$se.fit))
+	),
+	"Estimation" = c(
+		sum(dsm_s2_av1.pred$fit),
+		sum(dsm_s3_av1.pred$fit),
+		sum(dsm_s2_av041.pred$fit),
+		sum(dsm_s3_av041.pred$fit),
+		sum(dsm_s2_avshelf.pred$fit),
+		sum(dsm_s3_avshelf.pred$fit)
+	),
+	"Max" = c(
+		sum(dsm_s2_av1.pred$fit + (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_av1.pred$fit + (2 * dsm_s3_av1.pred$se.fit)),
+		sum(dsm_s2_av041.pred$fit + (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_av041.pred$fit + (2 * dsm_s3_av1.pred$se.fit)),
+		sum(dsm_s2_avshelf.pred$fit + (2 * dsm_s2_av1.pred$se.fit)),
+		sum(dsm_s3_avshelf.pred$fit + (2 * dsm_s3_av1.pred$se.fit))
+	)
+)
+
+data.table::data.table(res_abondance)
 ```
+
 
 ## Cartes
 
@@ -819,6 +835,8 @@ dev.off()
 ## Carte pour le poster
 
 ```{r}
+#dsm_s3_avshelf.pred.2 <- (dsm_s3_avshelf.pred/sum(dsm_s3_avshelf.pred))*100
+
 get_map_abundance(
 	empty.map = empty.map,
 	dsm.pred = dsm_s3_avshelf.pred,

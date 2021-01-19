@@ -10,6 +10,10 @@ get_map_abundance <- function(empty.map,
 															observations = TRUE,
 															poster = FALSE) {
 	
+	# On passe en % de requins
+	dsm.pred.sum <- sum(dsm.pred)
+	dsm.pred <- (dsm.pred/dsm.pred.sum)*100
+	
 	# Carte vide
 	res <- empty.map
 	
@@ -43,18 +47,18 @@ get_map_abundance <- function(empty.map,
 				)
 			),
 			aes(x = x, y = y, fill = abondance,
-					text = paste0(round(dsm.pred, 2), " requins")),
+					text = paste0(round(dsm.pred, 2), "% des requins de la zone dans cette cellule de 4km²")),
 			alpha = 0.8) +
 			coord_fixed(ratio = 1.5) +
 			scale_fill_gradientn(
 				colours = pal,
-				name = " ",
-				limits = c(0, ceiling(max(dsm.pred))),
-				breaks = round(seq(
-					from = 0,
-					to = ceiling(max(dsm.pred)),
-					length.out = 5
-				), 1)
+				name = " "#,
+				# limits = c(0, ceiling(max(dsm.pred))),
+				# breaks = round(seq(
+				# 	from = 0,
+				# 	to = ceiling(max(dsm.pred)),
+				# 	length.out = 5
+				# ), 1)
 			)
 		if (poster){
 			res <- res +
