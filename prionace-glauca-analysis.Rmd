@@ -816,6 +816,23 @@ dev.off()
 
 ![](./img/dsm_s3_avshelf.pred.png)
 
+## Carte pour le poster
+
+```{r}
+get_map_abundance(
+	empty.map = empty.map,
+	dsm.pred = dsm_s3_avshelf.pred,
+	predata_tmp = predata_tmp3,
+	session_selec = 3,
+	segdata = segdata,
+	distdata = distdata,
+	abondance = TRUE,
+	transects = TRUE,
+	observations = TRUE,
+	poster = FALSE
+)
+```
+
 
 # Extrapolation sur gridata
 
@@ -877,4 +894,8 @@ save(dsm_s2_av1, dsm_s2_av041, dsm_s2_avshelf,
 save(dsm_s2_av1.pred, dsm_s2_av041.pred, dsm_s2_avshelf.pred,
 		 dsm_s3_av1.pred, dsm_s3_av041.pred, dsm_s3_avshelf.pred,
 		 file = "resultats/modeles_dsm.pred.RData")
+
+# Données nettoyées
+save(obsdata, predata, predata_tmp2, predata_tmp3, segdata, distdata,
+		 file = "../data/donnees_nettoyees.RData")
 ```

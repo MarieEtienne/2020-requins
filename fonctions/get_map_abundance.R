@@ -72,13 +72,24 @@ get_map_abundance <- function(empty.map,
 	
 	
 	# Thème et couleurs
-	res <- res +
+	res <- res + 
 		theme_void() +
 		theme(legend.position = "bottom")
 	
+	
+
 	# Si poster = FALSE, conversion ggplotly
 	if (poster == FALSE){
-		res <- ggplotly(res, tooltip = "text") 
+		
+		axis_layout = list(showgrid = F, showline = FALSE)
+		
+		res <- ggplotly(res, tooltip = "text") %>% 
+			layout(
+				autosize = TRUE,
+				xaxis = axis_layout,
+				yaxis = axis_layout,
+				legend = list(borderwidth = 0, orientation = 'h')
+			)
 	}
 	
 	return(res)
