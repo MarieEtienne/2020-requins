@@ -50,10 +50,10 @@ ui = shiny::htmlTemplate(
   ),
   
   
-  # notre carte
-  notre_carte = plotlyOutput("notre_carte"),
+  # NOS CARTES##############################################################
+  session2 = plotlyOutput("session2"),
 
-  
+  session3 = plotlyOutput("session3"),
   
   ###########################################################################
   

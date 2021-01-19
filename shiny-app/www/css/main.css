@@ -161,7 +161,7 @@ h2, .h2 {
 
 h3, .h3 {
     font-size: 2.4rem;
-    line-height: 1.25;
+    line-height: 0;
 }
 
 h4, .h4 {
@@ -1237,7 +1237,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 .display-2--light {
-    color: #FFFFFF;
+    color: #000000;
 }
 
 .subhead + .display-2 {
@@ -2202,8 +2202,8 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-about {
-    padding-top: 7rem; /*16.2 changé en 10 pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
-    padding-bottom: 9rem;
+    padding-top: 2rem; /*diminuer pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
+    padding-bottom: 4rem;
     background-color: #4B5755;
     color: #010507;
     position: relative;
@@ -2372,7 +2372,7 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-services {
-    padding-top: 8rem;
+    padding-top: 2rem;
     padding-bottom: 13.2rem;
     background-color: #FFFFFF;
     color: #757575;
