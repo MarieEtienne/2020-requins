@@ -51,7 +51,7 @@ ui = shiny::htmlTemplate(
   
   
   # notre carte
-  notre_carte = plotOutput("notre_carte"),
+  notre_carte = plotlyOutput("notre_carte"),
 
   
   

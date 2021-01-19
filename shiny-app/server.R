@@ -41,8 +41,18 @@ server <- function(input, output) {
 
   # Notre carte ----------------------------------------------------
   
-  output$notre_carte <- renderPlot({
-    empty.map
+  output$notre_carte <- renderPlotly({
+    carte <- get_map_abundance(empty.map,
+                      dsm.pred = dsm_s2_av1.pred,
+                      predata_tmp = predata_tmp2,
+                      session_selec = 2,
+                      segdata,
+                      distdata,
+                      pal = c("#C2D7D9", "#CC2227"),
+                      abondance = TRUE,
+                      transects = TRUE,
+                      observations = TRUE,
+                      poster = FALSE)
   })
   
   

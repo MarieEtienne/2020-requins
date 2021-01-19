@@ -14,6 +14,7 @@ library(lubridate)
 library(leaflet)
 library(shinycssloaders)
 library(sp)
+library(plotly)
 
 #  Clean Scripts ----------------------------------------------------------
 source("utils/clean_uber_data.R")
@@ -24,3 +25,7 @@ load("../resultats/modeles_dsm.RData")
 load("../resultats/modeles_dsm.pred.RData")
 load("../../data/donnees_nettoyees.RData")
 load("../resultats/emptymap.RData")
+load("../../data/predata_tmp.RData")
+source("../Fonctions/get_map_abundance.R")
+
+
