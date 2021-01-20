@@ -70,6 +70,4 @@ server <- function(input, output) {
   })
   
 
- 
-
 }
