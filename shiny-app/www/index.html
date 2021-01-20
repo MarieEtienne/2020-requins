@@ -135,6 +135,7 @@
     <section id='methodes' class="s-services">
 
         <div class="row section-header has-bottom-sep" data-aos="fade-up">
+            <!-- data -->
             <div class="col-full">
                 <h3 class="subhead subhead--dark">Data</h3>  <!-- à mettre ici : données -->
                 <p style ="text-align: justify;"> 
@@ -148,24 +149,41 @@
                   → Session 3 from 31/07 to 08/08<br>
                   → Session 4 from 25/10 to 19/11<br>
                 </p>
+            </div> <!-- end data -->
+        </div>
+
+        <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+            <!-- functions -->
+            <div class="col-block">
+                <div>
                 <h3 class="subhead subhead--dark">Detection function</h3>  <!-- à mettre ici : Fonction -->
                 <p style ="text-align: justify;"> 
-                La fonction de détection est une fonction qui donne la probabilité de détection d'un individu en fonction de la distance d'observation et des biais d’observation. <br>
+                A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br>
                 Function : Distance::ds <br>
                 Covariates selection  : minimum Akaike information criterion <br>
                 Covariate used : Seastate (Beaufort scale)<br>
                 Function used : hazard-rate
                 </p>
-                <img alt="Hi!" src="images/test.PNG"/> <!-- alt : alternative text, si jamais ca apparait pas --> <!-- image capture , test, faut mettre lhistogramme -->
-                <h3 class="subhead subhead--dark">Density function</h3>  <!-- à mettre ici : Fonction -->
-                <p style ="text-align: justify;">  Modèle additif généralisé pour estimer spatialement l’abondance d’une espèce <br>
-                Choix des covariables : critère d’Akaike (AIC) minimum par sélection forward <br>
-                Covariables choisies : température de la surface de la mer, chlorophylle A et localisation. <br>
-                Disponibilité (availability) :  individus potentiellement visibles* (Nykanen) <br>
-                Trois options de “availability” sont prises en compte : 1, 0.41 et selon onshelf ou offshelf
-                </p>
+                <img alt="Hi!" src="images/test.PNG" width="480" height="300"/> 
+                <!-- alt : alternative text, si jamais ca apparait pas --> 
+                <!-- image test, faut mettre les légendes -->
+                </div>
             </div>
-        </div> <!-- end section-header -->
+                
+            <div class="col-block">
+                <div>
+                <h3 class="subhead subhead--dark">Density function</h3>  <!-- à mettre ici : Fonction -->
+                <p style ="text-align: justify;">  
+                Density surface modelling of line transect data is a Generalized Additive Model-based approach is used to calculate spatially-explicit estimates of animal abundance from distance sampling (also presence/absence and strip
+transect) data. <br>
+                Covariates selection : Forward selection with a minimum Akaike information criterion <br>
+                Covariates used : Sea surface temperature, chlorophyll A and localization. <br>
+                Availability :  potentially visible individuals* (Nykanen) <br>
+                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf
+                </p>
+                </div>
+            </div>
+        </div> <!-- end functions -->
 
         <!-- end about-desc -->
 
