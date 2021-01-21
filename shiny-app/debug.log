@@ -133,3 +133,22 @@
 [0121/143742.522:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
 [0121/143742.523:ERROR:crash_report_database_win.cc(455)] unexpected header
 [0121/143742.524:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/144242.493:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/145150.108:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/145742.494:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151207.178:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151242.494:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151250.341:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151347.144:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151416.968:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/151952.759:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/152742.495:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/154242.496:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/155046.535:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/155212.922:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/155651.928:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/155742.496:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/160030.605:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/160145.860:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/160358.929:ERROR:crash_report_database_win.cc(455)] unexpected header
+[0121/160427.040:ERROR:crash_report_database_win.cc(455)] unexpected header

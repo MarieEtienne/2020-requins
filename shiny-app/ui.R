@@ -89,11 +89,11 @@ ui = shiny::htmlTemplate(
   
   ##Choix transect##
   show_transect2 = radioButtons("transect2", 
-              "Show transect",
+              "Show transects",
               choices = list("Yes" = "TRUE", "No" = "FALSE")),
   
   show_transect3 = radioButtons("transect3", 
-              "Show transect",
+              "Show transects",
               choices = list("Yes" = "TRUE", "No" = "FALSE")),
   
   ##Choix Observation##
