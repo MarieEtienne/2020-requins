@@ -33,7 +33,7 @@ get_map_abundance <- function(empty.map,
 	if (observations) {
 		res <- res +
 			geom_point(data = (distdata %>% filter(session == session_selec)),
-								 aes(x = longitude, y = latitude), colour = "#004547")
+								 aes(x = longitude, y = latitude), colour = "#004547", shape = "🦈", size = .9)
 	}
 	
 	# Raster d'abondance des requins
@@ -52,24 +52,19 @@ get_map_abundance <- function(empty.map,
 			coord_fixed(ratio = 1.5) +
 			scale_fill_gradientn(
 				colours = pal,
-				name = " "#,
-				# limits = c(0, ceiling(max(dsm.pred))),
-				# breaks = round(seq(
-				# 	from = 0,
-				# 	to = ceiling(max(dsm.pred)),
-				# 	length.out = 5
-				# ), 1)
+				name = ""
 			)
+		
 		if (poster){
 			res <- res +
 				guides(
 					col = FALSE,
 					fill = guide_colourbar(
 						ticks = F,
-						barwidth = 28,
-						barheight = 4,
+						barwidth = 4,
+						barheight = 28,
 						label.theme = element_text(color = "#4B5755", size = 40),
-						direction = "horizontal"
+						direction = "vertical"
 					)
 				)}
 	}
@@ -77,9 +72,7 @@ get_map_abundance <- function(empty.map,
 	
 	# Thème et couleurs
 	res <- res + 
-		theme_void() +
-		theme(legend.position = "bottom")
-	
+		theme_void()
 	
 
 	# Si poster = FALSE, conversion ggplotly
@@ -87,13 +80,15 @@ get_map_abundance <- function(empty.map,
 		
 		axis_layout = list(showgrid = F, showline = FALSE)
 		
-		res <- ggplotly(res, tooltip = "text") %>% 
+		res <- res + theme(legend.position = "none")
+		
+		res <- ggplotly(res, tooltip = "text") %>%
 			layout(
 				autosize = TRUE,
 				xaxis = axis_layout,
-				yaxis = axis_layout,
-				legend = list(borderwidth = 0, orientation = 'h')
+				yaxis = axis_layout
 			)
+		
 	}
 	
 	return(res)
