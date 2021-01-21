@@ -131,10 +131,8 @@
                     </a>
                 </div>
 
-        </div> <!-- end home-content -->
-
-
-    </section> <!-- end s-home -->
+        </div> 
+    </section> <!-- end home -->
 
 
     <!-- Observation protocol
@@ -186,7 +184,8 @@
                 Function : Distance::ds <br>
                 Covariates selection  : minimum Akaike information criterion <br>
                 Covariate used : Seastate (Beaufort scale)<br>
-                Function used : hazard-rate
+                Function used : hazard-rate <br>
+                Probability equation <!-- formule p  -->
                 </p>
                 <img alt="Hi!" src="images/plot.PNG" width="480" height="300"/> 
                 <!-- alt : alternative text, si jamais ca apparait pas --> 
@@ -196,14 +195,16 @@
                 
             <div class="col-block">
                 <div>
-                <h3 class="subhead subhead--dark">Density function</h3>  <!-- à mettre ici : Fonction -->
+                <h3 class="subhead subhead--dark">Density function</h3>  
                 <p style ="text-align: justify;">  
                 Density surface modelling of line transect data is a Generalized Additive Model-based approach is used to calculate spatially-explicit estimates of animal abundance from distance sampling (also presence/absence and strip
 transect) data. <br>
+                Function : dsm::predict <br>
                 Covariates selection : Forward selection with a minimum Akaike information criterion <br>
                 Covariates used : Sea surface temperature, chlorophyll A and localization. <br>
                 Availability :  potentially visible individuals* (Nykanen) <br>
-                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf
+                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf <br>
+                Negative binomiale/Tweedie distribution <br> <!-- à détailler -->
                 </p>
                 </div>
             </div>
