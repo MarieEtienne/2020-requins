@@ -9,10 +9,8 @@ ui = shiny::htmlTemplate(
   # Index Page
   "www/index.html",
   
-  # Nombre de session
-  number_of_trips = "4",
   
-  
+  ###########SESSIONS#################
   #SESSION 2 AV1
   num_sharks_s2_av1 = textOutput(
     "num_sharks_s2_av1",
@@ -46,6 +44,43 @@ ui = shiny::htmlTemplate(
   #SESSION 3 AVSHELF
   num_sharks_s3_avshelf = textOutput(
     "num_sharks_s3_avshelf",
+    inline = T
+  ),
+  
+  ###########SESSIONS# SE################
+  #SESSION 2 AV1
+  num_sharks_s2_av1_se = textOutput(
+    "num_sharks_s2_av1_se",
+    inline = T
+  ),
+  
+  #SESSION 2 AV041
+  num_sharks_s2_av041_se = textOutput(
+    "num_sharks_s2_av041_se",
+    inline = T
+  ),
+  
+  #SESSION 2 AVSHELF
+  num_sharks_s2_avshelf_se = textOutput(
+    "num_sharks_s2_avshelf_se",
+    inline = T
+  ),
+  
+  #SESSION 3 AV1
+  num_sharks_s3_av1_se = textOutput(
+    "num_sharks_s3_av1_se",
+    inline = T
+  ),
+  
+  #SESSION 3 AV041
+  num_sharks_s3_av041_se = textOutput(
+    "num_sharks_s3_av041_se",
+    inline = T
+  ),
+  
+  #SESSION 3 AVSHELF
+  num_sharks_s3_avshelf_se = textOutput(
+    "num_sharks_s3_avshelf_se",
     inline = T
   ),
   
