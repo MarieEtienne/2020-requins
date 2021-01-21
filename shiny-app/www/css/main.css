@@ -119,8 +119,8 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
-    margin-top: 6rem;
-    margin-bottom: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
 }
 
 @media only screen and (max-width: 600px) {
@@ -176,7 +176,7 @@ h5, .h5 {
 
 h6, .h6 {
     font-family: "montserrat-bold", sans-serif;
-    font-size: 4rem;
+    font-size: 3.5rem;
     line-height: 1;
     color: #7F7F7F;
     position: relative;
