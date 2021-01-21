@@ -16,8 +16,6 @@ library(shinycssloaders)
 library(sp)
 library(plotly)
 
-#  Clean Scripts ----------------------------------------------------------
-source("utils/clean_uber_data.R")
 
 # Importation des données  ------------------------------------------------
 load("../resultats/detfc.Rdata")
