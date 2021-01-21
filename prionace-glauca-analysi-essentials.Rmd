@@ -626,6 +626,7 @@ map <- get_map_abundance(
 	observations = FALSE,
 	poster = TRUE
 )
+map
 
 png("./img/dsm_s3_avshelf.pred.png",
 		width = 1800,
@@ -636,12 +637,10 @@ dev.off()
 
 ![](./img/dsm_s3_avshelf.pred.png)
 
-## Carte pour le poster
+## Carte pour l'appli
 
 ```{r}
-#dsm_s3_avshelf.pred.2 <- (dsm_s3_avshelf.pred/sum(dsm_s3_avshelf.pred))*100
-
-get_map_abundance(
+map2 <- get_map_abundance(
 	empty.map = empty.map,
 	dsm.pred = dsm_s3_avshelf.pred$fit,
 	predata_tmp = predata_tmp3,
@@ -653,6 +652,7 @@ get_map_abundance(
 	observations = TRUE,
 	poster = FALSE
 )
+map2
 ```
 
 # Exportation des résultats en Rdata
