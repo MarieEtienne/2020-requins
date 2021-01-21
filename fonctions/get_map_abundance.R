@@ -52,7 +52,13 @@ get_map_abundance <- function(empty.map,
 			coord_fixed(ratio = 1.5) +
 			scale_fill_gradientn(
 				colours = pal,
-				name = ""
+				name = "",
+				limits = c(0, round(max(dsm.pred)*100)/100),
+				breaks = round(seq(
+						from = 0,
+						to = max(dsm.pred)*100,
+						length.out = 5
+					))/100
 			)
 		
 		if (poster){
@@ -62,7 +68,7 @@ get_map_abundance <- function(empty.map,
 					fill = guide_colourbar(
 						ticks = F,
 						barwidth = 4,
-						barheight = 28,
+						barheight = 40,
 						label.theme = element_text(color = "#4B5755", size = 40),
 						direction = "vertical"
 					)
