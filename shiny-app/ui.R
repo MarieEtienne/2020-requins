@@ -86,6 +86,27 @@ ui = shiny::htmlTemplate(
   
   
   # NOS CARTES##############################################################
+  
+  ##Choix transect##
+  show_transect2 = radioButtons("transect2", 
+              "Show transect",
+              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  
+  show_transect3 = radioButtons("transect3", 
+              "Show transect",
+              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  
+  ##Choix Observation##
+  show_observations2 = radioButtons("observations2", 
+              "Show observations",
+              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  
+  show_observations3 = radioButtons("observations3", 
+              "Show observations",
+              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  
+  ##Cartes##
+  
   session2 = plotlyOutput("session2"),
 
   session3 = plotlyOutput("session3")

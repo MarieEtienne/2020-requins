@@ -74,8 +74,8 @@ server <- function(input, output) {
                       distdata,
                       pal = c("#C2D7D9", "#CC2227"),
                       abondance = TRUE,
-                      transects = TRUE,
-                      observations = TRUE,
+                      transects = input$transect2,
+                      observations = input$observations2,
                       poster = FALSE)
   })
   
@@ -88,8 +88,8 @@ server <- function(input, output) {
                                   distdata,
                                   pal = c("#C2D7D9", "#CC2227"),
                                   abondance = TRUE,
-                                  transects = TRUE,
-                                  observations = TRUE,
+                                  transects = input$transect3,
+                                  observations = input$observations3,
                                   poster = FALSE)
   })
   
