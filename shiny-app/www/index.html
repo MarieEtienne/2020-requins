@@ -58,7 +58,8 @@
                 
                 <ul class="header-nav__list">
                     <li class="current"><a class="smoothscroll"  href="#intro" title="intro">Home</a></li>
-                    <li><a class="smoothscroll"  href="#methodes" title="methodes">Data and methods</a></li>
+                    <li><a class="smoothscroll"  href="#data" title="data">Observation protocol</a></li>
+                    <li><a class="smoothscroll"  href="#methods" title="methods">Statistical methods</a></li>
                     <li><a class="smoothscroll"  href="#estimation2" title="estimation2">Spring 2019</a></li>
                     <li><a class="smoothscroll"  href="#estimation3" title="estimation3">Summer 2019</a></li>
                 </ul>
@@ -107,8 +108,14 @@
                 
 
                 <div class="home-content__buttons">
-                    <a href="#methodes" class="smoothscroll btn btn--stroke">
-                        Data et methods
+                    <a href="#data" class="smoothscroll btn btn--stroke">
+                        Observation protocol
+                    </a>
+                </div>
+                
+                <div class="home-content__buttons">
+                    <a href="#methods" class="smoothscroll btn btn--stroke">
+                        Statistical methods
                     </a>
                 </div>
                 
@@ -124,47 +131,63 @@
                     </a>
                 </div>
 
-        </div> <!-- end home-content -->
+        </div> 
+    </section> <!-- end home -->
 
 
-    </section> <!-- end s-home -->
-
-
-    <!-- methodes
+    <!-- Observation protocol
     ================================================== -->
-    <section id='methodes' class="s-services">
+    <section id='data' class="s-services">
 
         <div class="row section-header has-bottom-sep" data-aos="fade-up">
-            <!-- data -->
+            
             <div class="col-full">
                 <h3 class="subhead subhead--dark">Data</h3>  <!-- à mettre ici : données -->
                 <p style ="text-align: justify;"> 
                 The observations were made from a plane at 200m altitude and going at an average speed of 180km / h, in the Bay of Biscay off La Rochelle. The method used to collect data is a transect sampling which consist of following lines (transects) and counting the occurences of sharks as well as their distances from the plane.
                 </p> <!-- pour mettre un texte, faut rajouter la forme du text avec une class de CSS -->
-                <h3 class="subhead subhead--dark">Sessions</h3>  <!-- à mettre ici : données -->
-                <p style ="text-align: justify;"> Four sessions were carried out in 2019 :  <br> 
-                <!-- ul : unordered list et li : element de la liste-->
-                  → Session 1 from 12/02 to 27/02<br>
-                  → Session 2 from 30/05 to 02/06<br>
-                  → Session 3 from 31/07 to 08/08<br>
-                  → Session 4 from 25/10 to 19/11<br>
-                </p>
-            </div> <!-- end data -->
+            </div> 
+            <div class="row section-header has-bottom-sep block-1-3 block-m-1-3 block-mob-full" data-aos="fade-up">
+                <div class="col-block">
+                    <h3 class="subhead subhead--dark">Sessions</h3>  <!-- à mettre ici : données -->
+                    <p style ="text-align: justify;"> Four sessions were carried out in 2019 :  <br> 
+                    <!-- ul : unordered list et li : element de la liste-->
+                    → Session 1 from 12/02 to 27/02<br>
+                    → Session 2 from 30/05 to 02/06<br>
+                    → Session 3 from 31/07 to 08/08<br>
+                    → Session 4 from 25/10 to 19/11<br>
+                    </p>
+                </div>
+                <div class="col-block">
+                    <h3 class="subhead subhead--dark">Transect Sampling</h3>
+                    <img alt="Hi!" src="images/transect_sampling.PNG"/> 
+                </div>
+                <div class="col-block">
+                    <h3 class="subhead subhead--dark">Our transects</h3>
+                    <img alt="Hi!" src="images/our_transects.PNG"/> 
+                </div>
+            </div> 
         </div>
+    </section> <!-- end data -->
+    
+        <!-- Observation protocol
+    ================================================== -->
+    <section id='methods' class="s-services">
 
         <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
-            <!-- functions -->
+
             <div class="col-block">
                 <div>
-                <h3 class="subhead subhead--dark">Detection function</h3>  <!-- à mettre ici : Fonction -->
+                <h3 class="subhead subhead--dark">Detection function</h3>  
                 <p style ="text-align: justify;"> 
                 A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br>
                 Function : Distance::ds <br>
                 Covariates selection  : minimum Akaike information criterion <br>
                 Covariate used : Seastate (Beaufort scale)<br>
-                Function used : hazard-rate
+                Function used : hazard-rate <br>
+                Probability equation <!-- formule p  -->
                 </p>
-                <img alt="Hi!" src="images/test.PNG" width="480" height="300"/> 
+                <img alt="Hi!" src="images/plot.PNG" width="480" height="300"/> 
                 <!-- alt : alternative text, si jamais ca apparait pas --> 
                 <!-- image test, faut mettre les légendes -->
                 </div>
@@ -172,24 +195,20 @@
                 
             <div class="col-block">
                 <div>
-                <h3 class="subhead subhead--dark">Density function</h3>  <!-- à mettre ici : Fonction -->
+                <h3 class="subhead subhead--dark">Density function</h3>  
                 <p style ="text-align: justify;">  
                 Density surface modelling of line transect data is a Generalized Additive Model-based approach is used to calculate spatially-explicit estimates of animal abundance from distance sampling (also presence/absence and strip
 transect) data. <br>
+                Function : dsm::predict <br>
                 Covariates selection : Forward selection with a minimum Akaike information criterion <br>
                 Covariates used : Sea surface temperature, chlorophyll A and localization. <br>
                 Availability :  potentially visible individuals* (Nykanen) <br>
-                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf
+                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf <br>
+                Negative binomiale/Tweedie distribution <br> <!-- à détailler -->
                 </p>
                 </div>
             </div>
         </div> <!-- end functions -->
-
-        <!-- end about-desc -->
-
-
-
-        <div class="about__line"></div>   <!-- SEPARATEUR -->
 
     </section> 
     <!-- end methodes -->

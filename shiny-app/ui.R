@@ -88,22 +88,22 @@ ui = shiny::htmlTemplate(
   # NOS CARTES##############################################################
   
   ##Choix transect##
-  show_transect2 = radioButtons("transect2", 
-              "Show transects",
-              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  show_transect2 = checkboxInput("transect2", 
+              label = "Show transects",
+              value = FALSE),
   
-  show_transect3 = radioButtons("transect3", 
-              "Show transects",
-              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  show_transect3 = checkboxInput("transect3", 
+              label = "Show transects",
+              value = FALSE),
   
   ##Choix Observation##
-  show_observations2 = radioButtons("observations2", 
-              "Show observations",
-              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  show_observations2 = checkboxInput("observations2", 
+              label = "Show observations",
+              value = FALSE),
   
-  show_observations3 = radioButtons("observations3", 
-              "Show observations",
-              choices = list("Yes" = "TRUE", "No" = "FALSE")),
+  show_observations3 = checkboxInput("observations3", 
+              label = "Show observations",
+              value = FALSE),
   
   ##Cartes##
   
