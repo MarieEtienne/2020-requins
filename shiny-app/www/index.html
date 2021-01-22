@@ -30,6 +30,12 @@
     <script src="js/pace.min.js"></script>
     <link rel="stylesheet" type="text/css" href="shared/shiny.css"/>
 
+    <!-- pour écrire des équations en Latex -->
+    <script 
+        type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    
     <!-- favicons
     ================================================== -->
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -62,6 +68,7 @@
                     <li><a class="smoothscroll"  href="#methods" title="methods">Statistical methods</a></li>
                     <li><a class="smoothscroll"  href="#estimation2" title="estimation2">Spring 2019</a></li>
                     <li><a class="smoothscroll"  href="#estimation3" title="estimation3">Summer 2019</a></li>
+                    <li><a class="smoothscroll"  href="#about" title="about">About</a></li>
                 </ul>
 
     
@@ -184,7 +191,7 @@
             </div>
         </div>
 
-        <div class="row block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+        <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
 
             <div class="col-block">
                 <div>
@@ -195,7 +202,9 @@
                 <strong>Covariates and key function selection:</strong> minimization of the Akaike criterion <br>
                 <strong>Covariate used:</strong> Seastate (Beaufort scale)<br>
                 <strong>Key function used:</strong> hazard-rate <br>
-                <strong>Probability equation:</strong> <!-- formule p  -->
+                <strong>Probability equation:</strong> <br>
+                <!-- formule p  -->
+                <span class="math display">\[\Large 1-\frac{1}{e^{(\frac{\sigma}{d})^b}}\]</span><!-- formule p  -->
                 </p>
                 <img alt="Hi!" src="images/plot.PNG" width="480" height="300"/> 
                 <!-- alt : alternative text, si jamais ca apparait pas --> 
@@ -352,7 +361,25 @@
 
 
     </section> 
+    
+    <!-- about
+    ================================================== -->
 
+<section id='about' class="s-services">
+
+        <div class="row section-header" data-aos="fade-up">
+            <div class="col-full">
+                <h2 class="display-2--light">About</h2>
+            </div>
+        <div>
+                <h3 class="subhead subhead--dark">Nous et les Mathieu??</h3> 
+                <p> nous MPE et Mathieu</p>
+                <h3 class="subhead subhead--dark">Aknowledgments</h3> 
+                <p> les observateurs</p>
+            </div> 
+        </div>
+    </section> <!-- end data -->
+    
     <!-- preloader
     ================================================== -->
     <div id="preloader">
