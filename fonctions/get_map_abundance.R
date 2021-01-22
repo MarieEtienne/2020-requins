@@ -38,31 +38,39 @@ get_map_abundance <- function(empty.map,
 	
 	# Raster d'abondance des requins
 	if (abondance) {
-		res <- res +
-			geom_raster(data = as.data.frame(
-				cbind(
-					x = predata_tmp$longitude,
-					y = predata_tmp$latitude,
-					abondance = dsm.pred
-				)
-			),
-			aes(x = x, y = y, fill = abondance,
-					text = paste0(round(dsm.pred, 2), "% des requins de la zone dans cette cellule de 4km²")),
-			alpha = 0.8) +
-			coord_fixed(ratio = 1.5) +
-			scale_fill_gradientn(
-				colours = pal,
-				name = "",
-				limits = c(0, ceiling(max(dsm.pred)*100)/100),
-				breaks = round(seq(
+		
+		if (poster) {
+			res <- res +
+				geom_raster(
+					data = as.data.frame(
+						cbind(
+							x = predata_tmp$longitude,
+							y = predata_tmp$latitude,
+							abondance = dsm.pred
+						)
+					),
+					aes(
+						x = x,
+						y = y,
+						fill = abondance,
+						text = paste0(
+							round(dsm.pred, 2),
+							"% des requins de la zone dans cette cellule de 4km\u00B2"
+						)
+					),
+					alpha = 0.8
+				) +
+				coord_fixed(ratio = 1.5) +
+				scale_fill_gradientn(
+					colours = pal,
+					name = "",
+					limits = c(0, ceiling(max(dsm.pred) * 100) / 100),
+					breaks = round(seq(
 						from = 0,
 						to = ceiling(max(dsm.pred) * 100),
 						length.out = 5
-					))/100
-			)
-		
-		if (poster){
-			res <- res +
+					)) / 100
+				) +
 				guides(
 					col = FALSE,
 					fill = guide_colourbar(
@@ -72,7 +80,40 @@ get_map_abundance <- function(empty.map,
 						label.theme = element_text(color = "#4B5755", size = 40),
 						direction = "vertical"
 					)
-				)}
+				)
+		} else { # if poster = FALSE
+			res <- res +
+				geom_raster(
+					data = as.data.frame(
+						cbind(
+							x = predata_tmp$longitude,
+							y = predata_tmp$latitude,
+							abondance = dsm.pred
+						)
+					),
+					aes(
+						x = x,
+						y = y,
+						fill = abondance,
+						text = paste0(
+							round(dsm.pred, 2),
+							"% of the sharks in the study area in this 4km\u00B2 cell"
+						)
+					),
+					alpha = 0.8
+				) +
+				coord_fixed(ratio = 1.5) +
+				scale_fill_gradientn(
+					colours = pal,
+					name = "",
+					limits = c(0, ceiling(max(dsm.pred) * 100) / 100),
+					breaks = round(seq(
+						from = 0,
+						to = ceiling(max(dsm.pred) * 100),
+						length.out = 5
+					)) / 100
+				)
+		}
 	}
 	
 	
