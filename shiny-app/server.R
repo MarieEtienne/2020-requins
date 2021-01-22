@@ -67,7 +67,7 @@ server <- function(input, output) {
   
   output$session2 <- renderPlotly({
     session2 <- get_map_abundance(empty.map,
-                      dsm.pred = dsm_s2_avshelf.pred$fit,
+                      dsm.pred = dsm_s2_av1.pred$fit,
                       predata_tmp = predata_tmp2,
                       session_selec = 2,
                       segdata,
@@ -81,7 +81,7 @@ server <- function(input, output) {
   
   output$session3 <- renderPlotly({
     session3 <- get_map_abundance(empty.map,
-                                  dsm.pred = dsm_s3_avshelf.pred$fit,
+                                  dsm.pred = dsm_s3_av1.pred$fit,
                                   predata_tmp = predata_tmp3,
                                   session_selec = 3,
                                   segdata,
