@@ -142,15 +142,15 @@
         <div class="row section-header has-bottom-sep" data-aos="fade-up">
             
             <div class="col-full">
-                <h3 class="subhead subhead--dark">Data</h3>  <!-- à mettre ici : données -->
+                <h3 class="subhead subhead--dark">Observation protocol</h3>  <!-- à mettre ici : données -->
                 <p style ="text-align: justify;"> 
-                The observations were made from a plane at 200m altitude and going at an average speed of 180km / h, in the Bay of Biscay off La Rochelle. The method used to collect data is a transect sampling which consist of following lines (transects) and counting the occurences of sharks as well as their distances from the plane.
+                The observations were made from a plane at 200m altitude and going at an average speed of 180kmh, in the Bay of Biscay off La Rochelle in France. The method used to collect data is a transect sampling which consist of following lines (transects) and counting the occurences of sharks as well as their distances from the plane.
                 </p> <!-- pour mettre un texte, faut rajouter la forme du text avec une class de CSS -->
             </div> 
             <div class="row section-header has-bottom-sep block-1-3 block-m-1-3 block-mob-full" data-aos="fade-up">
                 <div class="col-block">
                     <h3 class="subhead subhead--dark">Sessions</h3>  <!-- à mettre ici : données -->
-                    <p style ="text-align: justify;"> Four sessions were carried out in 2019 :  <br> 
+                    <p style ="text-align: justify;"> Four sessions were carried out in 2019:  <br> 
                     <!-- ul : unordered list et li : element de la liste-->
                     → Session 1 from 12/02 to 27/02<br>
                     → Session 2 from 30/05 to 02/06<br>
@@ -181,11 +181,11 @@
                 <h3 class="subhead subhead--dark">Detection function</h3>  
                 <p style ="text-align: justify;"> 
                 A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br>
-                Function : Distance::ds <br>
-                Covariates selection  : minimum Akaike information criterion <br>
-                Covariate used : Seastate (Beaufort scale)<br>
-                Function used : hazard-rate <br>
-                Probability equation <!-- formule p  -->
+                <strong>Function:</strong> Distance::ds <br>
+                <strong>Covariates selection:</strong> minimization of the Akaike criterion <br>
+                <strong>Covariate used:</strong> Seastate (Beaufort scale)<br>
+                <strong>Function used:</strong> hazard-rate <br>
+                <strong>Probability equation:</strong> <!-- formule p  -->
                 </p>
                 <img alt="Hi!" src="images/plot.PNG" width="480" height="300"/> 
                 <!-- alt : alternative text, si jamais ca apparait pas --> 
@@ -199,12 +199,12 @@
                 <p style ="text-align: justify;">  
                 Density surface modelling of line transect data is a Generalized Additive Model-based approach is used to calculate spatially-explicit estimates of animal abundance from distance sampling (also presence/absence and strip
 transect) data. <br>
-                Function : dsm::predict <br>
-                Covariates selection : Forward selection with a minimum Akaike information criterion <br>
-                Covariates used : Sea surface temperature, chlorophyll A and localization. <br>
-                Availability :  potentially visible individuals* (Nykanen) <br>
+                <strong>Function:</strong> dsm::predict <br>
+                <strong>Covariates selection:</strong> Forward selection with minimization of the Akaike criterion <br>
+                <strong>Covariates used:</strong> Sea surface temperature, chlorophyll A and localization. <br>
+                <strong>Availability:</strong>  potentially visible individuals* (Nykanen) <br>
                 Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf <br>
-                Negative binomiale/Tweedie distribution <br> <!-- à détailler -->
+                <strong>Distribution:</strong> Negative binomiale/Tweedie distribution <br> <!-- à détailler -->
                 </p>
                 </div>
             </div>
