@@ -97,7 +97,7 @@ get_map_abundance <- function(empty.map,
 						fill = abondance,
 						text = paste0(
 							round(dsm.pred, 2),
-							"% of the sharks in the study area in this 4km\u00B2 cell"
+							"% of the sharks in the study area are in this 4km\u00B2 cell"
 						)
 					),
 					alpha = 0.8
