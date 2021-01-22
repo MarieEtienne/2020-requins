@@ -53,10 +53,10 @@ get_map_abundance <- function(empty.map,
 			scale_fill_gradientn(
 				colours = pal,
 				name = "",
-				limits = c(0, round(max(dsm.pred)*100)/100),
+				limits = c(0, ceiling(max(dsm.pred)*100)/100),
 				breaks = round(seq(
 						from = 0,
-						to = max(dsm.pred)*100,
+						to = ceiling(max(dsm.pred) * 100),
 						length.out = 5
 					))/100
 			)
