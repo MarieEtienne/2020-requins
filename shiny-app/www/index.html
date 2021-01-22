@@ -139,15 +139,17 @@
     ================================================== -->
     <section id='data' class="s-services">
 
-        <div class="row section-header has-bottom-sep" data-aos="fade-up">
+        <div class="row section-header" data-aos="fade-up">
             
             <div class="col-full">
-                <h3 class="subhead subhead--dark">Observation protocol</h3>  <!-- à mettre ici : données -->
+                <h2 class="display-2--light">
+                  Observation protocol
+                </h2>
                 <p style ="text-align: justify;"> 
                 The observations were made from a plane at 200m altitude and going at an average speed of 180kmh, in the Bay of Biscay off La Rochelle in France. The method used to collect data is a transect sampling which consist of following lines (transects) and counting the occurences of sharks as well as their distances from the plane.
                 </p> <!-- pour mettre un texte, faut rajouter la forme du text avec une class de CSS -->
             </div> 
-            <div class="row section-header has-bottom-sep block-1-3 block-m-1-3 block-mob-full" data-aos="fade-up">
+            <div class="row section-header block-1-3 block-m-1-3 block-mob-full" data-aos="fade-up">
                 <div class="col-block">
                     <h3 class="subhead subhead--dark">Sessions</h3>  <!-- à mettre ici : données -->
                     <p style ="text-align: justify;"> Four sessions were carried out in 2019:  <br> 
@@ -170,21 +172,29 @@
         </div>
     </section> <!-- end data -->
     
-        <!-- Observation protocol
+        <!-- Statistical methods
     ================================================== -->
     <section id='methods' class="s-services">
+        
+        <div class="row section-header" data-aos="fade-up">
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  Statistical methods 
+                </h2>
+            </div>
+        </div>
 
-        <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+        <div class="row block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
 
             <div class="col-block">
                 <div>
                 <h3 class="subhead subhead--dark">Detection function</h3>  
                 <p style ="text-align: justify;"> 
-                A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br>
-                <strong>Function:</strong> Distance::ds <br>
-                <strong>Covariates selection:</strong> minimization of the Akaike criterion <br>
+                A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br> <br>
+                <strong>R Function:</strong> Distance::ds <br>
+                <strong>Covariates and key function selection:</strong> minimization of the Akaike criterion <br>
                 <strong>Covariate used:</strong> Seastate (Beaufort scale)<br>
-                <strong>Function used:</strong> hazard-rate <br>
+                <strong>Key function used:</strong> hazard-rate <br>
                 <strong>Probability equation:</strong> <!-- formule p  -->
                 </p>
                 <img alt="Hi!" src="images/plot.PNG" width="480" height="300"/> 
@@ -197,13 +207,12 @@
                 <div>
                 <h3 class="subhead subhead--dark">Density function</h3>  
                 <p style ="text-align: justify;">  
-                Density surface modelling of line transect data is a Generalized Additive Model-based approach is used to calculate spatially-explicit estimates of animal abundance from distance sampling (also presence/absence and strip
-transect) data. <br>
-                <strong>Function:</strong> dsm::predict <br>
+                Density surface modelling of line transect data is a Generalized Additive Model-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br> <br>
+                <strong>R Function:</strong> dsm::predict <br>
                 <strong>Covariates selection:</strong> Forward selection with minimization of the Akaike criterion <br>
-                <strong>Covariates used:</strong> Sea surface temperature, chlorophyll A and localization. <br>
-                <strong>Availability:</strong>  potentially visible individuals* (Nykanen) <br>
-                Three “availability” levels are taken into account : 1, 0.41 and onshelf/offshelf <br>
+                <strong>Covariates used:</strong> Sea surface temperature, chlorophyll A and localization (X,Y coordinates, Lambert93). <br>
+                <strong>Availability bias:</strong>  potentially visible individuals* (Nykanen) <br>
+                Three “availability” levels are taken into account: 1, 0.41 and depending on the location on the continental shelf (on-shelf/off-shelf). <br>
                 <strong>Distribution:</strong> Negative binomiale/Tweedie distribution <br> <!-- à détailler -->
                 </p>
                 </div>
@@ -240,7 +249,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s2_av1}} sharks ± {{num_sharks_s2_av1_se}}
                 </h6>
-                <h5> Availability 1</h5>
+                <h5> Availability bias: 1</h5>
 
             </div>
             
@@ -248,7 +257,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s2_av041}} sharks ± {{num_sharks_s2_av041_se}}
                 </h6>
-                <h5> Availability 0.41</h5>
+                <h5> Availability bias: 0.41</h5>
 
             </div>
             
@@ -256,7 +265,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s2_avshelf}} sharks ± {{num_sharks_s2_avshelf_se}}
                 </h6>
-                <h5>Availability onshelf/offshelf</h5>
+                <h5>Availability bias: on-shelf/off-shelf</h5>
             </div>
          </div> 
          
@@ -305,7 +314,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s3_av1}} sharks ± {{num_sharks_s3_av1_se}}
                 </h6>
-                <h5> Availability 1</h5>
+                <h5> Availability bias: 1</h5>
 
             </div>
             
@@ -313,7 +322,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s3_av041}} sharks ± {{num_sharks_s3_av041_se}}
                 </h6>
-                <h5> Availability 0.41</h5>
+                <h5> Availability bias: 0.41</h5>
 
             </div>
             
@@ -321,7 +330,7 @@ transect) data. <br>
                 <h6>
                   {{num_sharks_s3_avshelf}} sharks ± {{num_sharks_s3_avshelf_se}}
                 </h6>
-                <h5>Availability onshelf/offshelf</h5>
+                <h5>Availability bias : on-shelf/off-shelf</h5>
             </div>
          </div> 
          <!--- CARTE SESSION 3 -->
