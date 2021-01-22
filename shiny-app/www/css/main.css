@@ -80,7 +80,7 @@ body {
     font-style: normal;
     font-weight: normal;
     line-height: 1.765;
-    color: #757575;
+    color: #004547;
     margin: 0;
     padding: 0;
 }
@@ -178,7 +178,7 @@ h6, .h6 {
     font-family: "montserrat-bold", sans-serif;
     font-size: 3.5rem;
     line-height: 1;
-    color: #7F7F7F;
+    color: #004547;
     position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2375,7 +2375,7 @@ html.no-csstransitions .home-content__main {
     padding-top: 2rem;
     padding-bottom: 13.2rem;
     background-color: #FFFFFF;
-    color: #757575;
+    color: #004547;
     position: relative;
 }
 
@@ -2737,7 +2737,7 @@ html.no-csstransitions .home-content__main {
     padding-top: 16.2rem;
     padding-bottom: 16.8rem;
     background-color: #e6e6e6;
-    color: #757575;
+    color: #004547;
     position: relative;
 }
 
