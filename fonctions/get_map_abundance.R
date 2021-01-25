@@ -64,19 +64,18 @@ get_map_abundance <- function(empty.map,
 				scale_fill_gradientn(
 					colours = pal,
 					name = "",
-					limits = c(0, ceiling(max(dsm.pred) * 100) / 100),
-					breaks = round(seq(
+					limits = c(0, 0.35),
+					breaks = seq(
 						from = 0,
-						to = ceiling(max(dsm.pred) * 100),
-						length.out = 5
-					)) / 100
-				) +
+						to =  0.35,
+						length.out = 6)
+					) +
 				guides(
 					col = FALSE,
 					fill = guide_colourbar(
 						ticks = F,
 						barwidth = 4,
-						barheight = 40,
+						barheight = 50,
 						label.theme = element_text(color = "#4B5755", size = 40),
 						direction = "vertical"
 					)
