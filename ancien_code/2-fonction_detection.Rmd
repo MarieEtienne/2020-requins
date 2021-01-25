@@ -41,16 +41,16 @@ library(Rdistance)
 Importation des données
 
 ```{r import_donnees}
-load("../data/effort_output.RData")
+load("../../data/effort_output.RData")
 # effort_ouput : Effort data divided in multiple sub-data differing by their scale of study.
 
-load("../data/list_prepare_obs_by_sp.RData")
+load("../../data/list_prepare_obs_by_sp.RData")
 # list_prepare_obs_by_sp : observation data divided in multiple sub-data differing by their scale of study.
 
-load("../data/predata_output.RData")
+load("../../data/predata_output.RData")
 # predata_output : A grid of 2km cells size with different covariable associated around the observation.
 
-gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
+gridata <- read.dbf("../../data/SPEE_CAPECET_Grid2km_modified.dbf")
 # gridata : equivalent to predata from predata_output but with a extended surface
 ```
 
