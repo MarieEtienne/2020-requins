@@ -1815,7 +1815,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 }
 
 .home-content__main {
-    padding-top: 0rem; /* pour remonter le titre abondance etc */
+    padding-top: 0rem; 
     position: relative;
 }
 
@@ -2202,7 +2202,7 @@ html.no-csstransitions .home-content__main {
  *
  * ------------------------------------------------------------------- */
 .s-about {
-    padding-top: 2rem; /*diminuer pour que ça remonte et faire Fn+Shift+F5 pour vider le cache parce que mon navigateur ne rafraichit par direct*/
+    padding-top: 2rem; 
     padding-bottom: 4rem;
     background-color: #4B5755;
     color: #010507;
