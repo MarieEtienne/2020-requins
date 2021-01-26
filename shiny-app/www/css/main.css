@@ -339,7 +339,7 @@ ol {
 }
 
 ul {
-    list-style: disc;
+    list-style: square inside;
 }
 
 li {

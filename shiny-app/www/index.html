@@ -202,28 +202,51 @@
 
         <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
 
-            <div class="col-block"> <!-- First function -->
-                <div> 
-                <h3 class="subhead subhead--dark">Detection function</h3>  
-                <p style ="text-align: justify;"> 
-                A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br> <br>
-                <strong>R Function:</strong> Distance::ds <br>
-                <strong>Covariates and key function selection:</strong> minimization of the Akaike criterion <br>
-                <strong>Covariate used:</strong> Seastate (Beaufort scale)<br>
-                <strong>Key function used:</strong> hazard-rate <br>
-                <strong>Probability equation:</strong> <br>
-                <span class="math display">\[\Large 1-\frac{1}{e^{(\frac{\sigma}{d})^b}}\]</span> <br>
-                &sigma;: scale coefficient<br>
-                b: shape coefficient <br>
-                d: distance <br>
-                </p>
+              <div class = "row"> <!-- Detection function -->
+                <h3 class = "subhead subhead--dark" >Detection function</h3>  
+                <p style = "text-align: justify;" > 
+                A detection function is used to define the probability of an individual to be observed and take account of observation bias. <br> <br> </p>
                 
-                <img alt="Detection Function plot" src="images/plot.PNG" width="480" height="300"/> 
+                <div class = "col-block"> <!-- Descriptive text -->
+                
+                  <p style = "text-align: justify;" > <!-- Useful points -->
+                    <strong>R function:</strong> Distance::ds <br>
+                    <strong>Covariates and key function selection:</strong> minimization of the Akaike criterion <br>
+                    <strong>Covariate used:</strong> Seastate (Beaufort scale)<br>
+                    <strong>Key function used:</strong> hazard-rate <br>
+                  </p>
+                  
+                  <!-- Formula title -->
+                  <p style = "text-transform:uppercase;"> 
+                    <strong>Detection probability</strong>
+                  </p>
+                  
+                  <!-- Formula -->
+                  <p style = "text-align: center;" >
+                    <span class="math display">\[\Large p =  g(d) = 1-\frac{1}{e^{(\frac{\sigma}{d})^b}}\]</span>
+                  </p>
+                  
+                  <!-- Formula informations-->
+                  <p style = "text-align: left;" >
+                    With:
+                    <ul>
+                      <li>p: detection probability</li>
+                      <li>&sigma;: scale coefficient, impacted by the sea state</li>
+                      <li>b: shape coefficient</li>
+                      <li>d: distance</li>
+                    </ul>
+                  </p>
                 </div>
-            </div> <!-- End First function -->
                 
-            <div class="col-block"> <!-- Second function -->
-                <div>
+                <div class = "col-block"> <!-- Image -->
+                  <img alt="Detection Function plot" src="./images/plot.png" width="480" height="300"/> 
+                </div>
+
+              </div> <!-- end Detection function -->
+
+
+
+              <div class = "row"> <!-- Density function -->
                 <h3 class="subhead subhead--dark">Density function</h3>  
                 <p style ="text-align: justify;">  
                 Density surface modelling of line transect data is a Generalized Additive Model-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br> <br>
@@ -237,8 +260,7 @@
                 <strong>Distribution:</strong> use of Negative binomiale to fit overdispersion <br> 
     
                 </p>
-                </div>
-            </div> <!-- End Second function -->
+              </div> <!-- End Density function -->
         </div> 
 
     </section> 

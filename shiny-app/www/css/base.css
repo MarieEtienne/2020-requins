@@ -385,6 +385,7 @@ small {
 ol,
 ul {
     list-style: none;
+    text-align: left;
 }
 
 li {
