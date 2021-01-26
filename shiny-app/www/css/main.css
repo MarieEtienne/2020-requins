@@ -75,14 +75,16 @@ html, body {
 
 body {
     background: #141414;
-    font-family: "lora-regular", serif;
-    font-size: 1.7rem;
-    font-style: normal;
-    font-weight: normal;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.6rem;
+    font-style: normal; 
+    font-variant: normal;
+    font-weight: 200; 
     line-height: 1.765;
-    color: #004547;
+    color: #000000;
     margin: 0;
     padding: 0;
+    text-align: justify;
 }
 
 
@@ -118,7 +120,7 @@ h1, h2, h3, h4, h5, h6,
     text-rendering: optimizeLegibility;
 }
 
-h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
+h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
@@ -129,7 +131,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
     }
 }
 
-h5, .h5, h6, .h6 {
+h4, .h4, h5, .h5, h6, .h6 {
     margin-top: 3rem;
     margin-bottom: 0rem;
 }
@@ -160,13 +162,21 @@ h2, .h2 {
 }
 
 h3, .h3 {
-    font-size: 2.4rem;
-    line-height: 0;
+    font-family: "montserrat-bold", sans-serif;
+    font-size: 2.1rem;
+    line-height: 1.333;
+    text-transform: uppercase;
+    letter-spacing: .1rem;
+    color: #141414;
 }
 
 h4, .h4 {
-    font-size: 2.1rem;
-    line-height: 1.286;
+    font-family: "montserrat-bold", sans-serif;
+    font-size: 1.7rem;
+    line-height: 1.333;
+    text-transform: uppercase;
+    letter-spacing: .25rem;
+    color: #141414;
 }
 
 h5, .h5 {
@@ -185,17 +195,29 @@ h6, .h6 {
     white-space: nowrap;
 }
 
+p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.6rem;
+    font-style: normal; 
+    font-variant: normal;
+    font-weight: 200; 
+    line-height: 1.765;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    text-align: justify;
+}
+
 p img {
     margin: 0;
 }
 
-p.lead {
-    font-family: "montserrat-regular", sans-serif;
-    font-size: 2rem;
+p.code {
+	  font-family: monospace; 
     font-weight: 300;
-    line-height: 1.8;
-    margin-bottom: 3.6rem;
-    color: #000000;
+    line-height: 1.65;
+    color: #CC8D7A;
+    text-align: center;
 }
 
 @media only screen and (max-width: 800px) {
@@ -211,12 +233,9 @@ em, i, strong, b {
     font-weight: normal;
 }
 
-em, i {
-    font-family: "lora-italic", serif;
-}
-
 strong, b {
-    font-family: "lora-bold", serif;
+    font-family: Manrope;
+    font-weight: 400;
 }
 
 small {
@@ -268,7 +287,7 @@ blockquote cite a, blockquote cite a:visited {
 }
 
 abbr {
-    font-family: "lora-bold", serif;
+    font-family: "oswald-bold", serif;
     font-variant: small-caps;
     text-transform: lowercase;
     letter-spacing: .05rem;
@@ -429,7 +448,7 @@ table {
     border-width: 0;
     width: 100%;
     max-width: 100%;
-    font-family: "lora-regular", serif;
+    font-family: "oswald-regular", serif;
 }
 
 th, td {
@@ -486,7 +505,7 @@ dl,
 form,
 .video-container,
 .cl-custom-select {
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 
@@ -1250,13 +1269,9 @@ button::-moz-focus-inner, input::-moz-focus-inner {
     line-height: 1.333;
     text-transform: uppercase;
     letter-spacing: .25rem;
-    color: #4B5755;
+    color: #141414;
     margin-top: 0;
     margin-bottom: 0;
-}
-
-.subhead--dark {
-    color: #000000;
 }
 
 
@@ -2375,7 +2390,7 @@ html.no-csstransitions .home-content__main {
     padding-top: 5rem;
     padding-bottom: 5rem;
     background-color: #FFFFFF;
-    color: #004547;
+    color: #000000;
     position: relative;
 }
 
@@ -2794,13 +2809,6 @@ html.no-csstransitions .home-content__main {
     margin: 0 10%;
 }
 
-.clients-testimonials .testimonials p {
-    font-family: "lora-regular", serif;
-    font-size: 3rem;
-    line-height: 1.8;
-    color: #555555;
-    margin-bottom: 6rem;
-}
 
 .clients-testimonials .testimonials__slide {
     padding: 0 0 3rem 0;
