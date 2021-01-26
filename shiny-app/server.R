@@ -1,5 +1,5 @@
 ###############################################################################
-# Defining Server Logic behind App to explore UBER data
+# Defining Server Logic behind App to explore Shark
 #
 # Léa Pautrel - Rindra Ranaivomanana - Emma Rouault
 # Janvier 2021
