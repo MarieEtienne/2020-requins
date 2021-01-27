@@ -276,16 +276,20 @@
               <div class = "row"> <!-- Density function -->
                 <h3 style="margin-top: 5rem">Density function</h3>  
                 <p style ="text-align: justify;">  
-                Density surface modelling of line transect data is a Generalized Additive Model-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br> <br>
-                <b>R Function:</b> <br>
-                - dsm::dsm  <br>
-                - dsm::predict <br>
+                Density surface modelling of line transect data is a Generalized Additive Model-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br>
+                <h4>R function used</h4> 
+                <p class="code">
+                dsm::dsm  <br>
+                dsm::predict <br>
+                </p>
+                <p style ="text-align: justify;">
+                    <ul> <!-- RAJOUTER DES LI -->
                 <b>Covariates selection:</b> Forward selection with minimization of the Akaike criterion <br>
                 <b>Covariates used:</b> Sea surface temperature, chlorophyll A and localization (X,Y coordinates, Lambert93). <br>
                 <b>Availability bias:</b>  potentially visible individuals <a href="#about">(Nykänen et al., 2018)</a> <br>
                 Three “availability” levels are taken into account: 1, 0.41 and depending on the location on the continental shelf (on-shelf/off-shelf). <br>
                 <b>Distribution:</b> use of Negative binomiale to fit overdispersion <br> 
-    
+                    </ul>
                 </p>
               </div> <!-- End Density function -->
         </div> 
