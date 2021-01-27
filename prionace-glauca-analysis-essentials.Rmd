@@ -539,6 +539,13 @@ dsm_s3_avshelf <- dsm(
 				availability = availability)
 ```
 
+```{r fig.width=10}
+# s2 av1
+par(mfrow = c(1, 3))
+plot.gam(dsm_s2_av1)
+```
+
+
 # Prédiction de l'abondance
 
 ```{r}
