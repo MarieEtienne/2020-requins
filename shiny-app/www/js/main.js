@@ -445,17 +445,6 @@
             }
         });
     };
-    
-    var $clickme = $('.clickme'),
-  $box = $('.box');
-
-$box.hide();
-
-$clickme.click(function(e) {
-  $(this).text(($(this).text() === 'Hide' ? 'Show' : 'Hide')).next('.box').slideToggle();
-  e.preventDefault();
-  
-});
 
 
    /* Initialize
@@ -478,6 +467,15 @@ $clickme.click(function(e) {
         clBackToTop();
 
     })();
+    
+    $('#MyCheckBox').click(function() {
+    if ($(this).is(':checked')) {
+        $("#ShowMeDIV").show();
+    } else {
+        $("#ShowMeDIV").hide();
+    } 
+        
+    });
         
         
 })(jQuery);

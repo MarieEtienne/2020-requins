@@ -1,13 +1,9 @@
-(function($) {
-var $clickme = $('.clickme'),
-  $box = $('.box');
+function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 
-$box.hide();
-
-$clickme.click(function(e) {
-  $(this).text(($(this).text() === 'Hide' ? 'Show' : 'Hide')).next('.box').slideToggle();
-  e.preventDefault();
-  
-});
-
-})(jQuery);
