@@ -540,9 +540,11 @@ dsm_s3_avshelf <- dsm(
 ```
 
 ```{r fig.height = 12, fig.width = 7}
-# s2 av1
-par(mfrow = c(3, 1))
-plot.gam(dsm_s2_av1)
+session_choix = "2"
+availability_choix = "1"
+
+par(mfrow = c(3, 1), cex=1.1, mar=c(1, 1, 1, 1))
+eval(parse(text = paste0("plot.gam(dsm_s", session_choix, "_av", availability_choix, ")")))
 ```
 
 

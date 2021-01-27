@@ -7,6 +7,24 @@
 
 server <- function(input, output) {
   
+  # Images for splines in the density model section --------------------------------
+  output$img_splines_dsm <- renderImage({
+      outfile <- tempfile(fileext='.png')
+      
+      # Generate a png
+      png(outfile, height = 600, width = 500)
+      par(mfrow = c(3, 1))#, cex = 1.1, mar = c(1, 1, 1, 1))
+      eval(parse(text = paste0("plot.gam(dsm_s", input$session_choix, "_av", input$availability_choix, ")")))
+      dev.off()
+      
+      # Return a list
+      list(src = outfile,
+           alt = "This is alternate text")
+    }, deleteFile = TRUE)
+    
+  
+  
+  
   # Basic Numbers Page --------------------------------------------------------------
   
   # Nombres de requins dans session 2

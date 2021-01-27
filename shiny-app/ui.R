@@ -9,6 +9,23 @@ ui = shiny::htmlTemplate(
   # Index Page
   "www/index.html",
   
+  ## Density model #############################################################
+  session_choix = radioButtons(
+    inputId = "session_choix",
+    label = "Session",
+    choices = c("Spring" = "2",
+                "Summer" = "3")),
+  
+  availability_choix = radioButtons(
+    inputId = "availability_choix",
+    label = "Availability bias",
+    choices = c("1" = "1",
+                "0.41" = "041",
+                "on-shelf/off-shelf" = "shelf")),
+  
+  img_splines_dsm = imageOutput("img_splines_dsm"),
+  
+  ## Résultats #################################################################
   
   ###########SESSIONS#################
   #SESSION 2 AV1

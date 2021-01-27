@@ -229,7 +229,7 @@
                 <p>
                   The selection of the covariates and of the key function was made by minimizing the Akaike Information Criterion.<br>
                   <ul>
-                    <li><b>Covariate used:</b> Seastate (Beaufort scale)</li>
+                    <li><b>Selected detection covariate:</b> Sea state (Beaufort scale)</li>
                     <li><b>Key function used:</b> hazard-rate</li>
                   </ul>
                 </p>
@@ -280,22 +280,64 @@
 
               <div class = "row"> <!-- Density function -->
                 <h3 style="margin-top: 5rem">Density function</h3>  
+                
                 <p style ="text-align: justify;">  
-                Density surface modelling of line transect data is a Generalized Additive Model-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br>
-                <h4>R function used</h4> 
-                <p class="code">
-                dsm::dsm  <br>
-                dsm::predict <br>
-                </p>
-                <p style ="text-align: justify;">
+                Density surface modelling of line transect data is a Generalized Additive Model (GAM)-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br>
+                
+                <div class = "col-block" style="width:50%!important"> <!-- Descriptive text -->
+                
+                <!-- Model selection -->
+                    <h4>Model selection</h4>
+                    <p>To select the density covariates, a forward algorithm minimizing the Akaike Information Criterion was made.</p>
                     <ul>
-                <li><b>Covariates selection:</b> Forward selection with minimization of the Akaike criterion </li>
-                <li><b>Covariates used:</b> Sea surface temperature, chlorophyll A and localization (X,Y coordinates, Lambert93). </li>
-                <li><b>Availability bias:</b>  potentially visible individuals <a href="#about">(Nykänen et al., 2018)</a> <br>
-                Three “availability” levels are taken into account: 1, 0.41 and depending on the location on the continental shelf (on-shelf/off-shelf).</li>
-                <li><b>Distribution:</b> use of Negative binomiale to fit overdispersion </li> 
+                        <li><b>Selected density covariates:</b></li>
+                        <ul>
+                            <li>Sea surface temperature (mean from 4 weeks of measures before the session)</li>
+                            <li>Location (X and Y coordinates, in Lambert93)</li>
+                            <li>Chlorophyll A concentration (mean from 4 weeks of measures before the session)</li>
+                        </ul>
+                        <li><b>GAM fitting method:</b> restricted maximum likelihood (REML)</li>
+                        <li><b>Distribution:</b> Negative binomiale, to fit overdispersion</li> 
                     </ul>
-                </p>
+                    
+                <!-- Availability bias -->
+                    <h4>Availability bias</h4>
+                    <p>
+                        Availability corresponds to the possibility of seing the sharks. 
+                        It basically represents the proportion of sharks that are close enough to the sea surface to be seen. 
+                        Like in the article of <a href="#about">Nykänen et al., in 2018</a>, 
+                        three availability bias were taken into account:</p>
+                    <ul>
+                        <li><b>1:</b> we consider that all sharks are potentially visible</li>
+                        <li><b>0.41:</b> the proportion of time blue sharks spend close to the surface</li>
+                        <li><b>on-shelf/off-shelf:</b> 
+                            a different availability bias whether sharks are on the continental shelf (<b>0.63</b>) 
+                            or not (<b>0,14</b>)</li> 
+                    </ul>
+                
+                <!-- R functions -->
+                    <h4>R functions</h4> 
+                    
+                        <p class = "code">dsm::dsm to fit model parameters</p>
+                        <p class = "code">dsm::predict to spatially estimate sharks abundance</p>
+
+                </div> <!--- end descriptive text -->
+                
+                
+                
+                <div class = "col-block" style="width:50%!important"> <!-- Spines plots -->
+                    <h4>Covariates effect on shark abundance</h4>
+                    <p style="text-align: center">Select the model's session and availability bias</p>
+                    <table><tr>
+                        <td>{{ session_choix }}</td>
+                        <td>{{ availability_choix }}</td>
+                    </tr></table>
+               
+                {{ img_splines_dsm }}
+                
+                </div> <!--- end splines plot -->
+
+                
               </div> <!-- End Density function -->
         </div> 
 
