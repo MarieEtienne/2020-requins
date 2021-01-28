@@ -379,11 +379,11 @@ ggplot() +
 ```{r}
 plot_detfc <- distdata %>% 
   ggplot(aes(x = distance)) +
-	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
-	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), col = "#1A3C3D", size = 1.5) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState), text = paste0(..count..," sharks\n", "Sea state: ", factor(seaState))), binwidth = 0.02, col="white", alpha = .3) +
+	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec0)), col = "#54C3C7", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec1)), col = "#3C8C8F", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec2)), col = "#2B6466", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec3)), col = "#1A3C3D", size = 1.5) +
 	# Nom des axes
 	xlab("Distance (km)") +
 	ylab("Detection probability") +
@@ -891,18 +891,18 @@ map2
 ```{r}
 # Fonction de détection
 save(detfc.sea.hr, plot_detfc,
-		 file = "resultats/detfc.Rdata")
+		 file = "shiny-app/data/detfc.Rdata")
 
 
 # Modèles : dsm
 save(dsm_s2_av1, dsm_s2_av041, dsm_s2_avshelf,
 		 dsm_s3_av1, dsm_s3_av041, dsm_s3_avshelf,
-		 file = "resultats/modeles_dsm.RData")
+		 file = "shiny-app/data/modeles_dsm.RData")
 
 # Résultats de la prédiction : dsm.pred
 save(dsm_s2_av1.pred, dsm_s2_av041.pred, dsm_s2_avshelf.pred,
 		 dsm_s3_av1.pred, dsm_s3_av041.pred, dsm_s3_avshelf.pred,
-		 file = "resultats/modeles_dsm.pred.RData")
+		 file = "shiny-app/data/modeles_dsm.pred.RData")
 
 # Données nettoyées
 save(obsdata, predata, predata_tmp2, predata_tmp3, segdata, distdata,

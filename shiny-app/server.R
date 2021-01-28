@@ -70,7 +70,7 @@ server <- function(input, output) {
   
   # Histogramme ----------------------------------------------------
   output$histogramme <- renderPlotly({
-    histogramme <- ggplotly(plot_detfc)
+    histogramme <- ggplotly(plot_detfc, tooltip = "text")
   })
 
   # Notre carte ----------------------------------------------------
