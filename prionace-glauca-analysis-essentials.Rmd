@@ -375,6 +375,72 @@ ggplot() +
 	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), lty = 5, size = 2)
 ```
 
+## final plot of detection function
+```{r}
+plot_detfc <- distdata %>% 
+  ggplot(aes(x = distance)) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), col = "#1A3C3D", size = 1.5) +
+	# Nom des axes
+	xlab("Distance (km)") +
+	ylab("Detection probability") +
+	labs(fill = "Beaufort") +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		panel.background = element_blank()
+	) +
+	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
+
+ggplotly(plot_detfc)
+
+# Français
+png("./img/plot_fndet_fr.png")
+distdata %>% 
+  ggplot(aes(x = distance)) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), col = "#1A3C3D", size = 1.5) +
+	# Nom des axes
+	xlab("Distance (km)") +
+	ylab("Probabilité de détection") +
+	labs(fill = "Beaufort") +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		panel.background = element_blank()
+	) +
+	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
+dev.off()
+
+# Anglais
+png("./img/plot_fndet_en.png")
+distdata %>% 
+  ggplot(aes(x = distance)) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
+	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), col = "#1A3C3D", size = 1.5) +
+	# Nom des axes
+	xlab("Distance (km)") +
+	ylab("Detection probability") +
+	labs(fill = "Beaufort") +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		panel.background = element_blank()
+	) +
+	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
+dev.off()
+```
+
+
 ```{r}
 g.herm.cov <- function(y, param, beaufort){
 	# Paramètres
@@ -540,12 +606,22 @@ dsm_s3_avshelf <- dsm(
 				availability = availability)
 ```
 
+## Plot des splines
 ```{r fig.height = 12, fig.width = 7}
-session_choix = "2"
-availability_choix = "1"
 
-par(mfrow = c(3, 1), cex=1.1, mar=c(1, 1, 1, 1))
-eval(parse(text = paste0("plot.gam(dsm_s", session_choix, "_av", availability_choix, ")")))
+for (session_choix in 2:3){
+	for (availability_choix in c("1", "041", "shelf")){
+		# créé png
+		eval(parse(text = paste0('png("./shiny-app/www/images/dsm_s', session_choix, 
+														 '_av', availability_choix, '.pred.png", width = 700, height = 1000)')))
+		# plot
+		par(mfrow = c(3, 1), cex = 1.1, mar = c(5,5,5,5))
+		eval(parse(text = paste0("plot.gam(dsm_s", session_choix, "_av", availability_choix, ")")))
+		# écrit png et ferme
+		dev.off()
+	}
+}
+
 ```
 
 
@@ -813,8 +889,9 @@ map2
 
 ```{r}
 # Fonction de détection
-save(detfc.sea.hr,
+save(detfc.sea.hr, plot_detfc,
 		 file = "resultats/detfc.Rdata")
+
 
 # Modèles : dsm
 save(dsm_s2_av1, dsm_s2_av041, dsm_s2_avshelf,

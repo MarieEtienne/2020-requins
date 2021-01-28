@@ -19,11 +19,11 @@ library(plotly)
 
 
 # Importation des données  ------------------------------------------------
-load("../resultats/detfc.Rdata")
-load("../resultats/modeles_dsm.RData")
-load("../resultats/modeles_dsm.pred.RData")
+load("data/detfc.Rdata")
+load("data/modeles_dsm.RData")
+load("data/modeles_dsm.pred.RData")
 load("../../data/donnees_nettoyees.RData")
-load("../resultats/emptymap.RData")
+load("data/emptymap.RData")
 source("fonctions/get_map_abundance_app.R")
 
 
