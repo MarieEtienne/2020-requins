@@ -398,7 +398,7 @@ plot_detfc <- distdata %>%
 ggplotly(plot_detfc)
 
 # Français
-png("./img/plot_fndet_fr.png")
+png("./img/plot_fndet_fr.png", width = 1200, height = 750)
 distdata %>% 
   ggplot(aes(x = distance)) +
 	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
@@ -419,7 +419,7 @@ distdata %>%
 dev.off()
 
 # Anglais
-png("./img/plot_fndet_en.png")
+png("./img/plot_fndet_en.png", width = 1200, height = 750)
 distdata %>% 
   ggplot(aes(x = distance)) +
 	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
@@ -432,6 +432,7 @@ distdata %>%
 	ylab("Detection probability") +
 	labs(fill = "Beaufort") +
 	theme(
+		
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 		panel.background = element_blank()
