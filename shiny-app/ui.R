@@ -107,20 +107,20 @@ ui = shiny::htmlTemplate(
   ##Choix transect##
   show_transect2 = checkboxInput("transect2", 
               label = "Show transects",
-              value = TRUE),
+              value = FALSE),
   
   show_transect3 = checkboxInput("transect3", 
               label = "Show transects",
-              value = TRUE),
+              value = FALSE),
   
   ##Choix Observation##
   show_observations2 = checkboxInput("observations2", 
               label = "Show observations",
-              value = TRUE),
+              value = FALSE),
   
   show_observations3 = checkboxInput("observations3", 
               label = "Show observations",
-              value = TRUE),
+              value = FALSE),
   
   ##Cartes##
   
