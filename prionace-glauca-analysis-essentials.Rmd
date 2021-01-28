@@ -399,9 +399,9 @@ ggplotly(plot_detfc)
 
 # Français
 png("./img/plot_fndet_fr.png", width = 1200, height = 750)
-distdata %>% 
-  ggplot(aes(x = distance)) +
-	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+
+plot <- ggplot(distdata, aes(x = distance)) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col = "white", alpha = .3) +
 	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
 	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
 	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
@@ -411,18 +411,24 @@ distdata %>%
 	ylab("Probabilité de détection") +
 	labs(fill = "Beaufort") +
 	theme(
+		axis.text = element_text(size = 30, colour = "#141414"),
+		axis.title = element_text(size = 40, colour = "#141414"),
+		legend.text = element_text(size = 30, colour = "#141414"),
+		legend.title = element_text(size = 30, colour = "#141414"),
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 		panel.background = element_blank()
 	) +
 	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
+plot
+
 dev.off()
 
 # Anglais
 png("./img/plot_fndet_en.png", width = 1200, height = 750)
-distdata %>% 
-  ggplot(aes(x = distance)) +
-	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+
+plot <- ggplot(distdata, aes(x = distance)) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col = "white", alpha = .3) +
 	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), col = "#54C3C7", size = 1.5) +
 	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), col = "#3C8C8F", size = 1.5) +
 	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), col = "#2B6466", size = 1.5) +
@@ -432,12 +438,17 @@ distdata %>%
 	ylab("Detection probability") +
 	labs(fill = "Beaufort") +
 	theme(
-		
+		axis.text = element_text(size = 30, colour = "#141414"),
+		axis.title = element_text(size = 40, colour = "#141414"),
+		legend.text = element_text(size = 30, colour = "#141414"),
+		legend.title = element_text(size = 30, colour = "#141414"),
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 		panel.background = element_blank()
 	) +
 	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
+plot
+
 dev.off()
 ```
 
