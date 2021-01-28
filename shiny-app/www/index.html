@@ -222,7 +222,7 @@
                 <p>
                 A detection function is used to define the probability of an individual to be observed and take account of observation bias.</p>
                 
-                <div class = "col-block"> <!-- Descriptive text -->
+                <div class = "col-block"  style="width:55%!important"> <!-- Descriptive text -->
                 
                 <!-- Useful points -->
                 <h4>Model selection</h4>
@@ -246,21 +246,22 @@
                   
                   <!-- Mathematic formula -->
                   <p, style = "text-align: center;" >
-                    <span class="math display">\[\normalsize p =  g(d) = 1-\frac{1}{e^{(\frac{\sigma}{d})^b}}\]</span>
+                    <span class="math display">\[\normalsize \mathbb{P}(detected \mid present) =  g_{\sigma_i}(d) = 1-\frac{1}{e^{(\frac{\sigma_i}{d})^b}}\]</span>
                   </p>
                   
                   <!-- Formula informations-->
                   <p, style = "text-align: left;" >
                     <ul>
-                      <li><i>p</i>: detection probability</li>
-                      <li><i>&sigma;</i>: scale coefficient, impacted by the sea state</li>
-                      <li><i>b</i>: shape coefficient <span class="math display">\[\normalsize \ln(b) = 1.47 \]</span></li>
-                      <li><i>d</i>: distance <span class="math display">\[\normalsize \ln(\sigma) = -2.23 + 0.17 \times beaufort \]</span></li>
+                        <li><i>b</i>: shape coefficient
+                            <span class="math display">\[\small \ln(b) = 1.47 \]</span></li>
+                        <li><i>&sigma;<sub>i</sub></i>: scale coefficient, impacted by the sea state i = {0, 1, 2, 3}
+                            <span class="math display">\[\small \ln(\sigma_i) = -2.23 + 0.17 \times i \]</span></li>
+                        <li><i>d</i>: distance</li>
                     </ul>
                   </p>
                 </div>
                 
-                <div class = "col-block"> <!-- Graphique de la fonction de detection -->
+                <div class = "col-block" style="width:45%!important"> <!-- Graphique de la fonction de detection -->
                   <h4>Detection function plot</h4>
                   {{ histogramme }}
                   <!-- Limites -->

@@ -70,7 +70,8 @@ server <- function(input, output) {
   
   # Histogramme ----------------------------------------------------
   output$histogramme <- renderPlotly({
-    histogramme <- ggplotly(plot_detfc, tooltip = "text")
+    histogramme <- ggplotly(plot_detfc, tooltip = "text") %>% 
+      layout(legend = list(title = list(text="Beaufort\n"), x = 0.8, y = 0.8))
   })
 
   # Notre carte ----------------------------------------------------
