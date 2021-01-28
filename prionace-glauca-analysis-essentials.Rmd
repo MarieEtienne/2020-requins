@@ -379,11 +379,11 @@ ggplot() +
 ```{r}
 plot_detfc <- distdata %>% 
   ggplot(aes(x = distance)) +
-	geom_histogram(aes(y = ..count../10, fill = factor(seaState), text = paste0(..count..," sharks\n", "Sea state: ", factor(seaState))), binwidth = 0.02, col="white", alpha = .3) +
-	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec0)), col = "#54C3C7", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec1)), col = "#3C8C8F", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec2)), col = "#2B6466", size = 1.5) +
-	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y, text = paste0("Sea state: ", factor(seaState), "\n Detection probability: ", proba_detec3)), col = "#1A3C3D", size = 1.5) +
+	geom_histogram(aes(y = ..count../10, fill = factor(seaState)), binwidth = 0.02, col="white", alpha = .3) +
+	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y, col = "#54C3C7", size = 1.5)) +
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y, col = "#3C8C8F", size = 1.5)) +
+	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y, col = "#2B6466", size = 1.5)) +
+	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y, col = "#1A3C3D", size = 1.5)) +
 	# Nom des axes
 	xlab("Distance (km)") +
 	ylab("Detection probability") +
@@ -397,6 +397,9 @@ plot_detfc <- distdata %>%
 
 ggplotly(plot_detfc)
 
+```
+
+```{r}
 # Français
 png("./img/plot_fndet_fr.png", width = 1200, height = 750)
 
