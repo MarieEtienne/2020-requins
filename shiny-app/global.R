@@ -24,7 +24,7 @@ load("../resultats/modeles_dsm.RData")
 load("../resultats/modeles_dsm.pred.RData")
 load("../../data/donnees_nettoyees.RData")
 load("../resultats/emptymap.RData")
-source("../Fonctions/get_map_abundance.R")
+source("fonctions/get_map_abundance_app.R")
 
 
 

@@ -84,32 +84,38 @@ server <- function(input, output) {
   # Notre carte ----------------------------------------------------
   
   output$session2 <- renderPlotly({
-    session2 <- get_map_abundance(empty.map,
-                      dsm.pred = dsm_s2_av1.pred$fit,
-                      predata_tmp = predata_tmp2,
-                      session_selec = 2,
-                      segdata,
-                      distdata,
-                      pal = c("#C2D7D9", "#CC2227"),
-                      abondance = TRUE,
-                      transects = input$transect2,
-                      observations = input$observations2,
-                      poster = FALSE)
+    session2 <- get_map_abundance_app(
+      empty.map,
+      dsm.pred.1 = dsm_s2_av1.pred,
+      dsm.pred.041 = dsm_s2_av041.pred,
+      dsm.pred.shelf = dsm_s2_avshelf.pred,
+      predata_tmp = predata_tmp2,
+      session_selec = 2,
+      segdata,
+      distdata,
+      pal = c("#C2D7D9", "#CC2227"),
+      abondance = TRUE,
+      transects = input$transect2,
+      observations = input$observations2
+    )
   })
   
   output$session3 <- renderPlotly({
-    session3 <- get_map_abundance(empty.map,
-                                  dsm.pred = dsm_s3_av1.pred$fit,
-                                  predata_tmp = predata_tmp3,
-                                  session_selec = 3,
-                                  segdata,
-                                  distdata,
-                                  pal = c("#C2D7D9", "#CC2227"),
-                                  abondance = TRUE,
-                                  transects = input$transect3,
-                                  observations = input$observations3,
-                                  poster = FALSE)
+    session3 <- get_map_abundance_app(
+      empty.map,
+      dsm.pred.1 = dsm_s3_av1.pred,
+      dsm.pred.041 = dsm_s3_av041.pred,
+      dsm.pred.shelf = dsm_s3_avshelf.pred,
+      predata_tmp = predata_tmp3,
+      session_selec = 3,
+      segdata,
+      distdata,
+      pal = c("#C2D7D9", "#CC2227"),
+      abondance = TRUE,
+      transects = input$transect3,
+      observations = input$observations3
+    )
   })
   
-
+  
 }

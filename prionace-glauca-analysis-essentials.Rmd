@@ -63,15 +63,16 @@ gridata <- read.dbf("../data/SPEE_CAPECET_Grid2km_modified.dbf")
 
 ```{r import_functions}
 # On importe les fonctions pour sélectionner les covariables (fonction de détection + dsm)
-source("./fonctions/selec_detfc_aic.R")
-source("./fonctions/selec_dsm_aic_fwd.R")
+source("./shiny-app/fonctions/selec_detfc_aic.R")
+source("./shiny-app/fonctions/selec_dsm_aic_fwd.R")
 
 # On importe la fonction pred_splines
-source("./fonctions/pred_splines.R")
+source("./shiny-app/fonctions/pred_splines.R")
 
 # On importe les fonctions get_map_abundance
-source("./fonctions/get_map_abundance.R")
-source("./fonctions/get_map_abundance_extr.R")
+source("./shiny-app/fonctions/get_map_abundance.R")
+source("./shiny-app/fonctions/get_map_abundance_app.R")
+source("./shiny-app/fonctions/get_map_abundance_extr.R")
 ```
 
 ## Sélection des données
@@ -792,18 +793,19 @@ dev.off()
 ## Carte pour l'appli
 
 ```{r}
-map2 <- get_map_abundance(
+map2 <- get_map_abundance_app(
 	empty.map = empty.map,
-	dsm.pred = dsm_s3_avshelf.pred$fit,
+	dsm.pred.1 = dsm_s3_av1.pred,
+	dsm.pred.041 = dsm_s3_av041.pred,
+	dsm.pred.shelf = dsm_s3_avshelf.pred,
 	predata_tmp = predata_tmp3,
 	session_selec = 3,
 	segdata = segdata,
 	distdata = distdata,
 	abondance = TRUE,
 	transects = TRUE,
-	observations = TRUE,
-	poster = FALSE
-)
+	observations = TRUE
+	)
 map2
 ```
 
