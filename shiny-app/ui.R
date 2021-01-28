@@ -27,6 +27,9 @@ ui = shiny::htmlTemplate(
   
   ## Résultats #################################################################
   
+  ############HISTOGRAMME##############
+  histogramme = plotlyOutput("histogramme"),
+  
   ###########SESSIONS#################
   #SESSION 2 AV1
   num_sharks_s2_av1 = textOutput(

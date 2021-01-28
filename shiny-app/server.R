@@ -68,7 +68,10 @@ server <- function(input, output) {
     dsm_s3_avshelf.pred$se.fit %>% sum() %>% round()
   })
   
-
+  # Histogramme ----------------------------------------------------
+  output$histogramme <- renderPlotly({
+    histogramme <- ggplotly(plot_detfc)
+  })
 
   # Notre carte ----------------------------------------------------
   
