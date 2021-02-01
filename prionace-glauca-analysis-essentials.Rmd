@@ -385,19 +385,19 @@ plot_detfc <- distdata %>%
 								 binwidth = 0.02, col="white", alpha = .3) +
 	
 	geom_line(data = data.frame(x = dist, y = proba_detec0),
-						aes(x = x, y = y, text="Beaufort = 0"),
+						aes(x = x, y = y, text="Beaufort = agitation faible"),
 						col = "#54C3C7", size = 1.5, lty = 1) +
 	
 	geom_line(data = data.frame(x = dist, y = proba_detec1), 
-						aes(x = x, y = y, text="Beaufort = 1"),
+						aes(x = x, y = y, text="Beaufort = agitation modérée"),
 						col = "#3C8C8F", size = 1.5) +
 	
-	geom_line(data = data.frame(x = dist, y = proba_detec2), 
-						aes(x = x, y = y, text="Beaufort = 2"), 
+	geom_line(data = data.frame(x = dist, y = proba_detec2),
+						aes(x = x, y = y, text="Beaufort = 2"),
 						col = "#2B6466", size = 1.5) +
-	
-	geom_line(data = data.frame(x = dist, y = proba_detec3), 
-						aes(x = x, y = y, text="Beaufort = 3"), 
+
+	geom_line(data = data.frame(x = dist, y = proba_detec3),
+						aes(x = x, y = y, text="Beaufort = 3"),
 						col = "#1A3C3D", size = 1.5) +
 	# Nom des axes
 	xlab("Distance (km)") +
@@ -410,7 +410,7 @@ plot_detfc <- distdata %>%
 	) +
 	scale_fill_manual(values = c("#54C3C7", "#3C8C8F", "#2B6466", "#1A3C3D"))
 
-ggplotly(plot_detfc, tooltip = "text") %>% layout(legend = list(title = list(text="Beaufort\n"), x = 0.8, y = 0.8))
+ggplotly(plot_detfc, tooltip = "text") %>% layout(legend = list(title = list(text="Beaufort\n"), x = 0.6, y = 0.6))
 
 ```
 
