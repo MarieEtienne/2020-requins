@@ -276,6 +276,16 @@ rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
 
 # Fonction de détection
 
+## Transformer seaState en 2 modalités
+```{r}
+library(plyr)
+distdata$seaState<-as.character(distdata$seaState)
+distdata$seaState<-revalue(distdata$seaState, c("0"="agitation faible","1"="agitation faible", "2"="agitation modérée","3"="agitation modérée"))
+segdata$seaState<-as.character(segdata$seaState)
+segdata$seaState<-revalue(segdata$seaState, c("0"="agitation faible","1"="agitation faible", "2"="agitation modérée","3"="agitation modérée"))
+```
+
+
 ```{r}
 detfc.sea.hr <- Distance::ds(
 						distdata,
@@ -300,7 +310,7 @@ plot(
 )
 add_df_covar_line(detfc.sea.hr, data.frame(seaState = na.omit(unique(distdata$seaState))), lwd=2, pdf = TRUE)
 
-legend(x = 0.2, y = 1, legend = c("0", "1", "2", "3"), lty=2:5)
+legend(x = 0.17, y = 1, legend = c("agitation faible", "agitation modérée"), lty=2:5)
 ```
 
 ## Recherche des paramètres adéquats
@@ -365,7 +375,7 @@ plot(	detfc.sea.hr,
 grid()
 add_df_covar_line(detfc.sea.hr, data.frame(seaState = na.omit(unique(distdata$seaState))), lwd=2, pdf = TRUE)
 
-legend(x = 0.2, y = 1, legend = c("0", "1", "2", "3"), lty=2:5)
+legend(x = 0.2, y = 1, legend = c("agitation faible", "agitation modérée"), lty=2:5)
 
 
 ggplot() +
