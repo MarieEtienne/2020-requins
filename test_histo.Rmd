@@ -276,6 +276,16 @@ rm(list = c("coord_l93", "cov_names_mean_sd", "cov_segment",
 
 # Fonction de détection
 
+## Transformer seaState en 2 modalités
+```{r}
+library(plyr)
+distdata$seaState<-as.character(distdata$seaState)
+distdata$seaState<-revalue(distdata$seaState, c("0"="agitation faible","1"="agitation faible", "2"="agitation modérée","3"="agitation modérée"))
+segdata$seaState<-as.character(segdata$seaState)
+segdata$seaState<-revalue(segdata$seaState, c("0"="agitation faible","1"="agitation faible", "2"="agitation modérée","3"="agitation modérée"))
+```
+
+
 ```{r}
 detfc.sea.hr <- Distance::ds(
 						distdata,
@@ -300,7 +310,7 @@ plot(
 )
 add_df_covar_line(detfc.sea.hr, data.frame(seaState = na.omit(unique(distdata$seaState))), lwd=2, pdf = TRUE)
 
-legend(x = 0.2, y = 1, legend = c("0", "1", "2", "3"), lty=2:5)
+legend(x = 0.17, y = 1, legend = c("agitation faible", "agitation modérée"), lty=2:5)
 ```
 
 ## Recherche des paramètres adéquats
@@ -337,22 +347,14 @@ sigma0 <- scale.value(detfc_par[2:3], # 2 paramètres : sigma intercept + sigma 
 
 # sigma.1 : intercept + seaState toujours à 1
 sigma1 <- scale.value(detfc_par[2:3], # 2 paramètres : sigma intercept + sigma seaState = 1
-											z = matrix(rep(1, 96*2), ncol = 2))
+											z = matrix(c(rep(1, 96),rep(1,96)), ncol = 2))
 
-# sigma.2 : intercept + seaState toujours à 2
-sigma2 <- scale.value(detfc_par[2:3], # 2 paramètres : sigma intercept + sigma seaState constant à 2
-											z = matrix(c(rep(1, 96), rep(2, 96)), ncol = 2))
 
-# sigma.3 : intercept + seaState toujours à 3
-sigma3 <- scale.value(detfc_par[2:3], # 2 paramètres : sigma intercept + sigma seaState constant à 2
-											z = matrix(c(rep(1, 96), rep(3, 96)), ncol = 2))
 
 
 # A partir de tous ces paramètres et du vecteur des distances, on calcule la probabilité de détection
 proba_detec0 <- key.fct.hr(distance = dist, sigma = sigma0, b = b)
 proba_detec1 <- key.fct.hr(distance = dist, sigma = sigma1, b = b)
-proba_detec2 <- key.fct.hr(distance = dist, sigma = sigma2, b = b)
-proba_detec3 <- key.fct.hr(distance = dist, sigma = sigma3, b = b)
 ```
 
 ```{r }
@@ -365,14 +367,12 @@ plot(	detfc.sea.hr,
 grid()
 add_df_covar_line(detfc.sea.hr, data.frame(seaState = na.omit(unique(distdata$seaState))), lwd=2, pdf = TRUE)
 
-legend(x = 0.2, y = 1, legend = c("0", "1", "2", "3"), lty=2:5)
+legend(x = 0.2, y = 1, legend = c("agitation faible", "agitation modérée"), lty=2:5)
 
 
 ggplot() +
 	geom_line(data = data.frame(x = dist, y = proba_detec0), aes(x = x, y = y), lty = 2, size = 2) +
-	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), lty = 3, size = 2) +
-	geom_line(data = data.frame(x = dist, y = proba_detec2), aes(x = x, y = y), lty = 4, size = 2) +
-	geom_line(data = data.frame(x = dist, y = proba_detec3), aes(x = x, y = y), lty = 5, size = 2)
+	geom_line(data = data.frame(x = dist, y = proba_detec1), aes(x = x, y = y), lty = 3, size = 2) 
 ```
 
 ## final plot of detection function
@@ -396,14 +396,7 @@ plot_detfc <- distdata %>%
 						aes(x = x, y = y, text="Beaufort = agitation modérée"),
 						col = "#3C8C8F", size = 1.5) +
 	
-	# geom_line(data = data.frame(x = dist, y = proba_detec2), 
-	# 					aes(x = x, y = y, text="Beaufort = 2"), 
-	# 					col = "#2B6466", size = 1.5) +
-	# 
-	# geom_line(data = data.frame(x = dist, y = proba_detec3), 
-	# 					aes(x = x, y = y, text="Beaufort = 3"), 
-	# 					col = "#1A3C3D", size = 1.5) +
-	# Nom des axes
+
 	xlab("Distance (km)") +
 	ylab("Detection probability") +
 	labs(fill = "Beaufort") +
