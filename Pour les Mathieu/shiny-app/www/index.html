@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!--[if lt IE 9 ]><html class="no-js oldie" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="no-js oldie ie9" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8" />
+    <title> Abundance and distribution of the blue shark in the Bay of Biscay </title>
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="css/base.css"> 
+    <link rel="stylesheet" href="css/vendor.css"> 
+    <link rel="stylesheet" href="css/main.css"> 
+
+    <!-- script
+    ================================================== -->
+    <script src="js/modernizr.js"></script>
+    <script src="js/pace.min.js"></script>
+    <script src="js/showhide.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="shared/shiny.css"/>
+    <!-- Manrope font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600&display=swap" rel="stylesheet">
+
+
+    <!-- Latex function 
+    ================================================== -->
+    <script 
+        type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    
+    <!-- favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="shark.ico" type="image/x-icon">
+    <link rel="icon" href="shark.ico" type="image/x-icon">
+    
+    <!-- shiny stuff
+        ================================================== -->
+    {{ headContent() }}
+    
+    <style>.selectize-dropdown {z-index: 10000}</style>
+    
+</head> 
+
+<body id="top"> 
+
+    <!-- HEADER
+    ================================================== -->
+    <header class="s-header"> <!--MENU-->
+
+        <nav class="header-nav">
+
+            <a href="#0" class="header-nav__close" title="close"><span> Close </span></a>
+
+            <div class="header-nav__content">
+                <h3>Navigation</h3>
+                
+                <ul class="header-nav__list">
+                    <li class="current"><a class="smoothscroll"  href="#intro" title="intro">Home</a></li>
+                    <li><a class="smoothscroll"  href="#data" title="data">Observation protocol</a></li>
+                    <li><a class="smoothscroll"  href="#methods" title="methods">Statistical methods</a></li>
+                    <li><a class="smoothscroll"  href="#estimation2" title="estimation2">Spring 2019</a></li>
+                    <li><a class="smoothscroll"  href="#estimation3" title="estimation3">Summer 2019</a></li>
+                    <li><a class="smoothscroll"  href="#conclusion" title="conclusion">Conclusion</a></li>
+                    <li><a class="smoothscroll"  href="#about" title="about">About</a></li>
+                </ul>
+
+    
+                <ul class="header-nav__social">
+                    <li>
+                        <a href="https://www.agrocampus-ouest.fr/" target="_blank"><img alt="Hi!" src="images/app-logo_Agrocampus-bleu.png" width="53" height="53"/> </a> <!--target = "_blank" : ouvre une nouvelle fenetre-->
+                    </li>
+                    <li>
+                        <a href="https://observatoire-pelagis.cnrs.fr/" target="_blank"><img alt="Hi!" src="images/app-logo_pelagis-bleu.png" width="53" height="53"/></a>
+                    </li>
+                    <li>
+                        <a href="https://parc-marin-gironde-pertuis.fr/" target="_blank"><img alt="Hi!" src="images/app-logo_PNM-bleu.png" width="53" height="53"/></a>
+                    </li>
+                </ul>
+
+            </div> 
+
+        </nav>  <!-- end header naviation -->
+
+        <a class="header-menu-toggle" href="#0"> <!-- buttons -->
+            <span class="header-menu-text">Menu</span>
+            <span class="header-menu-icon"></span>
+        </a>
+
+    </header> <!-- end header section -->
+
+
+    <!-- HOME
+    ================================================== -->
+    <section id="intro" class="s-home target-section" data-parallax="scroll" data-image-src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Prionace_glauca_1.jpg" data-natural-width=3000 data-natural-height=2000 data-position-y=center>
+
+        <div class="overlay"></div> 
+        <div class="shadow-overlay"></div>
+
+        <div class="home-content">
+
+            <div class="row home-content__main">
+
+                <h3>Prionace glauca</h3>
+
+                <h1>
+                    Abundance and distribution of the blue shark in the Bay of Biscay
+                </h1>
+                
+
+                <div class="home-content__buttons">
+                    <a href="#data" class="smoothscroll btn btn--stroke">
+                        Observation protocol
+                    </a>
+                </div>
+                
+                <div class="home-content__buttons">
+                    <a href="#methods" class="smoothscroll btn btn--stroke">
+                        Statistical methods
+                    </a>
+                </div>
+                
+                <div class="home-content__buttons">
+                    <a href="#estimation2" class="smoothscroll btn btn--stroke">
+                        Spring 2019
+                    </a>
+                </div>
+                
+                <div class="home-content__buttons">
+                    <a href="#estimation3" class="smoothscroll btn btn--stroke">
+                        Summer 2019
+                    </a>
+                </div>
+                
+                <div class="home-content__buttons">
+                    <a href="#conclusion" class="smoothscroll btn btn--stroke">
+                        Conclusion
+                    </a>
+                </div>
+                
+                <div class="home-content__scroll">
+                <a href="#about" class="scroll-link smoothscroll">
+                    <span>About</span>
+                </a>
+                </div>
+
+                <div class="home-content__line"></div>
+
+        </div> 
+    </section> <!-- end home -->
+
+
+    <!-- OBSERVATION PROTOCOL
+    ================================================== -->
+    <section id='data' class="s-services">
+
+        <div class="row section-header" data-aos="fade-up">
+            
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  Observation protocol
+                </h2>
+                
+                <p style ="text-align: justify;">
+                The observations were made from a plane at 200m altitude and going at an average speed of 180kmh, in the Bay of Biscay off La Rochelle in France. The method used to collect data is a transect sampling, which consists of following lines (transects) and counting the occurences of sharks as well as their distances from the plane.
+                </p> 
+            </div> 
+            <div class="row section-header block-1-3 block-m-1-3 block-mob-full" data-aos="fade-up">
+                <div class="col-block">
+                    <h3>Sessions</h3> 
+                    <p> Four sessions were carried out in 2019:
+                      <ul>
+                        <li><b>Winter :</b> from 12/02 to 27/02</li>
+                        <li><b>Spring :</b> from 30/05 to 02/06</li>
+                        <li><b>Summer :</b> from 31/07 to 08/08</li>
+                        <li><b>Fall :</b> from 25/10 to 19/11</li>
+                      </ul>
+                    </p>
+                </div>
+                <div class="col-block">
+                    <h3>Transect Sampling</h3>
+                    <img alt="Transect sampling explanation" src="images/transect_sampling.png" height="600"/> 
+                </div>
+                <div class="col-block">
+                    <h3>Our transects</h3>
+                    <img alt="Map showing our transects" src="images/our_transects.png" height="600"/> 
+                </div>
+            </div> 
+        </div>
+    </section> <!-- end observation protocol -->
+    
+        <!-- STATISTICAL METHODS
+    ================================================== -->
+    <section id='methods' class="s-services">
+        
+        <div class="row section-header" data-aos="fade-up">
+            <div class="col-full">
+                <h2>
+                  Statistical methods 
+                </h2>
+            </div>
+        </div>
+
+        <div class="row section-header has-bottom-sep block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+
+              <div class = "row"> <!-- Detection function -->
+                <h3>Detection function</h3>  
+                <p>
+                A detection function is used to define the probability of an individual to be observed and take account of observation bias.</p>
+                
+                <div class = "col-block"  style="width:55%!important"> <!-- Descriptive text -->
+                
+                <!-- Useful points -->
+                <h4>Model selection</h4>
+                <p>
+                  The selection of the covariates and of the key function was made by minimizing the Akaike Information Criterion.<br>
+                  <ul>
+                    <li><b>Selected detection covariate:</b> Sea state (Beaufort scale)</li>
+                    <li><b>Key function used:</b> hazard-rate</li>
+                  </ul>
+                </p>
+                  
+                <h4>R function used</h4>
+                <p class = "code">
+                  Distance::ds
+                </p>
+
+
+                <!-- Formula -->
+                  <!-- Formula title -->
+                  <h4>Detection probability formula</h4>
+                  
+                  <!-- Mathematic formula -->
+                  <p, style = "text-align: center;" >
+                    <span class="math display">\[\normalsize \mathbb{P}(detected \mid present) =  g_{\sigma_i}(d) = 1-\frac{1}{e^{(\frac{\sigma_i}{d})^b}}\]</span>
+                  </p>
+                  
+                  <!-- Formula informations-->
+                  <p, style = "text-align: left;" >
+                    <ul>
+                        <li><i>b</i>: shape coefficient
+                            <span class="math display">\[\small \ln(b) = 1.47 \]</span></li>
+                        <li><i>&sigma;<sub>i</sub></i>: scale coefficient, impacted by the sea state i = {0, 1, 2, 3}
+                            <span class="math display">\[\small \ln(\sigma_i) = -2.23 + 0.17 \times i \]</span></li>
+                        <li><i>d</i>: distance</li>
+                    </ul>
+                  </p>
+                </div>
+                
+                <div class = "col-block" style="width:45%!important"> <!-- Graphique de la fonction de detection -->
+                  <h4>Detection function plot</h4>
+                  {{ histogramme }}
+                  <!-- Limites -->
+                  <table><tr>
+                    <td><p, style = "text-align: center;" >
+                      <span class="math display">\[\normalsize \lim_{d \to 0} g(d) = 1\]</span>
+                    </p></td>
+                    <td><p, style = "text-align: center;" >
+                      <span class="math display">\[\normalsize \lim_{d \to +\infty} g(d) = 0\]</span>
+                    </p></td>
+                  </tr></table>
+                </div>
+
+              </div> <!-- end Detection function -->
+
+
+
+              <div class = "row"> <!-- Density function -->
+                <h3 style="margin-top: 5rem">Density function</h3>  
+                
+                <p style ="text-align: justify;">  
+                Density surface modelling of line transect data is a Generalized Additive Model (GAM)-based approach. It is used to calculate spatially-explicit estimates of animal abundance with data from observations and covariates. <br>
+                
+                <div class = "col-block" style="width:47%!important"> <!-- Descriptive text -->
+                
+                <!-- Model selection -->
+                    <h4>Model selection</h4>
+                    <p>To select the density covariates, a forward algorithm minimizing the Akaike Information Criterion was made.</p>
+                    <ul>
+                        <li><b>Selected density covariates:</b></li>
+                        <ul>
+                            <li>Sea surface temperature (mean from 4 weeks of measures before the session)</li>
+                            <li>Location (X and Y coordinates, in Lambert93)</li>
+                            <li>Chlorophyll A concentration (mean from 4 weeks of measures before the session)</li>
+                        </ul>
+                        <li><b>GAM fitting method:</b> restricted maximum likelihood (REML)</li>
+                        <li><b>Distribution:</b> Negative binomiale, to fit overdispersion</li> 
+                    </ul>
+                    
+                <!-- Availability bias -->
+                    <h4>Availability bias</h4>
+                    <p>
+                        Availability corresponds to the possibility of seing the sharks. 
+                        It basically represents the proportion of sharks that are close enough to the sea surface to be seen. Three availability bias were taken into account. </p>
+                    <ul>
+                        <li><b>1:</b> we consider that all sharks are potentially visible</li>
+                        <li><b>0.41:</b> the proportion of time blue sharks spend close to the surface</li>
+                        <li><b>on-shelf/off-shelf:</b> 
+                            a different availability bias whether sharks are on the continental shelf (<b>0.63</b>) 
+                            or not (<b>0,14</b>)</li> 
+                    </ul>
+                    <p> NB : Two tagged sharks were used to get the availability 0.41 and on-shelf/off-shelf by <a href="#about">Nykänen et al., in 2018</a>.</p>
+                
+                <!-- R functions -->
+                    <h4>R functions</h4> 
+                    
+                        <p class = "code">dsm::dsm to fit model parameters</p>
+                        <p class = "code">dsm::predict to spatially estimate sharks abundance</p>
+
+                </div> <!--- end descriptive text -->
+                
+                
+                
+                <div class = "col-block" style="width:53%!important; text-align: center"> <!-- Spines plots -->
+                    <h4>Covariates effect on shark abundance</h4>
+                    <p style="text-align: center">Select the model's session and availability bias</p>
+                    <table><tr>
+                        <td>{{ session_choix }}</td>
+                        <td>{{ availability_choix }}</td>
+                    </tr></table>
+               
+                {{ img_splines_dsm }}
+                
+                </div> <!--- end splines plot -->
+
+                
+              </div> <!-- End Density function -->
+        </div> 
+
+    </section> 
+    <!-- end statistical methods -->
+    
+
+
+    <!-- SPRING 2019 ABUNDANCE AND MAP
+    ================================================== -->
+    <section id='estimation2' class="s-services">
+        
+        <!--- Title  -->
+        
+        <div class="row section-header" data-aos="fade-up">
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  Spring 2019 
+                </h2>
+                <p style ="text-align: center;"> 
+                80 sharks observed
+                </p>
+            </div>
+        </div> 
+
+        <!--- Abundance and map Spring 2019 -->
+        
+        <div class="row about-stats stats block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+            
+            <div class="col-block" style="width:40%!important">
+                
+            <!--- Abundance Spring 2019 -->
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s2_av1}} sharks ± {{num_sharks_s2_av1_se}}
+                </h6>
+                <h5> Availability bias: 1</h5>
+
+            </div>
+            
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s2_av041}} sharks ± {{num_sharks_s2_av041_se}}
+                </h6>
+                <h5> Availability bias: 0.41</h5>
+
+            </div>
+            
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s2_avshelf}} sharks ± {{num_sharks_s2_avshelf_se}}
+                </h6>
+                <h5>Availability bias: on-shelf/off-shelf</h5>
+            </div>
+         </div> 
+         
+         <!--- Map Spring 2019 -->
+         <div class="row section-header col-block" style="width:60%!important" data-aos="fade-up">
+             <div class = "stats block-1-2 block-m-1-2 block-mob-full">
+                <div class="col-block service-item aos-init aos-animate" data-aos="fade-up">
+                 {{ show_transect2 }}
+                </div>
+                <div class="col-block service-item aos-init aos-animate" data-aos="fade-up">
+                {{ show_observations2 }}
+                </div>
+             </div>
+             <div>
+             {{ session2 }}
+             </div>
+         </div> 
+         
+       </div> <!--- END SPRING 2019 ABUNDANCE AND MAP -->
+
+
+    </section> 
+    
+       <!-- SUMMER 2019 ABUNDANCE AND MAP
+    ================================================== -->
+    <section id='estimation3' class="s-services">
+        
+        <!--- Title -->
+        
+        <div class="row section-header" data-aos="fade-up">
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  Summer 2019 
+                </h2>
+                <p style ="text-align: center;"> 
+                16 sharks observed
+                </p>
+            </div>
+        </div> 
+
+        <!--- Abundance and map Summer 2019 -->
+        
+        <div class="row about-stats stats block-1-2 block-m-1-2 block-mob-full" data-aos="fade-up">
+            
+            <div class="col-block" style="width:40%!important">
+                
+            <!--- Abundance Summer 2019 -->
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s3_av1}} sharks ± {{num_sharks_s3_av1_se}}
+                </h6>
+                <h5> Availability bias: 1</h5>
+
+            </div>
+            
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s3_av041}} sharks ± {{num_sharks_s3_av041_se}}
+                </h6>
+                <h5> Availability bias: 0.41</h5>
+
+            </div>
+            
+            <div class="stats__col">
+                <h6>
+                  {{num_sharks_s3_avshelf}} sharks ± {{num_sharks_s3_avshelf_se}}
+                </h6>
+                <h5>Availability bias : on-shelf/off-shelf</h5>
+            </div>
+         </div> 
+         <!--- Map Summer 2019 -->
+         <div class="row section-header col-block" style="width:60%!important" data-aos="fade-up">
+             <div class = "stats block-1-2 block-m-1-2 block-mob-full">
+                <div class="col-block service-item aos-init aos-animate" data-aos="fade-up">
+                 {{ show_transect3 }}
+                </div>
+                <div class="col-block service-item aos-init aos-animate" data-aos="fade-up">
+                {{ show_observations3 }}
+                </div>
+             </div>
+             <div>
+             {{ session3 }}
+             </div>
+         </div> 
+         
+       </div> <!--- END SUMMER 2019 ABUNDANCE AND MAP -->
+
+
+    </section> 
+    
+    <!-- CONLUSION
+    ================================================== -->
+
+    <section id='conclusion' class="s-services">
+
+        <div class="row section-header" data-aos="fade-up">
+            
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  Conclusion
+                </h2>
+                <p style ="text-align: justify;"> 
+                &#9658; Shark observation depends on sea state and their presence depends on sea surface temperature, the concentration of  chlorophyll A and the location <br> <br>
+                &#9658; No sharks are observed in winter nor fall so there is a possible impact of seasons on the presence of sharks on the surface and/or on migrations. <br> <br>
+                &#9658; In spring, the abundance of sharks is higher but more scattered and in summer the sharks are less abundant but are more concentrated in an area.  <br>
+                    <input type="checkbox" name="MyCheckBox" id="MyCheckBox">  <strong>Show season comparison</strong>
+                    <div id="ShowMeDIV" style="display: none;">
+                        <img alt="Detection Function plot" src="./images/poster_anglais.png" id="map" width = "800"/>
+                    </div> 
+                </p>
+                <p style ="text-align: justify;"> 
+                &#9658; The availability bias has an impact on the estimated abundance but not on the distribution area. <br> <br>
+                &#9658; The three availability modalities are questionable (1, 0.41 and on-shelf/off-shelf). However, they give relative abundance which can be useful to compare sharks population over time.
+                </p>
+                <h4>Discussion</h4>
+                <p style ="text-align: justify;"> 
+                &#9658; The detection function seems odd. Indeed, the more agitated the sea is, the better is the sharks detection; which is surprising. A way to improve it would be to use data from another species with the same detection characteristics (size, behaviour) such as other sharks species or dolphins. <br> <br>
+                &#9658; The estimation precision of the amount of shark is another issue. This could be because only 96 sharks were observed, which is a low-data context. This could be bettered by implementing data from other years or similar areas to fit the model.  
+                </p>
+            </div>
+        </div>
+    </section> <!-- end conclusion -->    
+    
+    <!-- ABOUT
+    ================================================== -->
+
+    <section id='about' class="s-services">
+
+        <div class="row section-header" data-aos="fade-up">
+            
+            <div class="col-full">
+                <h2 class="display-2--light">
+                  About
+                </h2>
+                <h4>Authors</h4>
+                <p style ="text-align: center;"> 
+                Léa PAUTREL<sup>1</sup>, Rindra RANAIVOMANANA<sup>1</sup>, 
+                Emma ROUAULT<sup>1</sup>, Marie-Pierre ETIENNE<sup>1</sup>, 
+                Matthieu AUTHIER<sup>2</sup>, Mathieu GENU<sup>2</sup> <br>
+                <sup>1</sup>L'Institut Agro | Agrocampus Ouest | Unité Pédagogique de Mathématiques Appliquées <br>
+                <sup>2</sup>Observatoire Pelagis 
+                </p>
+                <h4>Aknowledgements</h4>
+                <p style ="text-align: center;"> 
+                We thank all the observers: Cécile Dars, Sophie Laran, Olivier van Canneyt, Ghislain Dorémus, Jérôme Spitz, <br>
+                Paula Mendez Fernandez,Eléonore Meheust, Ariance Blanchard, Vincent Ridoux, Thierry Sanchez <br> <br>
+                And we also thank Milaja Nykänen, who worked on a similar study in Ireland. 
+                </p>
+                <h4>Reference</h4>
+                <p style ="text-align: justify;"> 
+                Nykänen M, Jessopp M, Doyle TK, Harman LA, Cañadas A, et al. (2018) <b>Using tagging data and aerial surveys to incorporate availability bias in the abundance estimation of blue sharks (Prionace glauca).</b> PLOS ONE 13(9): e0203122. <a href="https://doi.org/10.1371/journal.pone.0203122" target="_blank">https://doi.org/10.1371/journal.pone.0203122</a>
+                </p>
+            </div>
+            <div>
+                <img alt="Hi!" src="images/all_logos.png"/>
+            </div>
+        </div>
+    </section> <!-- end about -->
+    
+        <!-- preloader
+    ================================================== -->
+    <div id="preloader">
+        <div id="loader">
+            <div class="line-scale-pulse-out">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
